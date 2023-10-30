@@ -2,7 +2,7 @@ import React from "react";
 import { Layout, Menu, Breadcrumb } from "antd";
 import { Link, useLocation } from "react-router-dom";
 
-const { Content, Sider,Header,Footer } = Layout;
+const { Content, Sider,Footer } = Layout;
 
 interface AppLayoutProps {
   children: React.ReactNode;

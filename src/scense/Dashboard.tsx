@@ -1,6 +1,5 @@
 import React from "react";
-import { googleLogout } from "@react-oauth/google";
-import { Button,Avatar, Row, Col, Card } from "antd";
+import { Row, Col, Card } from "antd";
 import AppLayout from "../layout/AppLayout";
 
 const Dashboard: React.FC = () => {

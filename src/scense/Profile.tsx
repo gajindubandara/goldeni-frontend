@@ -1,5 +1,5 @@
 import React from "react";
-import { Avatar, Button, Card } from "antd";
+import { Avatar, Button } from "antd";
 import AppLayout from "../layout/AppLayout";
 import { googleLogout } from "@react-oauth/google";
 

@@ -1,8 +1,5 @@
-// src/App.tsx
-
 import React from "react";
 import { BrowserRouter as Router, Route, Routes, Navigate } from "react-router-dom";
-import AppLayout from "./layout/AppLayout";
 import Login from "./scense/Login";
 import Dashboard from "./scense/Dashboard";
 import Profile from "./scense/Profile";
