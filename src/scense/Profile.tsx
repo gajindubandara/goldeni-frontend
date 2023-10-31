@@ -17,8 +17,8 @@ const Profile: React.FC = () => {
   };
   
   return (
-    <AppLayout>
-      <h2>Profile</h2>
+    <AppLayout>S
+      <h1>Profile</h1>
       <div style={{ display: "flex", alignItems: "center" }}>
         <Avatar size={64} src={userData.picture} />
         <div style={{ marginLeft: 16 }}>

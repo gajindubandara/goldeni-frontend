@@ -40,7 +40,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
             </Breadcrumb.Item>
             ))}
         </Breadcrumb>
-        <div style={{ padding: 24, background: "#fff", minHeight: 360 }}>
+        <div style={{ padding: 24, background: "#fff", minHeight: '85vh' }}>
             {children}
           </div>
       </Content>
