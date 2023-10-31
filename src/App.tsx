@@ -1,14 +1,14 @@
 import React from "react";
-import { BrowserRouter as Router, Route, Routes, Navigate, Link, } from "react-router-dom";
+import { BrowserRouter as Router, Route, Routes, Link, } from "react-router-dom";
 import Login from "./scense/Login";
 import Dashboard from "./scense/Dashboard";
 import Profile from "./scense/Profile";
 
 const App: React.FC = () => {
-  const isLoggedIn = localStorage.getItem("loggedIn");
-  const sessionExpiration = localStorage.getItem("sessionExpiration");
+  // const isLoggedIn = localStorage.getItem("loggedIn");
+  // const sessionExpiration = localStorage.getItem("sessionExpiration");
 
-  const isSessionExpired = sessionExpiration ? new Date().getTime() > parseInt(sessionExpiration) : true;
+  // const isSessionExpired = sessionExpiration ? new Date().getTime() > parseInt(sessionExpiration) : true;
   return (
     // <Router>
       // <nav>
