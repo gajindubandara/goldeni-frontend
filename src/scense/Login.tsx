@@ -80,6 +80,7 @@ const [ user, setUser ] = useState<any | null>(null);
   <div className="title_box">
         <span className="title">Golden </span><span className="i_color">i</span>
         <p className="tag_line"> ~ Your Visionary Companion for Safe and Smart Navigation ~</p>
+        <p>test</p>
         </div>
     </div>
   </div>
