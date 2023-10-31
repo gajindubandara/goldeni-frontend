@@ -19,7 +19,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
       collapsedWidth="0" // Width when collapsed (0 means it disappears)
       width={200} theme="dark">
         <div className="navLogo">
-        <img src="https://www.yorkstonguesthouse.co.uk/wp-content/uploads/2017/09/Rectangle-1920x1080-Placeholder.png" alt="Logo" />
+        <img src="https://res.cloudinary.com/dwldehfnr/image/upload/v1698754847/goldeni-frontend/dlzyi4azchasou9li4tz.png" alt="Logo" />
         </div>
         <Menu mode="vertical" theme="dark" defaultSelectedKeys={[location.pathname]}>
           <Menu.Item key="/dashboard">
