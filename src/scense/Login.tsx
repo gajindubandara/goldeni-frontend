@@ -7,7 +7,6 @@ import { Button } from "antd";
 import { useGoogleLogin } from "@react-oauth/google";
 import { useEffect, useState } from "react";
 import axios from "axios";
-// import { useNavigate } from "react-router-dom";
 
 const Login: React.FC = () => {
   const [user, setUser] = useState<any | null>(null);
@@ -17,6 +16,8 @@ const Login: React.FC = () => {
   //     googleLogout();
   //     setProfile(null);
   // };
+
+  // const navigate = useNavigate()
 
   const login = useGoogleLogin({
     onSuccess: (codeResponse) => setUser(codeResponse),
@@ -42,7 +43,9 @@ const Login: React.FC = () => {
           const expirationTime = (new Date().getTime() + 60000).toString(); // 1 hour in milliseconds
           localStorage.setItem("sessionExpiration", expirationTime);
           // console.log(res);
-          window.location.href = "/dashboard";
+          window.location.href = "/";
+          // navigate('/dashboard');
+          // window.location.href = window.location.href.split('#')[0] + '#/dashboard';
         })
         .catch((err) => console.log(err));
     }
