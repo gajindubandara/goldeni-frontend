@@ -2,18 +2,22 @@ import React from "react";
 import { Avatar, Button } from "antd";
 import AppLayout from "../layout/AppLayout";
 import { googleLogout } from "@react-oauth/google";
+import { useNavigate } from 'react-router-dom';
 
 const Profile: React.FC = () => {
     // Retrieve the userData object from session
   const userData = JSON.parse(localStorage.getItem("userData") || "{}");
   console.log(userData)
+  const navigate = useNavigate();
 
   const logOut = () => {
     googleLogout();
     localStorage.removeItem("loggedIn");
     localStorage.removeItem("sessionExpiration");
     localStorage.removeItem("userData");
-    window.location.href = "/";
+    // window.location.href = "/";
+    navigate('/');
+    window.location.reload();
   };
   
   return (

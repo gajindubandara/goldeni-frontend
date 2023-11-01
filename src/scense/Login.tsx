@@ -7,8 +7,10 @@ import { Button } from "antd";
 import { useGoogleLogin } from "@react-oauth/google";
 import { useEffect, useState } from "react";
 import axios from "axios";
+import { useNavigate } from 'react-router-dom';
 
 const Login: React.FC = () => {
+  const navigate = useNavigate();
   const [user, setUser] = useState<any | null>(null);
   // const [profile, setProfile] = useState<any | null>(null); // Initialize with null or specify the actual type
 
@@ -43,13 +45,15 @@ const Login: React.FC = () => {
           const expirationTime = (new Date().getTime() + 60000).toString(); // 1 hour in milliseconds
           localStorage.setItem("sessionExpiration", expirationTime);
           // console.log(res);
-          window.location.href = "/index.html#/";
+          // window.location.href = "/index.html#/";
+          navigate('/');
+          window.location.reload();
           // navigate('/dashboard');
           // window.location.href = window.location.href.split('#')[0] + '#/dashboard';
         })
         .catch((err) => console.log(err));
     }
-  }, [user]);
+  }, [navigate, user]);
 
   const src =
     "https://res.cloudinary.com/dwldehfnr/video/upload/v1698683188/goldeni-frontend/xy9lis5g5rkd11q3azfh.mp4";

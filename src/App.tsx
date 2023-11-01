@@ -11,21 +11,21 @@ const App: React.FC = () => {
   return (
     <Router>
       <Routes>
-      <Route
+      {/* <Route
           path="/login"
           element={<Login />}
-        />
+        /> */}
         <Route
           path="/"
           element={isLoggedIn && !isSessionExpired ? <Navigate to="/dashboard" /> : <Login />}
         />
         <Route
           path="/dashboard"
-          element={isLoggedIn && !isSessionExpired ? <Dashboard /> : <Navigate to="/login" />}
+          element={isLoggedIn && !isSessionExpired ? <Dashboard /> : <Navigate to="/" />}
         />
         <Route
           path="/profile"
-          element={isLoggedIn && !isSessionExpired ? <Profile /> : <Navigate to="/login" />}
+          element={isLoggedIn && !isSessionExpired ? <Profile /> : <Navigate to="/" />}
         />
       </Routes>
     </Router>
