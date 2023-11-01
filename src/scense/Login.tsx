@@ -1,9 +1,4 @@
-// src/components/Login.js
-
-// import React, { useState } from "react";
 import { Button } from "antd";
-// import { useEffect } from "react";
-// import { GoogleLogin } from '@react-oauth/google';
 import { useGoogleLogin } from "@react-oauth/google";
 import { useEffect, useState } from "react";
 import axios from "axios";
@@ -12,15 +7,6 @@ import { useNavigate } from 'react-router-dom';
 const Login: React.FC = () => {
   const navigate = useNavigate();
   const [user, setUser] = useState<any | null>(null);
-  // const [profile, setProfile] = useState<any | null>(null); // Initialize with null or specify the actual type
-
-  // const logOut = () => {
-  //     googleLogout();
-  //     setProfile(null);
-  // };
-
-  // const navigate = useNavigate()
-
   const login = useGoogleLogin({
     onSuccess: (codeResponse) => setUser(codeResponse),
     onError: (error) => console.log("Login Failed:", error),
@@ -42,7 +28,7 @@ const Login: React.FC = () => {
           // setProfile(res.data);
           localStorage.setItem("userData", JSON.stringify(res.data));
           localStorage.setItem("loggedIn", "true");
-          const expirationTime = (new Date().getTime() + 60000).toString(); // 1 hour in milliseconds
+          const expirationTime = (new Date().getTime() + 3600000).toString(); // 1 hour in milliseconds
           localStorage.setItem("sessionExpiration", expirationTime);
           // console.log(res);
           // window.location.href = "/index.html#/";
@@ -63,20 +49,14 @@ const Login: React.FC = () => {
         <source src={src} type="video/mp4" />
         Your browser does not support the video tag.
       </video>
-
-      {/* <img src="https://res.cloudinary.com/dwldehfnr/image/upload/v1698684559/goldeni-frontend/wwujztdjc4wfbqe2ajjr.png" className="logo" alt="Your Logo" /> */}
-
       <Button ghost className="sign-in-button" onClick={() => login()}>
         Sign in with Google
       </Button>
 
       <div className="home-content-container">
         <div className="home-content">
-          {/* <span className="title">Golden </span> */}
           <img src="https://res.cloudinary.com/dwldehfnr/image/upload/v1698754847/goldeni-frontend/dlzyi4azchasou9li4tz.png" alt="Your Logo" className="main-logo" />
-          {/* <span className="i_color">i</span> */}
           <p className="tag_line">
-            {" "}
             ~ Your Visionary Companion for Safe and Smart Navigation ~
           </p>
         </div>

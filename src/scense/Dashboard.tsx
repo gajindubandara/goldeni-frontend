@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Row, Col, Card, Button } from "antd";
 import AppLayout from "../layout/AppLayout";
+import PopupForm from "../components/PopupForm";
 
 const Dashboard: React.FC = () => {
   const boxData = [
@@ -13,20 +14,48 @@ const Dashboard: React.FC = () => {
     { title: "Device 6", id: "09:89:27:AA:G2:CC", status: "connected" },
   ];
 
-  const [activeCard, setActiveCard] = useState(null);
+  const [isPopupVisible, setPopupVisible] = useState(false);
 
-  const handleCardClick = (index: any) => {
-    setActiveCard(index === activeCard ? null : index);
+  const showPopup = () => {
+    setPopupVisible(true);
   };
 
-  const handleAddButtonClick = () => {
-    setActiveCard(null); // Reset activeCard to null when the "Add Device" button is clicked
+  const closePopup = () => {
+    setPopupVisible(false);
   };
 
   return (
     <AppLayout>
       <h1>Dashboard</h1>
       <hr />
+      <DeviceCards />
+      <PopupForm visible={isPopupVisible} onClose={closePopup} />
+    </AppLayout>
+  );
+
+  function DeviceCards() {
+    const [showDeviceCard, setShowDeviceCard] = useState(true);
+    const [showDeviceInfoCard, setShowDeviceInfoCard] = useState(false);
+
+    const toggleCards = () => {
+      setShowDeviceCard(!showDeviceCard);
+      setShowDeviceInfoCard(!showDeviceInfoCard);
+    };
+
+    return (
+      <div>
+        {showDeviceCard && <DeviceListCard toggleCards={toggleCards} />}
+        {showDeviceInfoCard && <DeviceInfoCard toggleCards={toggleCards} />}
+      </div>
+    );
+  }
+
+  interface CardProps {
+    toggleCards: () => void;
+  }
+
+  function DeviceListCard({ toggleCards }: CardProps) {
+    return (
       <div className="section-break">
         <h2>Devices</h2>
         <div className="device-msg">
@@ -40,12 +69,9 @@ const Dashboard: React.FC = () => {
               <Col key={box.id} xs={24} sm={12} md={8} lg={6} xl={6}>
                 <Card
                   style={{ cursor: "pointer", position: "relative" }}
-                  className={`device-card ${
-                    activeCard === index ? "device-active-card" : ""
-                  }`}
-                  onClick={() => handleCardClick(index)}
+                  className="device-card"
+                  onClick={() => toggleCards()}
                 >
-                  {/* <div className="deviceStatus">{box.status}</div> */}
                   <div className="device-name">{box.title}</div>
                   <div className="device-id">ID: {box.id}</div>
                   {box.status === "connected" ? (
@@ -100,11 +126,7 @@ const Dashboard: React.FC = () => {
               </Col>
             ))}
             <Col xs={24} sm={12} md={8} lg={6} xl={6}>
-              <Button
-                type="dashed"
-                className="btn-add-device"
-                onClick={handleAddButtonClick}
-              >
+              <Button type="dashed" className="btn-add-device" onClick={showPopup}>
                 <svg
                   width="20"
                   height="20"
@@ -125,39 +147,22 @@ const Dashboard: React.FC = () => {
           </Row>
         </div>
       </div>
+    );
+  }
 
+  function DeviceInfoCard({ toggleCards }: CardProps) {
+    return (
       <div className="section-break">
         <h2>Device Infomation</h2>
-        {/* <Card>
-          <Row gutter={[16, 16]}>
-            <Col xs={24} sm={12} md={12} lg={6} xl={6}>
-              <div className="avatar">
-                <UserOutlined style={{ fontSize: "24px" }} />
-              </div>
-            </Col>
-            <Col xs={24} sm={12} md={12} lg={18} xl={18}>
-              <div className="user-info">
-                <div className="info-row">
-                  <MailOutlined style={{ fontSize: "16px" }} />
-                  <span>Email: abd@gmai.cpm</span>
-                </div>
-                <div className="info-row">
-                  <IdcardOutlined style={{ fontSize: "16px" }} />
-                  <span>Device ID: 346623626</span>
-                </div>
-                <div className="info-row">
-                  <span>Device Name: debvj</span>
-                </div>
-                <div className="info-row">
-                  <span>Status: Connected</span>
-                </div>
-              </div>
-            </Col>
-          </Row>
-        </Card> */}
+        <Button onClick={() => toggleCards()}>Back to Devices</Button>
+        <div className="section-break">
+        <Card>
+          <div>Chart section...</div>
+        </Card>
+        </div>
       </div>
-    </AppLayout>
-  );
+    );
+  }
 };
 
 export default Dashboard;

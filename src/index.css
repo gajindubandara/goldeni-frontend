@@ -162,16 +162,11 @@ code {
 
 
 
-.device-hover-card:hover {
-  background-color: #f0f0f0; /* Change the background color on hover */
-  transition: background-color 0.3s; /* Add a smooth transition effect */
+.device-card:hover {
+  border: 1px solid #1890ff; /* Add a border with a blue color */
+  transition: border 0.3s, background-color 0.3s;
 }
 
-.device-active-card {
-  border: 1px solid #1890ff; /* Add a border with a blue color */
-  /* background-color: #f0f0f0;  */
-  transition: border 0.3s, background-color 0.3s; /* Add a smooth transition effect */
-}
 .device-card .ant-card-body{
   padding: 10px !important;
 }
