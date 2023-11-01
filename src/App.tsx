@@ -6,6 +6,7 @@ import Profile from "./scense/Profile";
 
 const App: React.FC = () => {
   // const isLoggedIn = localStorage.getItem("loggedIn");
+  
   // const sessionExpiration = localStorage.getItem("sessionExpiration");
   // const isSessionExpired = sessionExpiration ? new Date().getTime() > parseInt(sessionExpiration) : true;
   return (
