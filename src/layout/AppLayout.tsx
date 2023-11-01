@@ -44,7 +44,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
             {children}
           </div>
       </Content>
-      <Footer style={{ textAlign: 'center' }}>Ant Design ©2023 Created by Ant UED</Footer>
+      <Footer style={{ textAlign: 'center' }}>©2023, Golden i</Footer>
       </Layout>
     </Layout>
   );
