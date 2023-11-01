@@ -43,7 +43,7 @@ const Login: React.FC = () => {
           const expirationTime = (new Date().getTime() + 60000).toString(); // 1 hour in milliseconds
           localStorage.setItem("sessionExpiration", expirationTime);
           // console.log(res);
-          window.location.href = "/";
+          window.location.href = "/index.html#/";
           // navigate('/dashboard');
           // window.location.href = window.location.href.split('#')[0] + '#/dashboard';
         })
