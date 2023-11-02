@@ -1,6 +1,8 @@
 import React from "react";
 import { Layout, Menu, Breadcrumb } from "antd";
 import { Link, useLocation } from "react-router-dom";
+import { googleLogout } from "@react-oauth/google";
+import { useNavigate } from 'react-router-dom';
 
 const { Content, Sider,Footer } = Layout;
 
@@ -10,7 +12,19 @@ interface AppLayoutProps {
 
 const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
   const location = useLocation();
+  const navigate = useNavigate();
   const breadcrumbItems = location.pathname.split("/").filter((item) => item);
+
+  const handleLogout = () => {
+    googleLogout();
+    localStorage.removeItem("loggedIn");
+    localStorage.removeItem("sessionExpiration");
+    localStorage.removeItem("userData");
+    // window.location.href = "/";
+    navigate('/login');
+    window.location.reload();
+    
+  };
 
   return (
     <Layout style={{ minHeight: "100vh" }}>
@@ -27,6 +41,9 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
           </Menu.Item>
           <Menu.Item key="/profile">
             <Link to="/profile">Profile</Link>
+          </Menu.Item>
+          <Menu.Item key="/logout" onClick={handleLogout}>
+            Logout
           </Menu.Item>
         </Menu>
       </Sider>

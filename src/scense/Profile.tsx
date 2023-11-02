@@ -10,15 +10,15 @@ const Profile: React.FC = () => {
   console.log(userData)
   const navigate = useNavigate();
 
-  const logOut = () => {
-    googleLogout();
-    localStorage.removeItem("loggedIn");
-    localStorage.removeItem("sessionExpiration");
-    localStorage.removeItem("userData");
-    // window.location.href = "/";
-    navigate('/');
-    window.location.reload();
-  };
+  // const logOut = () => {
+  //   googleLogout();
+  //   localStorage.removeItem("loggedIn");
+  //   localStorage.removeItem("sessionExpiration");
+  //   localStorage.removeItem("userData");
+  //   // window.location.href = "/";
+  //   navigate('/');
+  //   window.location.reload();
+  // };
   
   return (
     <AppLayout>
@@ -35,7 +35,7 @@ const Profile: React.FC = () => {
           <p>verified email: {userData.verified_email}</p>
           {/* <Avatar size={64} src={userData.picture} /> */}
 
-          <Button onClick={logOut}>Log out</Button>
+
         </div>
       </div>
     </AppLayout>

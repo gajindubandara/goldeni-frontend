@@ -11,10 +11,10 @@ const App: React.FC = () => {
   return (
     <Router>
       <Routes>
-      {/* <Route
+      <Route
           path="/login"
           element={<Login />}
-        /> */}
+        />
         <Route
           path="/"
           element={isLoggedIn && !isSessionExpired ? <Navigate to="/dashboard" /> : <Login />}
