@@ -11,7 +11,7 @@ interface PopupFormProps {
 
 interface FormData {
   name: string;
-  email: string;
+  num: number;
   address: string;
   deviceName: string;
   deviceSecret: string;
@@ -19,7 +19,7 @@ interface FormData {
 
 const initialFormData: FormData = {
     name: '',
-    email: '',
+    num: 0,
     address: '',
     deviceName: '',
     deviceSecret: '',
@@ -42,36 +42,40 @@ const PopupForm: React.FC<PopupFormProps> = ({ visible, onClose }) => {
           }}
         >
           <Form.Item
-            label="Name"
+            label="Device user's name"
             name="name"
             rules={[
               {
                 required: true,
-                message: 'Please enter your name',
+                message: "Please enter the device user's name",
               },
             ]}
           >
             <Input />
           </Form.Item>
           <Form.Item
-            label="Email"
-            name="email"
-            rules={[
-              {
-                required: true,
-                message: 'Please enter your email address',
-              },
-            ]}
-          >
-            <Input />
-          </Form.Item>
-          <Form.Item
-            label="Address"
+            label="Address of the user"
             name="address"
             rules={[
               {
                 required: true,
-                message: 'Please enter your address',
+                message: 'Please enter the address of the user',
+              },
+            ]}
+          >
+            <Input />
+          </Form.Item>
+          <Form.Item
+            label="Contact no of the guardian"
+            name="num"
+            rules={[
+              {
+                required: true,
+                message: 'Please enter the contact number of the guardian address',
+              },
+              {
+                pattern: /^(0\d{9})$/, // This regex pattern checks for 10 digits starting with 0
+                message: 'Please enter a valid 10-digit mobile number starting with 0',
               },
             ]}
           >
@@ -141,15 +145,15 @@ const PopupForm: React.FC<PopupFormProps> = ({ visible, onClose }) => {
             <Row gutter={16} >
             <Col xs={24} sm={12} md={12} lg={12} xl={12}>
                 <Card title="Personal Information">
-                <p><b>Name: </b>{formData.name}</p>
-                <p><b>Email: </b>{formData.email}</p>
-                <p><b>Address: </b>{formData.address}</p>
+                <p><b>Name of the device user: </b><br/>{formData.name}</p>
+                <p><b>Address of the user: </b><br/>{formData.address}</p>
+                <p><b>Contact no of the guardian: <br/></b>{formData.num}</p>
                 </Card>
             </Col>
             <Col xs={24} sm={12} md={12} lg={12} xl={12}>
                 <Card title="Device Information">
-                <p><b>Device Name: </b>{formData.deviceName}</p>
-                <p><b>Device Secret: </b>{formData.deviceSecret}</p>
+                <p><b>Device Name: </b><br/>{formData.deviceName}</p>
+                <p><b>Device Secret: </b><br/>{formData.deviceSecret}</p>
                 </Card>
             </Col>
             </Row>
@@ -191,7 +195,7 @@ const PopupForm: React.FC<PopupFormProps> = ({ visible, onClose }) => {
   return (
     <Modal
       visible={visible}
-      title="Multi-Step Form"
+      title="Enrole New Device"
       onCancel={onClose}
       footer={null}
       width={800}
