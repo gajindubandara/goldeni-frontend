@@ -17,6 +17,7 @@ code {
   align-items: center;
   justify-content: center;
   height: 64px; /* Adjust the height to fit your logo */
+  margin: 30px auto;
   /* background-color: #001529;  */
 }
 
@@ -51,14 +52,6 @@ code {
   object-fit: cover;
 }
 
-.logo {
-  position: absolute;
-  top: 20px;
-  left: 20px;
-  width: 100px;
-  height: auto;
-  border-radius: 5px;
-}
 
 .sign-in-button {
   position: absolute;

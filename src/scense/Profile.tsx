@@ -1,14 +1,14 @@
 import React from "react";
-import { Avatar, Button } from "antd";
+import { Avatar } from "antd";
 import AppLayout from "../layout/AppLayout";
-import { googleLogout } from "@react-oauth/google";
-import { useNavigate } from 'react-router-dom';
+// import { googleLogout } from "@react-oauth/google";
+// import { useNavigate } from 'react-router-dom';
 
 const Profile: React.FC = () => {
     // Retrieve the userData object from session
   const userData = JSON.parse(localStorage.getItem("userData") || "{}");
   console.log(userData)
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
 
   // const logOut = () => {
   //   googleLogout();
@@ -23,9 +23,9 @@ const Profile: React.FC = () => {
   return (
     <AppLayout>
       <h1>Profile</h1>
-      <div style={{ display: "flex", alignItems: "center" }}>
+      <div >
         <Avatar size={64} src={userData.picture} />
-        <div style={{ marginLeft: 16 }}>
+        {/* <div style={{ marginLeft: 16 }}> */}
           <p>email: {userData.email}</p>
           <p>family name: {userData.family_name}</p>
           <p>given name: {userData.given_name}</p>
@@ -36,7 +36,7 @@ const Profile: React.FC = () => {
           {/* <Avatar size={64} src={userData.picture} /> */}
 
 
-        </div>
+        {/* </div> */}
       </div>
     </AppLayout>
   );
