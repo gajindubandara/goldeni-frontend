@@ -1,5 +1,5 @@
 import React from "react";
-import { Layout, Menu, Breadcrumb } from "antd";
+import { Layout, Menu, Breadcrumb,Avatar } from "antd";
 import { Link, useLocation } from "react-router-dom";
 import { googleLogout } from "@react-oauth/google";
 import { useNavigate } from 'react-router-dom';
@@ -25,6 +25,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
     window.location.reload();
     
   };
+  const userData = JSON.parse(localStorage.getItem("userData") || "{}");
 
   return (
     <Layout style={{ minHeight: "100vh" }}>
@@ -39,9 +40,9 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
           <Menu.Item key="/dashboard">
             <Link to="/dashboard">Dashboard</Link>
           </Menu.Item>
-          <Menu.Item key="/profile">
+          {/* <Menu.Item key="/profile">
             <Link to="/profile">Profile</Link>
-          </Menu.Item>
+          </Menu.Item> */}
           <Menu.Item key="/logout" onClick={handleLogout}>
             Logout
           </Menu.Item>
@@ -61,7 +62,14 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
             {children}
           </div>
       </Content>
-      <Footer style={{ textAlign: 'center' }}>©2023, Golden i</Footer>
+      <Footer style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <div>
+            <Avatar src={userData.picture} />
+            <span style={{ marginLeft: '8px' }}>{userData.email}</span>
+          </div>
+          <div>©2023, Golden i</div>
+        </Footer>
+      {/* <Footer style={{ textAlign: 'center' }}>©2023, Golden i</Footer> */}
       </Layout>
     </Layout>
   );

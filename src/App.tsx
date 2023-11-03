@@ -2,7 +2,6 @@ import React from "react";
 import { HashRouter as Router, Route, Routes, Navigate, } from "react-router-dom";
 import Login from "./scense/Login";
 import Dashboard from "./scense/Dashboard";
-import Profile from "./scense/Profile";
 
 const App: React.FC = () => {
   const isLoggedIn = localStorage.getItem("loggedIn");
@@ -23,10 +22,10 @@ const App: React.FC = () => {
           path="/dashboard"
           element={isLoggedIn && !isSessionExpired ? <Dashboard /> : <Navigate to="/" />}
         />
-        <Route
+        {/* <Route
           path="/profile"
           element={isLoggedIn && !isSessionExpired ? <Profile /> : <Navigate to="/" />}
-        />
+        /> */}
       </Routes>
     </Router>
   );
