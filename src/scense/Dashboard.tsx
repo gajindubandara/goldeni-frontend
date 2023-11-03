@@ -127,7 +127,11 @@ const Dashboard: React.FC = () => {
               </Col>
             ))}
             <Col xs={24} sm={12} md={8} lg={6} xl={6}>
-              <Button type="dashed" className="btn-add-device" onClick={showPopup}>
+              <Button
+                type="dashed"
+                className="btn-add-device"
+                onClick={showPopup}
+              >
                 <svg
                   width="20"
                   height="20"
@@ -154,11 +158,21 @@ const Dashboard: React.FC = () => {
   function DeviceInfoCard({ toggleCards }: CardProps) {
     return (
       <div className="section-break">
-        <h2>Device Infomation</h2>
-        <Button onClick={() => toggleCards()}>Back to Devices</Button>
-        <div className="section-break">
-          <DeviceInfoSection />
-        </div>
+        <Row gutter={16}>
+          <Col xs={24} sm={12} md={12} lg={12} xl={12}>
+            <h2>Device Infomation</h2>
+          </Col>
+          <Col xs={24} sm={12} md={12} lg={12} xl={12}>
+            <Button
+              type="primary"
+              onClick={() => toggleCards()}
+              style={{ display: "block", margin: "10px 0px 10px auto" }}
+            >
+              Back to Devices
+            </Button>
+          </Col>
+        </Row>
+        <DeviceInfoSection />
       </div>
     );
   }
