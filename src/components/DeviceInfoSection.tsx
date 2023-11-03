@@ -1,13 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { Card, Button, Col, Row } from "antd";
-import axios from "axios";
 import PopupEditForm from "./PopupEditForm";
 
 interface userData {
-  type: string;
-  participants: string;
-  key: number;
-  price: number;
+  name: string;
+  deviceName: string;
+  address: string;
+  number: string;
 }
 
 const DeviceInfoSection: React.FC = () => {
@@ -22,16 +21,19 @@ const DeviceInfoSection: React.FC = () => {
   const closePopup = () => {
     setPopupVisible(false);
   };
+  
   // https://www.boredapi.com/api/activity
   // Get data form the API
   useEffect(() => {
-    axios.get(`https://www.boredapi.com/api/activity`)
-      .then((response) => {
-        setUserData(response.data);
-      })
-      .catch((error) => {
-        console.error('Error:', error);
-      });
+    let data={"name":"Tony Stark","deviceName":"stick 2","address":"River street","number":"0766520481",}
+    setUserData(data)
+    // axios.get(`https://www.boredapi.com/api/activity`)
+    //   .then((response) => {
+    //     setUserData(response.data);
+    //   })
+    //   .catch((error) => {
+    //     console.error('Error:', error);
+    //   });
   }, []);
 
   return (
@@ -43,21 +45,21 @@ const DeviceInfoSection: React.FC = () => {
           <Card title="User details" bordered={false}>
             <div className="user-detail-item">
               <b>Device Name: </b><br/>
-              {userData ? userData.type : "Loading..."}
+              {userData ? userData.name : "Loading..."}
             </div>
             <div className="user-detail-item">
               <b>User's Name: </b><br/>
-              {userData ? userData.participants : "Loading..."}
+              {userData ? userData.deviceName : "Loading..."}
             </div>
             <div className="user-detail-item">
               <b>User's Address: </b><br/>
-              {userData ? userData.key : "Loading..."}
+              {userData ? userData.address : "Loading..."}
             </div>
             <div className="user-detail-item">
               <b>Guardian's Number: </b><br/>
-              {userData ? userData.price : "Loading..."}
+              {userData ? userData.number : "Loading..."}
             </div>
-            <Button onClick={showPopup}>Edit</Button>
+            <Button type="primary" onClick={showPopup}>Edit</Button>
           </Card>
         </Col>
         <Col xs={24} sm={8} md={8} lg={8} xl={8}>

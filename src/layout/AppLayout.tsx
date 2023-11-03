@@ -49,7 +49,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
         </Menu>
       </Sider>
       <Layout>
-      <Content className="site-layout" style={{ padding: '0 50px' }}>
+      <Content className="site-layout" style={{ padding: '0 15px' }}>
         <Breadcrumb style={{ margin: '16px 0' }}>
           <Breadcrumb.Item>Golden i</Breadcrumb.Item>
           {breadcrumbItems.map((item, index) => (

@@ -1,5 +1,5 @@
 import React, { useState,useEffect } from 'react';
-import { Modal, Form, Input, Button } from 'antd';
+import { Modal, Form, Input, Button, message } from 'antd';
 
 
 
@@ -26,11 +26,26 @@ const initialFormData: FormData = {
   };
 
 const PopupEditForm: React.FC<PopupFormProps> = ({ visible, onClose,data }) => {
-  const [currentStep, setCurrentStep] = useState(0);
   const [form] = Form.useForm();
   const [formData, setFormData] = useState<FormData>(initialFormData);
 
 
+  const handleFormSubmit = (values:any) => {
+    form
+      .validateFields()
+      .then(() => {
+        if(values.name === data.name && values.deviceName === data.deviceName && values.address === data.address && values.number === data.number ){
+            message.warning('There is nothing to update');
+        }else{
+            message.success('Form submitted successfully');
+        }
+        
+        onClose();
+      })
+      .catch((error) => {
+        message.error('Form submission failed');
+      });
+  };
 
 //   const handleFormSubmit = () => {
 //     form
@@ -65,9 +80,24 @@ const PopupEditForm: React.FC<PopupFormProps> = ({ visible, onClose,data }) => {
         <Form
           form={form}
           onFinish={(values) => {
+            handleFormSubmit(values);
             setFormData({ ...formData, ...values });
-            setCurrentStep(currentStep + 1);
           }}
+          initialValues={
+            data
+            ? {
+                name: data.name,
+                deviceName: data.deviceName,
+                address: data.address,
+                number: data.number,
+              }
+            : {
+                name: "Loading...",
+                deviceName: "Loading...",
+                address: "Loading...",
+                number: "Loading...",
+              }
+            }
         >
           <Form.Item
             label="Device  name"
@@ -107,7 +137,7 @@ const PopupEditForm: React.FC<PopupFormProps> = ({ visible, onClose,data }) => {
           </Form.Item>
           <Form.Item
             label="Contact no of the guardian"
-            name="num"
+            name="number"
             rules={[
               {
                 required: true,
@@ -121,7 +151,7 @@ const PopupEditForm: React.FC<PopupFormProps> = ({ visible, onClose,data }) => {
           >
             <Input />
           </Form.Item>
-            <Button type="primary" htmlType="submit">
+          <Button type="primary" htmlType="submit" >
               Save
             </Button>
   
