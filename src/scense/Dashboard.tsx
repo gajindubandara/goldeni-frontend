@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Row, Col, Card, Button } from "antd";
 import AppLayout from "../layout/AppLayout";
 import PopupForm from "../components/PopupForm";
+import DeviceInfoSection from "../components/DeviceInfoSection";
 
 const Dashboard: React.FC = () => {
   const boxData = [
@@ -156,9 +157,7 @@ const Dashboard: React.FC = () => {
         <h2>Device Infomation</h2>
         <Button onClick={() => toggleCards()}>Back to Devices</Button>
         <div className="section-break">
-        <Card>
-          <div>Chart section...</div>
-        </Card>
+          <DeviceInfoSection />
         </div>
       </div>
     );
