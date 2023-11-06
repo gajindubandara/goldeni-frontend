@@ -7,10 +7,16 @@ import { useNavigate } from 'react-router-dom';
 const Login: React.FC = () => {
   const navigate = useNavigate();
   const [user, setUser] = useState<any | null>(null);
-  const login = useGoogleLogin({
-    onSuccess: (codeResponse) => setUser(codeResponse),
-    onError: (error) => console.log("Login Failed:", error),
-  });
+  // const login = useGoogleLogin({
+  //   onSuccess: (codeResponse) => setUser(codeResponse),
+  //   onError: (error) => console.log("Login Failed:", error),
+  // });
+
+  const login = () => {
+    // Redirect the user to the Cognito-hosted authentication page
+window.location.href = 'https://goldeni.auth.ap-southeast-1.amazoncognito.com/login?client_id=2ch8tjlfbqpa6nbf19ak670lrs&response_type=token&scope=email+openid+profile&redirect_uri=https%3A%2F%2Fgoldeni.s3.ap-southeast-1.amazonaws.com%2Findex.html';
+
+  }
 
   useEffect(() => {
     if (user) {

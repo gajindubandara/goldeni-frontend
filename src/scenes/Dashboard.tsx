@@ -15,6 +15,9 @@ const Dashboard: React.FC = () => {
     { title: "Device 6", id: "09:89:27:AA:G2:CC", status: "connected" },
   ];
 
+  const jwt = localStorage.getItem("idToken");
+  console.log(jwt);
+
   const [isPopupVisible, setPopupVisible] = useState(false);
 
   const showPopup = () => {
