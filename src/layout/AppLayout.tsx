@@ -1,5 +1,5 @@
-import React from "react";
-import { Layout, Menu, Breadcrumb,Avatar } from "antd";
+import React, { useState, useEffect } from "react";
+import { Layout, Menu, Breadcrumb } from "antd";
 import { Link, useLocation } from "react-router-dom";
 import { googleLogout } from "@react-oauth/google";
 import { useNavigate } from 'react-router-dom';
@@ -25,7 +25,34 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
     window.location.reload();
     
   };
-  const userData = JSON.parse(localStorage.getItem("userData") || "{}");
+  const [userData, setUser] = useState({
+    email: '',
+    name: '',
+    picture: '',
+  });
+
+  useEffect(() => {
+    // Get the ID token from local storage
+    const idToken = localStorage.getItem("idToken");
+    if (idToken) {
+      // const [header, payload, signature] = idToken.split('.');
+      
+      // Decoding the payload (second part of the token)
+      const decodedPayload = JSON.parse(atob(idToken.split('.')[1]));
+      
+
+      const email = decodedPayload.email; // Replace 'email' with the attribute you want to access
+      const name = decodedPayload.name; // Replace 'name' with the attribute you want to access
+      const picture = decodedPayload.picture; 
+
+      setUser({email,name,picture,});
+      // localStorage.setItem("userData", JSON.stringify(userData));
+    } else {
+      console.error('ID token not found in local storage');
+    }
+  }, []);
+
+  // const userData = JSON.parse(localStorage.getItem("userData") || "{}");
 
   return (
     <Layout style={{ minHeight: "100vh" }}>
@@ -64,7 +91,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
       </Content>
       <Footer style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <div>
-            <Avatar src={userData.picture} />
+            {/* <Avatar src={userData.picture} /> */}
             <span style={{ marginLeft: '8px' }}>{userData.email}</span>
           </div>
           <div>©2023, Golden i</div>

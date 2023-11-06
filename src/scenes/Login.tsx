@@ -1,4 +1,5 @@
 import { Button } from "antd";
+import React from "react";
 // import { useGoogleLogin } from "@react-oauth/google";
 // import { useEffect } from "react";
 // import axios from "axios";
@@ -15,6 +16,7 @@ const Login: React.FC = () => {
   const login = () => {
     // Redirect the user to the Cognito-hosted authentication page
 window.location.href = 'https://goldeni.auth.ap-southeast-1.amazoncognito.com/login?client_id=2ch8tjlfbqpa6nbf19ak670lrs&response_type=token&scope=email+openid+profile&redirect_uri=https%3A%2F%2Fgoldeni.s3.ap-southeast-1.amazonaws.com%2Findex.html';
+// window.location.href = 'https://goldeni.auth.ap-southeast-1.amazoncognito.com/login?client_id=2ch8tjlfbqpa6nbf19ak670lrs&response_type=token&scope=email+openid+profile&redirect_uri=http%3A%2F%2Flocalhost%3A3000';
 
   }
 
