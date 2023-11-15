@@ -25,7 +25,7 @@ const initialFormData: FormData = {
     deviceSecret: '',
   };
 
-const PopupForm: React.FC<PopupFormProps> = ({ visible, onClose }) => {
+const PopupEnrollForm: React.FC<PopupFormProps> = ({ visible, onClose }) => {
   const [currentStep, setCurrentStep] = useState(0);
   const [form] = Form.useForm();
   const [formData, setFormData] = useState<FormData>(initialFormData);
@@ -139,7 +139,7 @@ const PopupForm: React.FC<PopupFormProps> = ({ visible, onClose }) => {
     {
       title: 'Review and Submit',
       content: (
-        
+
         <div >
             <div style={{margin:'0px 0px 20px 0px'}}>
             <Row gutter={16} >
@@ -195,7 +195,7 @@ const PopupForm: React.FC<PopupFormProps> = ({ visible, onClose }) => {
   return (
     <Modal
       visible={visible}
-      title="Enrole New Device"
+      title="Enroll New Device"
       onCancel={onClose}
       footer={null}
       width={800}
@@ -212,4 +212,4 @@ const PopupForm: React.FC<PopupFormProps> = ({ visible, onClose }) => {
   );
 };
 
-export default PopupForm;
+export default PopupEnrollForm;
