@@ -1,4 +1,4 @@
-name: Upload Website
+name: Deploy Goldeni Web App
 
 on:
   push:
