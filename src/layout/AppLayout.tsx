@@ -86,7 +86,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
             {/* <Avatar src={userData.picture} /> */}
             <span style={{ marginLeft: '8px' }}>{userData.email}</span>
           </div>
-          <div>©2023, Golden i</div>
+          <div>©2024, Golden i</div>
         </Footer>
       {/* <Footer style={{ textAlign: 'center' }}>©2023, Golden i</Footer> */}
       </Layout>
