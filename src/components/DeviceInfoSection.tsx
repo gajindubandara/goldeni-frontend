@@ -152,7 +152,7 @@ const DeviceInfoSection: React.FC = () => {
                 }
                 title={<div style={{ fontSize: "30px" }}>90.00cm</div>}
                 description={
-                  <div style={{ fontWeight: "bolder", color: "#cfcfcf" }}>
+                  <div style={{ fontWeight: "bolder", color: "black" }}>
                     Middle Ultrasonic
                   </div>
                 }
