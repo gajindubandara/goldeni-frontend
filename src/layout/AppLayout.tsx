@@ -31,6 +31,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
     email: '',
     name: '',
     picture: '',
+    isAdmin: false // Default to non-admin
   });
 
   useEffect(() => {
@@ -47,6 +48,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
     }
   }, []);
 
+
   return (
     <Layout style={{ minHeight: "100vh" }}>
       <Sider
@@ -58,10 +60,18 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
         </div>
         <Menu mode="vertical" theme="dark" defaultSelectedKeys={[location.pathname]}>
           {routes.map((route) => (
-              <Menu.Item key={route.path}>
-                <Link to={route.path}>{route.name}</Link>
-              </Menu.Item>
+              // Check if the route is admin only and the user is admin
+              (!route.adminOnly || userData.isAdmin) && (
+                  <Menu.Item key={route.path}>
+                    <Link to={route.path}>{route.name}</Link>
+                  </Menu.Item>
+              )
           ))}
+          {/*{routes.map((route) => (*/}
+          {/*    <Menu.Item key={route.path}>*/}
+          {/*      <Link to={route.path}>{route.name}</Link>*/}
+          {/*    </Menu.Item>*/}
+          {/*))}*/}
           <Menu.Item key="/logout" onClick={handleLogout}>
             Logout
           </Menu.Item>

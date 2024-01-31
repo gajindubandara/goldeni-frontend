@@ -4,6 +4,7 @@ import PopupEditForm from "./PopupEditForm";
 import ultrasonic from '../assets/ultrasonic-sensor.png';
 import temp from '../assets/temprature.png';
 import ir from '../assets/infrared-sensor.png';
+import connection from '../assets/connection.png';
 
 const { Meta } = Card;
 interface userData {
@@ -100,106 +101,125 @@ const DeviceInfoSection: React.FC = () => {
         </Card>
 
         <Row gutter={16}>
-          <Col xs={24} sm={12} md={6} lg={6} xl={6}>
+          <Col xs={24} sm={12} md={8} lg={8} xl={8}>
             <Card style={{ marginTop: 16, border: "1px solid #cfcfcf" }}>
               <Meta
-                avatar={
-                  <div>
-                    <img src={temp} alt="Icon" style={{ width: "60px" }} />
-                  </div>
-                }
-                title={<div style={{ fontSize: "30px" }}>36.00°</div>}
-                description={
-                  <div style={{ fontWeight: "bolder", color: "black" }}>
-                    System Temprature
-                  </div>
-                }
+                  avatar={
+                    <div>
+                      <img src={connection} alt="Icon" style={{ width: "60px" }} />
+                    </div>
+                  }
+                  title={<div style={{ fontSize: "30px" }}>Connected</div>}
+                  description={
+                    <div style={{ fontWeight: "bolder", color: "black" }}>
+                      System Connection
+                    </div>
+                  }
               />
             </Card>
           </Col>
-          <Col xs={24} sm={12} md={6} lg={6} xl={6}>
+          <Col xs={24} sm={12} md={8} lg={8} xl={8}>
             <Card style={{ marginTop: 16, border: "1px solid #cfcfcf" }}>
               <Meta
-                avatar={
-                  <div>
-                    <img
-                      src={ultrasonic}
-                      alt="Icon"
-                      style={{ width: "60px" }}
-                    />
-                  </div>
-                }
-                title={<div style={{ fontSize: "30px" }}>90.00cm</div>}
-                description={
-                  <div style={{ fontWeight: "bolder", color: "black" }}>
-                    Top Ultrasonic
-                  </div>
-                }
+                  avatar={
+                    <div>
+                      <img src={temp} alt="Icon" style={{ width: "60px" }} />
+                    </div>
+                  }
+                  title={<div style={{ fontSize: "30px" }}>36.00°</div>}
+                  description={
+                    <div style={{ fontWeight: "bolder", color: "black" }}>
+                      System Temperature
+                    </div>
+                  }
               />
             </Card>
           </Col>
-          <Col xs={24} sm={12} md={6} lg={6} xl={6}>
+          <Col xs={24} sm={12} md={8} lg={8} xl={8}>
             <Card style={{ marginTop: 16, border: "1px solid #cfcfcf" }}>
               <Meta
-                avatar={
-                  <div>
-                    <img
-                      src={ultrasonic}
-                      alt="Icon"
-                      style={{ width: "60px" }}
-                    />
-                  </div>
-                }
-                title={<div style={{ fontSize: "30px" }}>90.00cm</div>}
-                description={
-                  <div style={{ fontWeight: "bolder", color: "black" }}>
-                    Middle Ultrasonic
-                  </div>
-                }
+                  avatar={
+                    <div>
+                      <img src={ir} alt="Icon" style={{ width: "60px" }} />
+                    </div>
+                  }
+                  title={<div style={{ fontSize: "30px" }}>ON</div>}
+                  description={
+                    <div style={{ fontWeight: "bolder", color: "black" }}>
+                      Infrared Sensor
+                    </div>
+                  }
               />
             </Card>
           </Col>
-          <Col xs={24} sm={12} md={6} lg={6} xl={6}>
+
+          <Col xs={24} sm={12} md={8} lg={8} xl={8}>
             <Card style={{ marginTop: 16, border: "1px solid #cfcfcf" }}>
               <Meta
-                avatar={
-                  <div>
-                    <img
-                      src={ultrasonic}
-                      alt="Icon"
-                      style={{ width: "60px" }}
-                    />
-                  </div>
-                }
-                title={<div style={{ fontSize: "30px" }}>90.00cm</div>}
-                description={
-                  <div style={{ fontWeight: "bolder", color: "black" }}>
-                    Bottom Ultrasonic
-                  </div>
-                }
+                  avatar={
+                    <div>
+                      <img
+                          src={ultrasonic}
+                          alt="Icon"
+                          style={{ width: "60px" }}
+                      />
+                    </div>
+                  }
+                  title={<div style={{ fontSize: "30px" }}>90.00cm</div>}
+                  description={
+                    <div style={{ fontWeight: "bolder", color: "black" }}>
+                      Top Ultrasonic
+                    </div>
+                  }
+              />
+            </Card>
+          </Col>
+          <Col xs={24} sm={12} md={8} lg={8} xl={8}>
+            <Card style={{ marginTop: 16, border: "1px solid #cfcfcf" }}>
+              <Meta
+                  avatar={
+                    <div>
+                      <img
+                          src={ultrasonic}
+                          alt="Icon"
+                          style={{ width: "60px" }}
+                      />
+                    </div>
+                  }
+                  title={<div style={{ fontSize: "30px" }}>90.00cm</div>}
+                  description={
+                    <div style={{ fontWeight: "bolder", color: "black" }}>
+                      Middle Ultrasonic
+                    </div>
+                  }
+              />
+            </Card>
+          </Col>
+          <Col xs={24} sm={12} md={8} lg={8} xl={8}>
+            <Card style={{ marginTop: 16, border: "1px solid #cfcfcf" }}>
+              <Meta
+                  avatar={
+                    <div>
+                      <img
+                          src={ultrasonic}
+                          alt="Icon"
+                          style={{ width: "60px" }}
+                      />
+                    </div>
+                  }
+                  title={<div style={{ fontSize: "30px" }}>90.00cm</div>}
+                  description={
+                    <div style={{ fontWeight: "bolder", color: "black" }}>
+                      Bottom Ultrasonic
+                    </div>
+                  }
               />
             </Card>
           </Col>
         </Row>
 
         <Row gutter={16}>
-          <Col xs={24} sm={12} md={6} lg={6} xl={6}>
-            <Card style={{ marginTop: 16, border: "1px solid #cfcfcf" }}>
-              <Meta
-                avatar={
-                  <div>
-                    <img src={ir} alt="Icon" style={{ width: "60px" }} />
-                  </div>
-                }
-                title={<div style={{ fontSize: "30px" }}>ON</div>}
-                description={
-                  <div style={{ fontWeight: "bolder", color: "black" }}>
-                    Infrared Sensor
-                  </div>
-                }
-              />
-            </Card>
-          </Col>
+
         </Row>
       </Card>
       <PopupEditForm
