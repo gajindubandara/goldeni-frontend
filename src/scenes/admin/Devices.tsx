@@ -26,7 +26,7 @@ const Devices: React.FC = () => {
         };
 
         fetchData();
-    }, []);
+    }, [idToken]);
 
     const handleSearch = (selectedKeys: React.Key[], confirm: () => void, dataIndex: string) => {
         confirm();
