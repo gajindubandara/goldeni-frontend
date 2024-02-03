@@ -82,11 +82,7 @@ const Devices: React.FC = () => {
             dataIndex: 'emergencyContactNumbers',
             key: 'emergencyContactNumbers',
             render: (emergencyContactNumbers: string[]) => (
-                <>
-                    {emergencyContactNumbers.map((number, index) => (
-                        <div key={index}>{number}</div>
-                    ))}
-                </>
+                <span>{emergencyContactNumbers.join(', ')}</span>
             ),
         },
         { title: 'Mac Address', dataIndex: 'macAddress', key: 'macAddress' },
