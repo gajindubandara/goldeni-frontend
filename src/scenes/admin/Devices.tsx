@@ -1,13 +1,17 @@
 import React, { useEffect, useState } from "react";
 import AppLayout from "../../layout/AppLayout";
-import { Button, Input, Table, Tag, Space } from "antd";
+import { Button, Input, Table, Tag, Space, Popconfirm, Dropdown, Menu } from "antd";
 import { SearchOutlined } from '@ant-design/icons';
 import { baseUrl } from '../../services/commonVariables';
+import { EllipsisOutlined } from '@ant-design/icons';
+import PopupEnrollForm from "../../components/PopupEnrollForm";
 
 const Devices: React.FC = () => {
     const [data, setData] = useState([]);
     const [loading, setLoading] = useState(true);
     const idToken = localStorage.getItem("idToken");
+    const [showEnrollPopup, setShowEnrollPopup] = useState(false); // State to manage popup visibility
+    let showEmailInput =true;
 
     useEffect(() => {
         const fetchData = async () => {
@@ -27,6 +31,16 @@ const Devices: React.FC = () => {
 
         fetchData();
     }, [idToken]);
+
+    interface Device {
+        deviceId: string;
+        registeredEmail: string;
+        emergencyContactNumbers: string[];
+        macAddress: string;
+        status: string;
+        connected: boolean;
+    }
+
 
     const handleSearch = (selectedKeys: React.Key[], confirm: () => void, dataIndex: string) => {
         confirm();
@@ -69,7 +83,12 @@ const Devices: React.FC = () => {
     });
 
     const columns = [
-        { title: 'Device ID', dataIndex: 'deviceId', key: 'deviceId', ...getColumnSearchProps('deviceId') },
+        {
+            title: 'Device ID',
+            dataIndex: 'deviceId',
+            key: 'deviceId',
+            ...getColumnSearchProps('deviceId')
+        },
         {
             title: 'Registered Email',
             dataIndex: 'registeredEmail',
@@ -85,7 +104,11 @@ const Devices: React.FC = () => {
                 <span>{emergencyContactNumbers.join(', ')}</span>
             ),
         },
-        { title: 'Mac Address', dataIndex: 'macAddress', key: 'macAddress' },
+        {
+            title: 'Mac Address',
+            dataIndex: 'macAddress',
+            key: 'macAddress'
+        },
         {
             title: 'Enrollment Status',
             key: 'status',
@@ -113,10 +136,61 @@ const Devices: React.FC = () => {
                 );
             },
         },
+        {
+            title: 'Action',
+            key: 'action',
+            render: (_: any, record: Device) => {
+                if (record.status === 'ENROLLED') {
+                    return null; // Return null if status is 'ENROLLED' to hide the action buttons
+                }
+
+                return (
+                    <Space size="middle">
+                        <Dropdown
+                            overlay={
+                                <Menu>
+                                    <Menu.Item key="delete">
+                                        <Popconfirm
+                                            title="Are you sure to delete this device?"
+                                            onConfirm={() => handleDelete(record.deviceId)}
+                                            okText="Yes"
+                                            cancelText="No"
+                                        >
+                                            <a>Delete</a>
+                                        </Popconfirm>
+                                    </Menu.Item>
+                                    {record.status === 'NEW' && (
+                                        <Menu.Item key="enroll">
+                                            <a onClick={() => handleEnroll(record.deviceId)}>Enroll</a>
+                                        </Menu.Item>
+                                    )}
+                                </Menu>
+                            }
+                            placement="bottomLeft"
+                            trigger={['click']}
+                        >
+                            <Button type="text" icon={<EllipsisOutlined />} />
+                        </Dropdown>
+                    </Space>
+                );
+            },
+        },
     ];
+
 
     const paginationConfig = {
         pageSize: 5, // Display 5 items per page
+    };
+
+    const handleDelete = (deviceId: string) => {
+        console.log(`Deleting device with ID: ${deviceId}`);
+        // Implement your delete logic here
+    };
+
+    const handleEnroll = (deviceId: string) => {
+        console.log(`Enrolling device with ID: ${deviceId}`);
+        // Implement your logic to show the popup here
+        setShowEnrollPopup(true);
     };
 
     return (
@@ -128,8 +202,16 @@ const Devices: React.FC = () => {
                     columns={columns}
                     pagination={paginationConfig}
                     loading={loading}
-                    rowKey={(record) => record.id}
+                    rowKey={(record) => record.deviceId}
                 />
+                {/* Render the PopupEnrollForm component based on showEnrollPopup state */}
+                {showEnrollPopup && (
+                    <PopupEnrollForm
+                        visible={showEnrollPopup}
+                        showEmailInput={showEmailInput}
+                        onClose={() => setShowEnrollPopup(false)}
+                    />
+                )}
             </div>
         </AppLayout>
     );

@@ -8,6 +8,7 @@ const Dashboard: React.FC = () => {
   const [isPopupVisible, setPopupVisible] = useState(false);
   const [showDeviceCard, setShowDeviceCard] = useState(true);
   const [showDeviceInfoCard, setShowDeviceInfoCard] = useState(false);
+  let showEmailInput= false;
 
   const showPopup = () => {
     setPopupVisible(true);
@@ -33,7 +34,7 @@ const Dashboard: React.FC = () => {
             />
         )}
         {showDeviceInfoCard && <DeviceInfoCard toggleCards={toggleCards} />}
-        <PopupEnrollForm visible={isPopupVisible} onClose={closePopup} />
+        <PopupEnrollForm visible={isPopupVisible} showEmailInput={showEmailInput}onClose={closePopup} />
       </AppLayout>
   );
 };

@@ -7,6 +7,7 @@ const { Step } = Steps;
 interface PopupFormProps {
   visible: boolean;
   onClose: () => void;
+  showEmailInput: boolean;
 }
 
 interface FormData {
@@ -15,6 +16,7 @@ interface FormData {
   address: string;
   deviceName: string;
   deviceSecret: string;
+  email: string;
 }
 
 const initialFormData: FormData = {
@@ -23,14 +25,16 @@ const initialFormData: FormData = {
     address: '',
     deviceName: '',
     deviceSecret: '',
+    email: '',
   };
 
-const PopupEnrollForm: React.FC<PopupFormProps> = ({ visible, onClose }) => {
+const PopupEnrollForm: React.FC<PopupFormProps> = ({ visible, onClose,showEmailInput  }) => {
   const [currentStep, setCurrentStep] = useState(0);
   const [form] = Form.useForm();
   const [formData, setFormData] = useState<FormData>(initialFormData);
 
-  const steps = [
+
+    const steps = [
     {
       title: 'Personal Information',
       content: (
@@ -41,7 +45,8 @@ const PopupEnrollForm: React.FC<PopupFormProps> = ({ visible, onClose }) => {
             setCurrentStep(currentStep + 1);
           }}
         >
-          <Form.Item
+
+            <Form.Item
             label="Device user's name"
             name="name"
             rules={[
@@ -53,6 +58,24 @@ const PopupEnrollForm: React.FC<PopupFormProps> = ({ visible, onClose }) => {
           >
             <Input />
           </Form.Item>
+            {showEmailInput && (
+                <Form.Item
+                    label="User's Email"
+                    name="email"
+                    rules={[
+                        {
+                            required: true,
+                            message: "Please enter the user's email",
+                        },
+                        {
+                            type: 'email',
+                            message: 'Please enter a valid email address',
+                        },
+                    ]}
+                >
+                    <Input />
+                </Form.Item>
+            )}
           <Form.Item
             label="Address of the user"
             name="address"
