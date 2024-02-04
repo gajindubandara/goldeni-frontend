@@ -1,10 +1,20 @@
 import React, { useEffect, useState } from "react";
 import AppLayout from "../../layout/AppLayout";
-import { Button, Input, Table, Tag, Space, Popconfirm, Dropdown, Menu } from "antd";
+import {Button, Input, Table, Tag, Space, Popconfirm, Dropdown, Menu, message} from "antd";
 import { SearchOutlined } from '@ant-design/icons';
 import { baseUrl } from '../../services/commonVariables';
 import { EllipsisOutlined } from '@ant-design/icons';
 import PopupEnrollForm from "../../components/PopupEnrollForm";
+import axios from "axios";
+
+interface Device {
+    deviceId: string;
+    registeredEmail: string;
+    emergencyContactNumbers: string[];
+    macAddress: string;
+    status: string;
+    connected: boolean;
+}
 
 const Devices: React.FC = () => {
     const [data, setData] = useState([]);
@@ -14,32 +24,26 @@ const Devices: React.FC = () => {
     let showEmailInput =true;
 
     useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const response = await fetch(`${baseUrl}/admin/devices`, {
-                    headers: {
-                        Authorization: `Bearer ${idToken}`                    }
-                });
-                const jsonData = await response.json();
-                setData(jsonData);
-                setLoading(false);
-            } catch (error) {
-                console.error("Error fetching data:", error);
-                setLoading(false);
-            }
-        };
-
         fetchData();
     }, [idToken]);
 
-    interface Device {
-        deviceId: string;
-        registeredEmail: string;
-        emergencyContactNumbers: string[];
-        macAddress: string;
-        status: string;
-        connected: boolean;
-    }
+    const fetchData = () => {
+        axios.get(`${baseUrl}/admin/devices`, {
+            headers: {
+                Authorization: `Bearer ${idToken}`
+            }
+        })
+            .then(response => {
+                setData(response.data);
+                setLoading(false);
+            })
+            .catch(error => {
+                console.error("Error fetching data:", error);
+                setLoading(false);
+            });
+    };
+
+
 
 
     const handleSearch = (selectedKeys: React.Key[], confirm: () => void, dataIndex: string) => {
@@ -182,9 +186,35 @@ const Devices: React.FC = () => {
         pageSize: 5, // Display 5 items per page
     };
 
-    const handleDelete = (deviceId: string) => {
-        console.log(`Deleting device with ID: ${deviceId}`);
-        // Implement your delete logic here
+    const handleDelete = async (deviceId: string) => {
+        try {
+            // Construct the URL with the device ID as a query parameter
+            const url = `${baseUrl}/admin/devices?id=${deviceId}`;
+
+            // Define the request headers
+            const headers = {
+                Authorization: `Bearer ${idToken}`
+            };
+
+            // Make the DELETE request using Axios
+            const response = await axios.delete(url, { headers });
+
+            if (response.status === 200) {
+                // Device deleted successfully
+                console.log(`Device with ID ${deviceId} deleted successfully.`);
+                // Optionally, you can update the UI to reflect the deletion
+                // For example, remove the device from the local state or reload the data
+                message.success('Device deleted successfully');
+                fetchData();
+            } else {
+                // Failed to delete device
+                console.error(`Failed to delete device with ID ${deviceId}.`);
+                message.error('Failed to delete device');
+            }
+        } catch (error) {
+            console.error('Error deleting device:', error);
+            message.error('Error deleting device');
+        }
     };
 
     const handleEnroll = (deviceId: string) => {

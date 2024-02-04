@@ -4,6 +4,7 @@ export const decodeIdToken = () => {
 
     if (idToken) {
         try {
+            console.log(idToken);
             // Decoding the payload (second part of the token)
             const decodedPayload = JSON.parse(atob(idToken.split('.')[1]));
 

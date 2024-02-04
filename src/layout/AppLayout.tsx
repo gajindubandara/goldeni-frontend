@@ -5,6 +5,7 @@ import { googleLogout } from "@react-oauth/google";
 import { useNavigate } from 'react-router-dom';
 import {decodeIdToken} from "../services/decodeService";
 import { routes } from "../services/routeService";
+import {landingPageIcon} from "../services/commonVariables";
 
 const { Content, Sider,Footer } = Layout;
 
@@ -56,7 +57,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
       collapsedWidth="0"
       width={200} theme="dark">
         <div className="navLogo">
-        <img src="https://res.cloudinary.com/dwldehfnr/image/upload/v1698754847/goldeni-frontend/dlzyi4azchasou9li4tz.png" alt="Logo" />
+        <img src={landingPageIcon} alt="Logo" />
         </div>
         <Menu mode="vertical" theme="dark" defaultSelectedKeys={[location.pathname]}>
           {routes.map((route) => (
