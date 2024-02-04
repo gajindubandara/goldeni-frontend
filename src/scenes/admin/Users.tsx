@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import AppLayout from "../../layout/AppLayout";
-import { Table, Tag, Avatar } from "antd";
+import { Table, Avatar } from "antd";
 import {avatarPlaceHolder, baseUrl} from '../../services/commonVariables';
 import axios from 'axios';
 
@@ -28,7 +28,7 @@ const Users: React.FC = () => {
         };
 
         fetchData();
-    }, []);
+    }, [idToken]);
 
     const columns = [
         {
