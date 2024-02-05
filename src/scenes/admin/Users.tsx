@@ -95,13 +95,14 @@ const Users: React.FC = () => {
     ];
 
     const paginationConfig = {
-        pageSize: 10
+        pageSize: 5
     };
 
     return (
         <AppLayout>
             <div className="section-break">
                 <h1>Users</h1>
+                <p>Total Users: {data.length}</p>
                 <Table dataSource={data} columns={columns} pagination={paginationConfig} loading={loading}/>
             </div>
         </AppLayout>
