@@ -245,7 +245,6 @@ const Devices: React.FC = () => {
         <AppLayout>
             <div className="section-break">
                 <h1>Devices</h1>
-                <p>Total Devices: {data.length}</p>
                 <Button
                     type="primary"
                     onClick={() => handleAddDevice()}
@@ -261,6 +260,7 @@ const Devices: React.FC = () => {
                     loading={loading}
                     rowKey={(record) => record.deviceId}
                 />
+                <p>Total Devices: {data.length}</p>
 
                 {showEnrollPopup && (
                     <PopupEnrollForm

@@ -93,24 +93,24 @@ const PopupAddDeviceForm: React.FC<PopupFormProps> = ({visible, onClose, onSucce
                     onFinish={handleFormSubmit}
                 >
                     <Form.Item
-                        label="Device Secret"
-                        name="deviceSecret"
-                        rules={[
-                            {
-                                required: true,
-                                message: 'Please enter the device secret',
-                            },
-                        ]}
-                    >
-                        <Input/>
-                    </Form.Item>
-                    <Form.Item
                         label="Device ID"
                         name="deviceId"
                         rules={[
                             {
                                 required: true,
                                 message: 'Please enter the device ID',
+                            },
+                        ]}
+                    >
+                        <Input/>
+                    </Form.Item>
+                    <Form.Item
+                        label="Device Secret"
+                        name="deviceSecret"
+                        rules={[
+                            {
+                                required: true,
+                                message: 'Please enter the device secret',
                             },
                         ]}
                     >
