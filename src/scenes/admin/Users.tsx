@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
 import AppLayout from "../../layout/AppLayout";
-import { Table, Avatar } from "antd";
+import {Table, Avatar, Input, Space, Button} from "antd";
 import {avatarPlaceHolder, baseUrl} from '../../services/commonVariables';
 import axios from 'axios';
+import {SearchOutlined} from "@ant-design/icons";
 
 const Users: React.FC = () => {
     const [data, setData] = useState([]);
@@ -30,6 +31,46 @@ const Users: React.FC = () => {
         fetchData();
     }, [idToken]);
 
+    const handleSearch = (selectedKeys: React.Key[], confirm: () => void, dataIndex: string) => {
+        confirm();
+    };
+
+    const handleReset = (clearFilters: () => void) => {
+        clearFilters();
+    };
+
+    const getColumnSearchProps = (dataIndex: string) => ({
+        filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }: any) => (
+            <div style={{ padding: 8 }}>
+                <Input
+                    placeholder={`Search ${dataIndex}`}
+                    value={selectedKeys[0]}
+                    onChange={(e) => setSelectedKeys(e.target.value ? [e.target.value] : [])}
+                    onPressEnter={() => handleSearch(selectedKeys, confirm, dataIndex)}
+                    style={{ width: 188, marginBottom: 8, display: 'block' }}
+                />
+                <Space>
+                    <Button
+                        type="primary"
+                        onClick={() => handleSearch(selectedKeys, confirm, dataIndex)}
+                        size="small"
+                        style={{ width: 90 }}
+                    >
+                        Search
+                    </Button>
+                    <Button onClick={() => handleReset(clearFilters)} size="small" style={{ width: 90 }}>
+                        Reset
+                    </Button>
+                </Space>
+            </div>
+        ),
+        filterIcon: (filtered: boolean) => (
+            <SearchOutlined style={{ color: filtered ? '#1890ff' : undefined }} />
+        ),
+        onFilter: (value: any, record: any) =>
+            record[dataIndex].toString().toLowerCase().includes(value.toLowerCase()),
+    });
+
     const columns = [
         {
             title: 'Avatar',
@@ -42,12 +83,14 @@ const Users: React.FC = () => {
         {
             title: 'Name',
             dataIndex: 'name',
-            key: 'name'
+            key: 'name',
+            ...getColumnSearchProps('name')
         },
         {
             title: 'Email',
             dataIndex: 'email',
-            key: 'email'
+            key: 'email',
+            ...getColumnSearchProps('email')
         }
     ];
 
