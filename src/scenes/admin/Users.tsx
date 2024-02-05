@@ -100,8 +100,8 @@ const Users: React.FC = () => {
 
     return (
         <AppLayout>
+            <h1>Users</h1>
             <div className="section-break">
-                <h1>Users</h1>
                 <Table dataSource={data} columns={columns} pagination={paginationConfig} loading={loading}/>
                 <p>Total Users: {data.length}</p>
             </div>

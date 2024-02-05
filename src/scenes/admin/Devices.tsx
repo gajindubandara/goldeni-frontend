@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from "react";
 import AppLayout from "../../layout/AppLayout";
-import {Button, Input, Table, Tag, Space, Popconfirm, Dropdown, Menu, message} from "antd";
+import {Button, Input, Table, Tag, Space, Popconfirm, Dropdown, Menu, message, Row} from "antd";
 import {SearchOutlined} from '@ant-design/icons';
 import {baseUrl} from '../../services/commonVariables';
 import {EllipsisOutlined} from '@ant-design/icons';
@@ -243,16 +243,17 @@ const Devices: React.FC = () => {
 
     return (
         <AppLayout>
+            <Row>
+            <h1>Devices</h1>
+            <Button
+                type="primary"
+                onClick={() => handleAddDevice()}
+                style={{display: "block", margin: "10px 0px 20px auto"}}
+            >
+                Add Device
+            </Button>
+            </Row>
             <div className="section-break">
-                <h1>Devices</h1>
-                <Button
-                    type="primary"
-                    onClick={() => handleAddDevice()}
-                    style={{display: "block", margin: "10px 0px 20px auto"}}
-                >
-                    Add Device
-                </Button>
-
                 <Table
                     dataSource={data}
                     columns={columns}
