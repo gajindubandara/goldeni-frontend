@@ -4,7 +4,6 @@ import PopupEditForm from "./PopupEditForm";
 import ultrasonic from '../assets/ultrasonic-sensor.png';
 import temp from '../assets/temprature.png';
 import ir from '../assets/infrared-sensor.png';
-import connection from '../assets/connection.png';
 
 const { Meta } = Card;
 interface userData {
