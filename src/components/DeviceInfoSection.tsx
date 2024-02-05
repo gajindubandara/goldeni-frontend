@@ -106,12 +106,27 @@ const DeviceInfoSection: React.FC = () => {
               <Meta
                   avatar={
                     <div>
-                      <img src={connection} alt="Icon" style={{ width: "60px" }} />
+                      <svg
+                          width="60"
+                          height="60"
+                          fill="none"
+                          stroke="#1db909"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth="2"
+                          viewBox="0 0 24 24"
+                          xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path d="M5 12.55a11 11 0 0 1 14.08 0"></path>
+                        <path d="M1.42 9a16 16 0 0 1 21.16 0"></path>
+                        <path d="M8.53 16.11a6 6 0 0 1 6.95 0"></path>
+                        <path d="M12 20h.01"></path>
+                      </svg>
                     </div>
                   }
-                  title={<div style={{ fontSize: "30px" }}>Connected</div>}
+                  title={<div style={{fontSize: "20px"}}>Connected</div>}
                   description={
-                    <div style={{ fontWeight: "bolder", color: "black" }}>
+                    <div style={{fontWeight: "bolder", color: "black"}}>
                       System Connection
                     </div>
                   }
@@ -119,16 +134,16 @@ const DeviceInfoSection: React.FC = () => {
             </Card>
           </Col>
           <Col xs={24} sm={12} md={8} lg={8} xl={8}>
-            <Card style={{ marginTop: 16, border: "1px solid #cfcfcf" }}>
+            <Card style={{marginTop: 16, border: "1px solid #cfcfcf"}}>
               <Meta
                   avatar={
                     <div>
-                      <img src={temp} alt="Icon" style={{ width: "60px" }} />
+                      <img src={temp} alt="Icon" style={{width: "60px"}}/>
                     </div>
                   }
-                  title={<div style={{ fontSize: "30px" }}>36.00°</div>}
+                  title={<div style={{fontSize: "20px"}}>36.00°</div>}
                   description={
-                    <div style={{ fontWeight: "bolder", color: "black" }}>
+                    <div style={{fontWeight: "bolder", color: "black"}}>
                       System Temperature
                     </div>
                   }
@@ -136,14 +151,14 @@ const DeviceInfoSection: React.FC = () => {
             </Card>
           </Col>
           <Col xs={24} sm={12} md={8} lg={8} xl={8}>
-            <Card style={{ marginTop: 16, border: "1px solid #cfcfcf" }}>
+            <Card style={{marginTop: 16, border: "1px solid #cfcfcf"}}>
               <Meta
                   avatar={
                     <div>
                       <img src={ir} alt="Icon" style={{ width: "60px" }} />
                     </div>
                   }
-                  title={<div style={{ fontSize: "30px" }}>ON</div>}
+                  title={<div style={{ fontSize: "20px" }}>ON</div>}
                   description={
                     <div style={{ fontWeight: "bolder", color: "black" }}>
                       Infrared Sensor
@@ -165,7 +180,7 @@ const DeviceInfoSection: React.FC = () => {
                       />
                     </div>
                   }
-                  title={<div style={{ fontSize: "30px" }}>90.00cm</div>}
+                  title={<div style={{ fontSize: "20px" }}>90.00cm</div>}
                   description={
                     <div style={{ fontWeight: "bolder", color: "black" }}>
                       Top Ultrasonic
@@ -186,7 +201,7 @@ const DeviceInfoSection: React.FC = () => {
                       />
                     </div>
                   }
-                  title={<div style={{ fontSize: "30px" }}>90.00cm</div>}
+                  title={<div style={{ fontSize: "20px" }}>90.00cm</div>}
                   description={
                     <div style={{ fontWeight: "bolder", color: "black" }}>
                       Middle Ultrasonic
@@ -207,7 +222,7 @@ const DeviceInfoSection: React.FC = () => {
                       />
                     </div>
                   }
-                  title={<div style={{ fontSize: "30px" }}>90.00cm</div>}
+                  title={<div style={{ fontSize: "20px" }}>90.00cm</div>}
                   description={
                     <div style={{ fontWeight: "bolder", color: "black" }}>
                       Bottom Ultrasonic
