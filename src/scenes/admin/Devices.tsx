@@ -1,11 +1,12 @@
-import React, { useEffect, useState } from "react";
+import React, {useEffect, useState} from "react";
 import AppLayout from "../../layout/AppLayout";
 import {Button, Input, Table, Tag, Space, Popconfirm, Dropdown, Menu, message} from "antd";
-import { SearchOutlined } from '@ant-design/icons';
-import { baseUrl } from '../../services/commonVariables';
-import { EllipsisOutlined } from '@ant-design/icons';
+import {SearchOutlined} from '@ant-design/icons';
+import {baseUrl} from '../../services/commonVariables';
+import {EllipsisOutlined} from '@ant-design/icons';
 import PopupEnrollForm from "../../components/PopupEnrollForm";
 import axios from "axios";
+import PopupAddDeviceForm from "../../components/PopupAddDeviceForm";
 
 interface Device {
     deviceId: string;
@@ -20,8 +21,9 @@ const Devices: React.FC = () => {
     const [data, setData] = useState([]);
     const [loading, setLoading] = useState(true);
     const idToken = localStorage.getItem("idToken");
-    const [showEnrollPopup, setShowEnrollPopup] = useState(false); // State to manage popup visibility
-    let showEmailInput =true;
+    const [showEnrollPopup, setShowEnrollPopup] = useState(false);
+    const [showAddDevicePopup, setShowAddDevicePopup] = useState(false);
+    let showEmailInput = true;
 
     useEffect(() => {
         fetchData(idToken)
@@ -44,8 +46,6 @@ const Devices: React.FC = () => {
     };
 
 
-
-
     const handleSearch = (selectedKeys: React.Key[], confirm: () => void, dataIndex: string) => {
         confirm();
     };
@@ -55,32 +55,32 @@ const Devices: React.FC = () => {
     };
 
     const getColumnSearchProps = (dataIndex: string) => ({
-        filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }: any) => (
-            <div style={{ padding: 8 }}>
+        filterDropdown: ({setSelectedKeys, selectedKeys, confirm, clearFilters}: any) => (
+            <div style={{padding: 8}}>
                 <Input
                     placeholder={`Search ${dataIndex}`}
                     value={selectedKeys[0]}
                     onChange={(e) => setSelectedKeys(e.target.value ? [e.target.value] : [])}
                     onPressEnter={() => handleSearch(selectedKeys, confirm, dataIndex)}
-                    style={{ width: 188, marginBottom: 8, display: 'block' }}
+                    style={{width: 188, marginBottom: 8, display: 'block'}}
                 />
                 <Space>
                     <Button
                         type="primary"
                         onClick={() => handleSearch(selectedKeys, confirm, dataIndex)}
                         size="small"
-                        style={{ width: 90 }}
+                        style={{width: 90}}
                     >
                         Search
                     </Button>
-                    <Button onClick={() => handleReset(clearFilters)} size="small" style={{ width: 90 }}>
+                    <Button onClick={() => handleReset(clearFilters)} size="small" style={{width: 90}}>
                         Reset
                     </Button>
                 </Space>
             </div>
         ),
         filterIcon: (filtered: boolean) => (
-            <SearchOutlined style={{ color: filtered ? '#1890ff' : undefined }} />
+            <SearchOutlined style={{color: filtered ? '#1890ff' : undefined}}/>
         ),
         onFilter: (value: any, record: any) =>
             record[dataIndex].toString().toLowerCase().includes(value.toLowerCase()),
@@ -130,7 +130,7 @@ const Devices: React.FC = () => {
             title: 'Connectivity',
             key: 'connection',
             dataIndex: 'connected',
-            render: (connection: boolean) =>  {
+            render: (connection: boolean) => {
                 let value = connection ? 'Connected' : 'Disconnected'
                 let color = connection ? 'green' : 'red';
                 return (
@@ -165,7 +165,8 @@ const Devices: React.FC = () => {
                                     </Menu.Item>
                                     {record.status === 'NEW' && (
                                         <Menu.Item key="enroll">
-                                            <Button type="link" onClick={() => handleEnroll(record.deviceId)}>Enroll</Button>
+                                            <Button type="link"
+                                                    onClick={() => handleEnroll(record.deviceId)}>Enroll</Button>
                                         </Menu.Item>
                                     )}
                                 </Menu>
@@ -173,7 +174,7 @@ const Devices: React.FC = () => {
                             placement="bottomLeft"
                             trigger={['click']}
                         >
-                            <Button type="text" icon={<EllipsisOutlined />} />
+                            <Button type="text" icon={<EllipsisOutlined/>}/>
                         </Dropdown>
                     </Space>
                 );
@@ -183,7 +184,7 @@ const Devices: React.FC = () => {
 
 
     const paginationConfig = {
-        pageSize: 5, // Display 5 items per page
+        pageSize: 10, // Display 5 items per page
     };
 
     const handleDelete = async (deviceId: string) => {
@@ -197,7 +198,7 @@ const Devices: React.FC = () => {
             };
 
             // Make the DELETE request using Axios
-            const response = await axios.delete(url, { headers });
+            const response = await axios.delete(url, {headers});
 
             if (response.status === 200) {
                 // Device deleted successfully
@@ -205,15 +206,7 @@ const Devices: React.FC = () => {
                 // Optionally, you can update the UI to reflect the deletion
                 // For example, remove the device from the local state or reload the data
                 message.success('Device deleted successfully');
-                fetchData(idToken)
-                    .then(response => {
-                        setData(response.data);
-                        setLoading(false);
-                    })
-                    .catch(error => {
-                        console.error("Error fetching data:", error);
-                        setLoading(false);
-                    });
+                handleFetchData();
             } else {
                 // Failed to delete device
                 console.error(`Failed to delete device with ID ${deviceId}.`);
@@ -231,10 +224,35 @@ const Devices: React.FC = () => {
         setShowEnrollPopup(true);
     };
 
+    const handleAddDevice = () => {
+        setShowAddDevicePopup(true)
+    };
+
+    const handleFetchData = () => {
+        fetchData(idToken)
+            .then(response => {
+                setData(response.data);
+                setLoading(false);
+            })
+            .catch(error => {
+                console.error("Error fetching data:", error);
+                setLoading(false);
+            });
+    };
+
+
     return (
         <AppLayout>
             <div className="section-break">
                 <h1>Devices</h1>
+                <Button
+                    type="primary"
+                    onClick={() => handleAddDevice()}
+                    style={{display: "block", margin: "10px 0px 20px auto"}}
+                >
+                    Add Device
+                </Button>
+
                 <Table
                     dataSource={data}
                     columns={columns}
@@ -242,12 +260,19 @@ const Devices: React.FC = () => {
                     loading={loading}
                     rowKey={(record) => record.deviceId}
                 />
-                {/* Render the PopupEnrollForm component based on showEnrollPopup state */}
+
                 {showEnrollPopup && (
                     <PopupEnrollForm
                         visible={showEnrollPopup}
                         showEmailInput={showEmailInput}
                         onClose={() => setShowEnrollPopup(false)}
+                    />
+                )}
+                {showAddDevicePopup && (
+                    <PopupAddDeviceForm
+                        visible={showAddDevicePopup}
+                        onClose={() => setShowAddDevicePopup(false)}
+                        onSuccess={handleFetchData}
                     />
                 )}
             </div>

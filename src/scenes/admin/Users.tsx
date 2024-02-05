@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, {useEffect, useState} from "react";
 import AppLayout from "../../layout/AppLayout";
 import {Table, Avatar, Input, Space, Button} from "antd";
 import {avatarPlaceHolder, baseUrl} from '../../services/commonVariables';
@@ -40,32 +40,32 @@ const Users: React.FC = () => {
     };
 
     const getColumnSearchProps = (dataIndex: string) => ({
-        filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }: any) => (
-            <div style={{ padding: 8 }}>
+        filterDropdown: ({setSelectedKeys, selectedKeys, confirm, clearFilters}: any) => (
+            <div style={{padding: 8}}>
                 <Input
                     placeholder={`Search ${dataIndex}`}
                     value={selectedKeys[0]}
                     onChange={(e) => setSelectedKeys(e.target.value ? [e.target.value] : [])}
                     onPressEnter={() => handleSearch(selectedKeys, confirm, dataIndex)}
-                    style={{ width: 188, marginBottom: 8, display: 'block' }}
+                    style={{width: 188, marginBottom: 8, display: 'block'}}
                 />
                 <Space>
                     <Button
                         type="primary"
                         onClick={() => handleSearch(selectedKeys, confirm, dataIndex)}
                         size="small"
-                        style={{ width: 90 }}
+                        style={{width: 90}}
                     >
                         Search
                     </Button>
-                    <Button onClick={() => handleReset(clearFilters)} size="small" style={{ width: 90 }}>
+                    <Button onClick={() => handleReset(clearFilters)} size="small" style={{width: 90}}>
                         Reset
                     </Button>
                 </Space>
             </div>
         ),
         filterIcon: (filtered: boolean) => (
-            <SearchOutlined style={{ color: filtered ? '#1890ff' : undefined }} />
+            <SearchOutlined style={{color: filtered ? '#1890ff' : undefined}}/>
         ),
         onFilter: (value: any, record: any) =>
             record[dataIndex].toString().toLowerCase().includes(value.toLowerCase()),
@@ -77,7 +77,7 @@ const Users: React.FC = () => {
             dataIndex: 'picture',
             key: 'picture',
             render: (picture: string) => (
-                picture !== 'none' ? <Avatar src={picture} /> : <Avatar src={avatarPlaceHolder} />
+                picture !== 'none' ? <Avatar src={picture}/> : <Avatar src={avatarPlaceHolder}/>
             )
         },
         {
@@ -95,14 +95,14 @@ const Users: React.FC = () => {
     ];
 
     const paginationConfig = {
-        pageSize: 5
+        pageSize: 10
     };
 
     return (
         <AppLayout>
             <div className="section-break">
                 <h1>Users</h1>
-                <Table dataSource={data} columns={columns} pagination={paginationConfig} loading={loading} />
+                <Table dataSource={data} columns={columns} pagination={paginationConfig} loading={loading}/>
             </div>
         </AppLayout>
     );
