@@ -24,15 +24,7 @@ const Devices: React.FC = () => {
     let showEmailInput =true;
 
     useEffect(() => {
-        fetchData();
-    }, [idToken]);
-
-    const fetchData = () => {
-        axios.get(`${baseUrl}/admin/devices`, {
-            headers: {
-                Authorization: `Bearer ${idToken}`
-            }
-        })
+        fetchData(idToken)
             .then(response => {
                 setData(response.data);
                 setLoading(false);
@@ -41,6 +33,14 @@ const Devices: React.FC = () => {
                 console.error("Error fetching data:", error);
                 setLoading(false);
             });
+    }, [idToken]);
+
+    const fetchData = (token: any) => {
+        return axios.get(`${baseUrl}/admin/devices`, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        });
     };
 
 
@@ -160,12 +160,12 @@ const Devices: React.FC = () => {
                                             okText="Yes"
                                             cancelText="No"
                                         >
-                                            <a>Delete</a>
+                                            <Button type="link" danger>Delete</Button>
                                         </Popconfirm>
                                     </Menu.Item>
                                     {record.status === 'NEW' && (
                                         <Menu.Item key="enroll">
-                                            <a onClick={() => handleEnroll(record.deviceId)}>Enroll</a>
+                                            <Button type="link" onClick={() => handleEnroll(record.deviceId)}>Enroll</Button>
                                         </Menu.Item>
                                     )}
                                 </Menu>
@@ -205,7 +205,15 @@ const Devices: React.FC = () => {
                 // Optionally, you can update the UI to reflect the deletion
                 // For example, remove the device from the local state or reload the data
                 message.success('Device deleted successfully');
-                fetchData();
+                fetchData(idToken)
+                    .then(response => {
+                        setData(response.data);
+                        setLoading(false);
+                    })
+                    .catch(error => {
+                        console.error("Error fetching data:", error);
+                        setLoading(false);
+                    });
             } else {
                 // Failed to delete device
                 console.error(`Failed to delete device with ID ${deviceId}.`);
