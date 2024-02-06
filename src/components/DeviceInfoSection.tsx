@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, {useState } from "react";
 import { Card, Button, Col, Row} from "antd";
 import PopupEditForm from "./PopupEditForm";
 import ultrasonic from '../assets/ultrasonic-sensor.png';
@@ -6,16 +6,25 @@ import temp from '../assets/temprature.png';
 import ir from '../assets/infrared-sensor.png';
 
 const { Meta } = Card;
-interface userData {
-  name: string;
-  deviceName: string;
-  address: string;
-  number: string;
+
+interface DeviceInfoSectionProps {
+  device: Device;
 }
 
-const DeviceInfoSection: React.FC = () => {
-  const [userData, setUserData] = useState<userData | null>(null);
+interface Device {
+  id: string;
+  deviceId: string;
+  deviceSecret: string;
+  registeredEmail: string;
+  registeredUsername: string;
+  registeredAddress: string;
+  macAddress: string;
+  emergencyContactNumbers: string[];
+  status: string;
+  connected: boolean;
+}
 
+const DeviceInfoSection: React.FC<DeviceInfoSectionProps> = ({device}) => {
   const [isPopupVisible, setPopupVisible] = useState(false);
 
   const showPopup = () => {
@@ -26,56 +35,30 @@ const DeviceInfoSection: React.FC = () => {
     setPopupVisible(false);
   };
 
-  // Get data form the API
-  useEffect(() => {
-    let data = {
-      name: "Tony Stark",
-      deviceName: "stick 2",
-      address: "21/A,Wasanakanda Road Katugastota",
-      number: "0766520481",
-    };
-    setUserData(data);
-    // axios.get(`https://www.boredapi.com/api/activity`)
-    //   .then((response) => {
-    //     setUserData(response.data);
-    //   })
-    //   .catch((error) => {
-    //     console.error('Error:', error);
-    //   });
-  }, []);
-
   return (
     <div>
       <Card style={{ background: "#f5f5f5" }}>
-        {/* <h3>User details</h3> */}
         <Card style={{ padding: "0px 24px !important" }}>
           <Row gutter={16}>
-            <Col xs={24} sm={4} md={4} lg={4} xl={4}>
-              <div className="user-detail-item">
-                <b>Device Name: </b>
-                <br />
-                {userData ? userData.name : "Loading..."}
-              </div>
-            </Col>
-            <Col xs={24} sm={4} md={4} lg={4} xl={4}>
+            <Col xs={24} sm={6} md={6} lg={6} xl={6}>
               <div className="user-detail-item">
                 <b>User's Name: </b>
                 <br />
-                {userData ? userData.deviceName : "Loading..."}
+                {device ? device.registeredUsername : "Loading..."}
               </div>
             </Col>
-            <Col xs={24} sm={4} md={4} lg={4} xl={4}>
+            <Col xs={24} sm={6} md={6} lg={6} xl={6}>
               <div className="user-detail-item">
                 <b>Guardian's No: </b>
                 <br />
-                {userData ? userData.number : "Loading..."}
+                {device ? device.emergencyContactNumbers.join(', ') : "Loading..."}
               </div>
             </Col>
             <Col xs={24} sm={10} md={10} lg={10} xl={10}>
               <div className="user-detail-item">
                 <b>User's Address: </b>
                 <br />
-                {userData ? userData.address : "Loading..."}
+                {device ? device.registeredAddress : "Loading..."}
               </div>
             </Col>
             <Col xs={24} sm={2} md={2} lg={2} xl={2}>
@@ -239,7 +222,7 @@ const DeviceInfoSection: React.FC = () => {
       <PopupEditForm
         visible={isPopupVisible}
         onClose={closePopup}
-        data={userData}
+        data={device}
       />
     </div>
   );

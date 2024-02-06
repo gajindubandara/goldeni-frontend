@@ -1,42 +1,34 @@
-import React, { useState } from "react";
+import React, {useState, useEffect} from "react";
 import AppLayout from "../layout/AppLayout";
-import PopupEnrollForm from "../components/PopupEnrollForm";
-import DeviceListCard from "../components/DeviceListCard";
-import DeviceInfoCard from "../components/DeviceInfoCard";
+import UserDashboard from "../components/UserDashboard";
+import AdminDashboard from "../components/AdminDashboard";
+import {decodeIdToken} from "../services/decodeService";
 
 const Dashboard: React.FC = () => {
-  const [isPopupVisible, setPopupVisible] = useState(false);
-  const [showDeviceCard, setShowDeviceCard] = useState(true);
-  const [showDeviceInfoCard, setShowDeviceInfoCard] = useState(false);
-  let showEmailInput= false;
 
-  const showPopup = () => {
-    setPopupVisible(true);
-  };
+    const [userData, setUser] = useState({
+        email: '',
+        name: '',
+        picture: '',
+        isAdmin: false // Default to non-admin
+    });
 
-  const closePopup = () => {
-    setPopupVisible(false);
-  };
+    useEffect(() => {
+        const userData = decodeIdToken();
+        if (userData) {
+            setUser(userData);
+        }
+    }, []);
 
-  const toggleCards = () => {
-    setShowDeviceCard(!showDeviceCard);
-    setShowDeviceInfoCard(!showDeviceInfoCard);
-  };
-
-  return (
-      <AppLayout>
-        <h1>Dashboard</h1>
-        <hr />
-        {showDeviceCard && (
-            <DeviceListCard
-                toggleCards={toggleCards}
-                showPopup={showPopup}
-            />
-        )}
-        {showDeviceInfoCard && <DeviceInfoCard toggleCards={toggleCards} />}
-        <PopupEnrollForm visible={isPopupVisible} showEmailInput={showEmailInput}onClose={closePopup} />
-      </AppLayout>
-  );
+    return (
+        <AppLayout>
+            {userData.isAdmin ? (
+                <AdminDashboard/>
+            ) : (
+                <UserDashboard/>
+            )}
+        </AppLayout>
+    );
 };
 
 export default Dashboard;

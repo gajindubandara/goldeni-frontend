@@ -1,11 +1,26 @@
 import React from "react";
-import { Row, Col, Button } from "antd";
+import {Row, Col, Button} from "antd";
 import DeviceInfoSection from "./DeviceInfoSection";
 
 interface DeviceInfoCardProps {
     toggleCards: () => void;
+    device: Device;
 }
-const DeviceInfoCard: React.FC<DeviceInfoCardProps> = ({ toggleCards }) => {
+
+interface Device {
+    id: string;
+    deviceId: string;
+    deviceSecret: string;
+    registeredEmail: string;
+    registeredUsername: string;
+    registeredAddress: string;
+    macAddress: string;
+    emergencyContactNumbers: string[];
+    status: string;
+    connected: boolean;
+}
+
+const DeviceInfoCard: React.FC<DeviceInfoCardProps> = ({toggleCards, device}) => {
     return (
         <div className="section-break">
             <Row gutter={16}>
@@ -16,13 +31,13 @@ const DeviceInfoCard: React.FC<DeviceInfoCardProps> = ({ toggleCards }) => {
                     <Button
                         type="primary"
                         onClick={() => toggleCards()}
-                        style={{ display: "block", margin: "10px 0px 10px auto" }}
+                        style={{display: "block", margin: "10px 0px 10px auto"}}
                     >
                         Back to Devices
                     </Button>
                 </Col>
             </Row>
-            <DeviceInfoSection />
+            <DeviceInfoSection device={device}/>
         </div>
     );
 };
