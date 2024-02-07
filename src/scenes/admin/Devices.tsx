@@ -11,6 +11,7 @@ import LoadingSpinner from "../../components/LoadingSpinner";
 
 interface Device {
     deviceId: string;
+    deviceSecret: string;
     registeredEmail: string;
     emergencyContactNumbers: string[];
     macAddress: string;
@@ -21,10 +22,11 @@ interface Device {
 const Devices: React.FC = () => {
     const [data, setData] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [enrollDevice, setEnrollDevice] = useState<any>();
     const idToken = localStorage.getItem("idToken");
     const [showEnrollPopup, setShowEnrollPopup] = useState(false);
     const [showAddDevicePopup, setShowAddDevicePopup] = useState(false);
-    let showEmailInput = true;
+    let isAdmin = true;
 
     useEffect(() => {
         fetchData(idToken)
@@ -165,7 +167,7 @@ const Devices: React.FC = () => {
                                     {record.status === 'NEW' && (
                                         <Menu.Item key="enroll">
                                             <Button type="link"
-                                                    onClick={() => handleEnroll(record.deviceId)}>Enroll</Button>
+                                                    onClick={() => handleEnroll(record)}>Enroll</Button>
                                         </Menu.Item>
                                     )}
                                     {record.status === 'ENROLLED' && (
@@ -230,10 +232,14 @@ const Devices: React.FC = () => {
         }
     };
 
-    const handleEnroll = (deviceId: string) => {
-        console.log(`Enrolling device with ID: ${deviceId}`);
-        // Implement your logic to show the popup here
+    const handleEnroll = (record: Device) => {
+        const enrollDeviceData = {
+            deviceId: record.deviceId,
+            deviceSecret: record.deviceSecret
+        }
+        setEnrollDevice(enrollDeviceData)
         setShowEnrollPopup(true);
+        console.log(enrollDevice)
     };
 
     const handleDisenroll = (deviceId: string) => {
@@ -307,9 +313,10 @@ const Devices: React.FC = () => {
                 {showEnrollPopup && (
                     <PopupEnrollForm
                         visible={showEnrollPopup}
-                        showEmailInput={showEmailInput}
+                        isAdmin={isAdmin}
                         onClose={() => setShowEnrollPopup(false)}
                         onSuccess={handleFetchData}
+                        data={enrollDevice}
                     />
                 )}
                 {showAddDevicePopup && (

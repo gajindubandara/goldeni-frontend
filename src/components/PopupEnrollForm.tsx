@@ -11,8 +11,9 @@ const {Step} = Steps;
 interface PopupFormProps {
     visible: boolean;
     onClose: () => void;
-    showEmailInput: boolean;
+    isAdmin: boolean;
     onSuccess: () => void;
+    data: any;
 }
 
 interface FormData {
@@ -35,7 +36,7 @@ const initialFormData: FormData = {
     email: '',
 };
 
-const PopupEnrollForm: React.FC<PopupFormProps> = ({visible, onClose, onSuccess, showEmailInput}) => {
+const PopupEnrollForm: React.FC<PopupFormProps> = ({visible, onClose, onSuccess, isAdmin, data}) => {
     const [currentStep, setCurrentStep] = useState(0);
     const [form] = Form.useForm();
     const [formData, setFormData] = useState<FormData>(initialFormData);
@@ -47,20 +48,21 @@ const PopupEnrollForm: React.FC<PopupFormProps> = ({visible, onClose, onSuccess,
         picture: '',
         isAdmin: false // Default to non-admin
     });
+    const enrollDeviceId = data.deviceId;
+    const enrollDeviceSecret = data.deviceSecret;
 
     useEffect(() => {
         const userData = decodeIdToken();
         if (userData) {
             setUser(userData);
         }
-
         if (visible) {
             // Reset the form data and set the current step to 0 when the form is opened
             setFormData(initialFormData);
             form.resetFields();
             setCurrentStep(0);
         }
-    }, [visible, form]);
+    }, [visible, form, data.deviceId, data.deviceSecret, isAdmin]);
 
     const steps = [
         {
@@ -71,6 +73,10 @@ const PopupEnrollForm: React.FC<PopupFormProps> = ({visible, onClose, onSuccess,
                     onFinish={(values) => {
                         setFormData({...formData, ...values});
                         setCurrentStep(currentStep + 1);
+                    }}
+                    initialValues={{
+                        deviceId: isAdmin ? enrollDeviceId : '',
+                        deviceSecret: isAdmin ? enrollDeviceSecret : ''
                     }}
                 >
 
@@ -86,7 +92,7 @@ const PopupEnrollForm: React.FC<PopupFormProps> = ({visible, onClose, onSuccess,
                     >
                         <Input/>
                     </Form.Item>
-                    {showEmailInput && (
+                    {isAdmin && (
                         <Form.Item
                             label="User's Email"
                             name="email"
@@ -176,7 +182,7 @@ const PopupEnrollForm: React.FC<PopupFormProps> = ({visible, onClose, onSuccess,
                             },
                         ]}
                     >
-                        <Input/>
+                        <Input disabled={isAdmin}/>
                     </Form.Item>
                     <Form.Item
                         label="Device Secret"
@@ -188,7 +194,7 @@ const PopupEnrollForm: React.FC<PopupFormProps> = ({visible, onClose, onSuccess,
                             },
                         ]}
                     >
-                        <Input/>
+                        <Input disabled={isAdmin}/>
                     </Form.Item>
                     {currentStep > 0 && (
                         <Button style={{marginRight: 8}} onClick={() => setCurrentStep(currentStep - 1)}>

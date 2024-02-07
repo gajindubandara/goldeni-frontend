@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, {useState} from "react";
 import PopupEnrollForm from "./PopupEnrollForm";
 import DeviceListCard from "./DeviceListCard";
 import DeviceInfoCard from "./DeviceInfoCard";
@@ -21,7 +21,11 @@ const UserDashboard: React.FC = () => {
     const [showDeviceCard, setShowDeviceCard] = useState(true);
     const [showDeviceInfoCard, setShowDeviceInfoCard] = useState(false);
     const [selectedDevice, setSelectedDevice] = useState<Device | null>(null);
-    let showEmailInput = false;
+    let isAdmin = false;
+    const data: any = {
+        deviceId: "",
+        deviceSecret: ""
+    };
 
     const showPopup = () => {
         setPopupVisible(true);
@@ -46,7 +50,7 @@ const UserDashboard: React.FC = () => {
     return (
         <div>
             <h1>User Dashboard</h1>
-            <hr />
+            <hr/>
             {showDeviceCard && (
                 <DeviceListCard
                     toggleCards={toggleCards}
@@ -54,9 +58,10 @@ const UserDashboard: React.FC = () => {
                     onSelectDevice={handleDeviceSelection}
                 />
             )}
-            {showDeviceInfoCard && selectedDevice && <DeviceInfoCard toggleCards={toggleCards} device={selectedDevice} />}
-            <PopupEnrollForm visible={isPopupVisible} showEmailInput={showEmailInput} onClose={closePopup}
-                             onSuccess={handleFetchData} />
+            {showDeviceInfoCard && selectedDevice &&
+                <DeviceInfoCard toggleCards={toggleCards} device={selectedDevice}/>}
+            <PopupEnrollForm visible={isPopupVisible} isAdmin={isAdmin} onClose={closePopup}
+                             onSuccess={handleFetchData} data={data}/>
         </div>
     );
 };
