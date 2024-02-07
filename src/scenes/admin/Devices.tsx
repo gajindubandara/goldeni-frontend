@@ -7,6 +7,7 @@ import {EllipsisOutlined} from '@ant-design/icons';
 import PopupEnrollForm from "../../components/PopupEnrollForm";
 import axios from "axios";
 import PopupAddDeviceForm from "../../components/PopupAddDeviceForm";
+import LoadingSpinner from "../../components/LoadingSpinner";
 
 interface Device {
     deviceId: string;
@@ -144,29 +145,39 @@ const Devices: React.FC = () => {
             title: 'Action',
             key: 'action',
             render: (_: any, record: Device) => {
-                if (record.status === 'ENROLLED') {
-                    return null; // Return null if status is 'ENROLLED' to hide the action buttons
-                }
-
                 return (
                     <Space size="middle">
                         <Dropdown
                             overlay={
                                 <Menu>
-                                    <Menu.Item key="delete">
-                                        <Popconfirm
-                                            title="Are you sure to delete this device?"
-                                            onConfirm={() => handleDelete(record.deviceId)}
-                                            okText="Yes"
-                                            cancelText="No"
-                                        >
-                                            <Button type="link" danger>Delete</Button>
-                                        </Popconfirm>
-                                    </Menu.Item>
+                                    {record.status === 'NEW' && (
+                                        <Menu.Item key="delete">
+                                            <Popconfirm
+                                                title="Are you sure to delete this device?"
+                                                onConfirm={() => handleDelete(record.deviceId)}
+                                                okText="Yes"
+                                                cancelText="No"
+                                            >
+                                                <Button type="link" danger>Delete</Button>
+                                            </Popconfirm>
+                                        </Menu.Item>
+                                    )}
                                     {record.status === 'NEW' && (
                                         <Menu.Item key="enroll">
                                             <Button type="link"
                                                     onClick={() => handleEnroll(record.deviceId)}>Enroll</Button>
+                                        </Menu.Item>
+                                    )}
+                                    {record.status === 'ENROLLED' && (
+                                        <Menu.Item key="disenroll">
+                                            <Popconfirm
+                                                title="Are you sure to disenroll this device?"
+                                                onConfirm={() => handleDisenroll(record.deviceId)}
+                                                okText="Yes"
+                                                cancelText="No"
+                                            >
+                                                <Button type="link" danger>Disenroll</Button>
+                                            </Popconfirm>
                                         </Menu.Item>
                                     )}
                                 </Menu>
@@ -188,6 +199,7 @@ const Devices: React.FC = () => {
     };
 
     const handleDelete = async (deviceId: string) => {
+        setLoading(true);
         try {
             // Construct the URL with the device ID as a query parameter
             const url = `${baseUrl}/admin/devices?id=${deviceId}`;
@@ -201,13 +213,13 @@ const Devices: React.FC = () => {
             const response = await axios.delete(url, {headers});
 
             if (response.status === 200) {
+                setLoading(false);
                 // Device deleted successfully
                 console.log(`Device with ID ${deviceId} deleted successfully.`);
-                // Optionally, you can update the UI to reflect the deletion
-                // For example, remove the device from the local state or reload the data
                 message.success('Device deleted successfully');
                 handleFetchData();
             } else {
+                setLoading(false);
                 // Failed to delete device
                 console.error(`Failed to delete device with ID ${deviceId}.`);
                 message.error('Failed to delete device');
@@ -223,6 +235,35 @@ const Devices: React.FC = () => {
         // Implement your logic to show the popup here
         setShowEnrollPopup(true);
     };
+
+    const handleDisenroll = (deviceId: string) => {
+        setLoading(true);
+        const config = {
+            method: 'put',
+            url: `${baseUrl}/devices/device/disenroll?id=${deviceId}`,
+            headers: {
+                'Authorization': `Bearer ${idToken}`
+            }
+        };
+
+        axios.request(config)
+            .then((response) => {
+                // Handle success response
+                message.success('Device disenrolled successfully');
+                console.log(response.data); // Log or handle response data
+                handleFetchData();
+            })
+            .catch((error) => {
+                // Handle error
+                console.error('Error updating device:', error);
+                // You can display an error message here using antd message or other means
+                message.error('Error updating device. Please try again.');
+            })
+            .finally(() => {
+                setLoading(false);
+            });
+    };
+
 
     const handleAddDevice = () => {
         setShowAddDevicePopup(true)
@@ -243,22 +284,22 @@ const Devices: React.FC = () => {
 
     return (
         <AppLayout>
+            <LoadingSpinner loading={loading}/>
             <Row>
-            <h1>Devices</h1>
-            <Button
-                type="primary"
-                onClick={() => handleAddDevice()}
-                style={{display: "block", margin: "10px 0px 20px auto"}}
-            >
-                Add Device
-            </Button>
+                <h1>Devices</h1>
+                <Button
+                    type="primary"
+                    onClick={() => handleAddDevice()}
+                    style={{display: "block", margin: "10px 0px 20px auto"}}
+                >
+                    Add Device
+                </Button>
             </Row>
             <div className="section-break">
                 <Table
                     dataSource={data}
                     columns={columns}
                     pagination={paginationConfig}
-                    loading={loading}
                     rowKey={(record) => record.deviceId}
                 />
                 <p>Total Devices: {data.length}</p>
@@ -268,6 +309,7 @@ const Devices: React.FC = () => {
                         visible={showEnrollPopup}
                         showEmailInput={showEmailInput}
                         onClose={() => setShowEnrollPopup(false)}
+                        onSuccess={handleFetchData}
                     />
                 )}
                 {showAddDevicePopup && (

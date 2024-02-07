@@ -1,7 +1,8 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import {Modal, Form, Input, Button, message} from 'antd';
 import axios from "axios";
 import {baseUrl} from "../services/commonVariables";
+import LoadingSpinner from "./LoadingSpinner";
 
 interface PopupFormProps {
     visible: boolean;
@@ -12,6 +13,7 @@ interface PopupFormProps {
 const PopupAddDeviceForm: React.FC<PopupFormProps> = ({visible, onClose, onSuccess}) => {
     const [form] = Form.useForm();
     const idToken = localStorage.getItem("idToken");
+    const [loading, setLoading] = useState(false);
 
     useEffect(() => {
         if (visible) {
@@ -21,6 +23,7 @@ const PopupAddDeviceForm: React.FC<PopupFormProps> = ({visible, onClose, onSucce
     }, [visible, form]);
 
     const handleFormSubmit = (values: any) => {
+        setLoading(true);
         const requestBody = {
             deviceId: values.deviceId,
             deviceSecret: values.deviceSecret,
@@ -62,82 +65,75 @@ const PopupAddDeviceForm: React.FC<PopupFormProps> = ({visible, onClose, onSucce
                 }
                 // Close the modal or perform other actions
                 onClose();
+            })
+            .finally(() => {
+                setLoading(false);
             });
-        // form
-        //     .validateFields()
-        //     .then((values) => {
-        //         // Log the form values to the console
-        //         console.log('Secret:', values.secret);
-        //         console.log('ID:', values.id);
-        //         console.log('MAC Address:', values.macAddress);
-        //         message.success('Form submitted successfully');
-        //         console.log(values); // You can handle form data here
-        //         onClose();
-        //     })
-        //     .catch((error) => {
-        //         message.error('Form submission failed');
-        //     });
     };
 
     return (
-        <Modal
-            visible={visible}
-            title="Add New Device"
-            onCancel={onClose}
-            footer={null}
-            width={800}
-        >
-            <div style={{margin: '20px 0px'}}>
-                <Form
-                    form={form}
-                    onFinish={handleFormSubmit}
-                >
-                    <Form.Item
-                        label="Device ID"
-                        name="deviceId"
-                        rules={[
-                            {
-                                required: true,
-                                message: 'Please enter the device ID',
-                            },
-                        ]}
+        <>
+            <LoadingSpinner loading={loading}/>
+
+            <Modal
+                visible={visible}
+                title="Add New Device"
+                onCancel={onClose}
+                footer={null}
+                width={800}
+            >
+                <div style={{margin: '20px 0px'}}>
+                    <Form
+                        form={form}
+                        onFinish={handleFormSubmit}
                     >
-                        <Input/>
-                    </Form.Item>
-                    <Form.Item
-                        label="Device Secret"
-                        name="deviceSecret"
-                        rules={[
-                            {
-                                required: true,
-                                message: 'Please enter the device secret',
-                            },
-                        ]}
-                    >
-                        <Input/>
-                    </Form.Item>
-                    <Form.Item
-                        label="MAC Address"
-                        name="macAddress"
-                        rules={[
-                            {
-                                required: true,
-                                message: 'Please enter the MAC address',
-                            },
-                            {
-                                pattern: /^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$/,
-                                message: 'Please enter a valid MAC address',
-                            },
-                        ]}
-                    >
-                        <Input/>
-                    </Form.Item>
-                    <Button type="primary" htmlType="submit">
-                        Save
-                    </Button>
-                </Form>
-            </div>
-        </Modal>
+                        <Form.Item
+                            label="Device ID"
+                            name="deviceId"
+                            rules={[
+                                {
+                                    required: true,
+                                    message: 'Please enter the device ID',
+                                },
+                            ]}
+                        >
+                            <Input/>
+                        </Form.Item>
+                        <Form.Item
+                            label="Device Secret"
+                            name="deviceSecret"
+                            rules={[
+                                {
+                                    required: true,
+                                    message: 'Please enter the device secret',
+                                },
+                            ]}
+                        >
+                            <Input/>
+                        </Form.Item>
+                        <Form.Item
+                            label="MAC Address"
+                            name="macAddress"
+                            rules={[
+                                {
+                                    required: true,
+                                    message: 'Please enter the MAC address',
+                                },
+                                {
+                                    pattern: /^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$/,
+                                    message: 'Please enter a valid MAC address',
+                                },
+                            ]}
+                        >
+                            <Input/>
+                        </Form.Item>
+                        <Button type="primary" htmlType="submit">
+                            Save
+                        </Button>
+                    </Form>
+                </div>
+            </Modal>
+        </>
     );
 };
 

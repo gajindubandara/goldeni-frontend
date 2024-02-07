@@ -2,6 +2,7 @@ import React, {useState, useEffect} from "react";
 import {Card, Row, Col, Button, message, Spin} from "antd";
 import axios from "axios";
 import {baseUrl} from "../services/commonVariables";
+import LoadingSpinner from "./LoadingSpinner";
 
 interface Device {
     id: string;
@@ -55,111 +56,106 @@ const DeviceListCard: React.FC<DeviceListCardProps> = ({toggleCards, showPopup, 
     };
 
     return (
+        <>
+            <LoadingSpinner loading={loading}/>
+            <div className="section-break">
 
-        <div className="section-break">
-            {loading ? ( // Show spinner if loading
-                <div className="spinner"><Spin size="large"/></div>
-            ) : (
-
-                <>
-                    <h2>Devices</h2>
-                    <div className="device-msg">
-                        Please select a device from the options below, or if you don't have a
-                        device to choose from, kindly click the 'Add a Device' button to add a
-                        new one.
-                    </div>
-                    <div className="device-box">
-                        <Row gutter={[16, 16]} style={{padding: "20px"}}>
-                            {devices.map((device, index) => (
-                                <Col key={device.registeredUsername} xs={24} sm={12} md={8} lg={6} xl={6}>
-                                    <Card
-                                        style={{cursor: "pointer", position: "relative"}}
-                                        className="device-card"
-                                        onClick={() => handleDeviceCardClick(device)}
-                                    >
-                                        <div className="device-name">{device.registeredUsername}</div>
-                                        <div className="device-id">ID: {device.deviceId}</div>
-                                        {/*<div className="device-status">Status: {device.status}</div>*/}
-                                        {device.connected ? (
-                                            <svg
-                                                width="20"
-                                                height="20"
-                                                fill="none"
-                                                stroke="#1db909"
-                                                strokeLinecap="round"
-                                                strokeLinejoin="round"
-                                                strokeWidth="2"
-                                                viewBox="0 0 24 24"
-                                                xmlns="http://www.w3.org/2000/svg"
-                                                style={{
-                                                    position: "absolute",
-                                                    top: "10px",
-                                                    right: "10px",
-                                                }}
-                                            >
-                                                <path d="M5 12.55a11 11 0 0 1 14.08 0"></path>
-                                                <path d="M1.42 9a16 16 0 0 1 21.16 0"></path>
-                                                <path d="M8.53 16.11a6 6 0 0 1 6.95 0"></path>
-                                                <path d="M12 20h.01"></path>
-                                            </svg>
-                                        ) : (
-                                            <svg
-                                                width="20"
-                                                height="20"
-                                                fill="none"
-                                                stroke="#d00606"
-                                                strokeLinecap="round"
-                                                strokeLinejoin="round"
-                                                strokeWidth="2"
-                                                viewBox="0 0 24 24"
-                                                xmlns="http://www.w3.org/2000/svg"
-                                                style={{
-                                                    position: "absolute",
-                                                    top: "10px",
-                                                    right: "10px",
-                                                }}
-                                            >
-                                                <path d="m1 1 22 22"></path>
-                                                <path d="M16.72 11.06A10.94 10.94 0 0 1 19 12.55"></path>
-                                                <path d="M5 12.55a10.94 10.94 0 0 1 5.17-2.39"></path>
-                                                <path d="M10.71 5.05A16 16 0 0 1 22.58 9"></path>
-                                                <path d="M1.42 9a15.91 15.91 0 0 1 4.7-2.88"></path>
-                                                <path d="M8.53 16.11a6 6 0 0 1 6.95 0"></path>
-                                                <path d="M12 20h.01"></path>
-                                            </svg>
-                                        )}
-                                    </Card>
-                                </Col>
-                            ))}
-                            <Col xs={24} sm={12} md={8} lg={6} xl={6}>
-                                <Button
-                                    type="dashed"
-                                    className="btn-add-device"
-                                    onClick={showPopup}
+                <h2>Devices</h2>
+                <div className="device-msg">
+                    Please select a device from the options below, or if you don't have a
+                    device to choose from, kindly click the 'Add a Device' button to add a
+                    new one.
+                </div>
+                <div className="device-box">
+                    <Row gutter={[16, 16]} style={{padding: "20px"}}>
+                        {devices.map((device, index) => (
+                            <Col key={device.registeredUsername} xs={24} sm={12} md={8} lg={6} xl={6}>
+                                <Card
+                                    style={{cursor: "pointer", position: "relative"}}
+                                    className="device-card"
+                                    onClick={() => handleDeviceCardClick(device)}
                                 >
-                                    <svg
-                                        width="20"
-                                        height="20"
-                                        fill="none"
-                                        stroke="currentColor"
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                        strokeWidth="2"
-                                        viewBox="0 0 24 24"
-                                        xmlns="http://www.w3.org/2000/svg"
-                                    >
-                                        <path d="M12 2a10 10 0 1 0 0 20 10 10 0 1 0 0-20z"></path>
-                                        <path d="M12 8v8"></path>
-                                        <path d="M8 12h8"></path>
-                                    </svg>
-                                </Button>
+                                    <div className="device-name">{device.registeredUsername}</div>
+                                    <div className="device-id">ID: {device.deviceId}</div>
+                                    {/*<div className="device-status">Status: {device.status}</div>*/}
+                                    {device.connected ? (
+                                        <svg
+                                            width="20"
+                                            height="20"
+                                            fill="none"
+                                            stroke="#1db909"
+                                            strokeLinecap="round"
+                                            strokeLinejoin="round"
+                                            strokeWidth="2"
+                                            viewBox="0 0 24 24"
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            style={{
+                                                position: "absolute",
+                                                top: "10px",
+                                                right: "10px",
+                                            }}
+                                        >
+                                            <path d="M5 12.55a11 11 0 0 1 14.08 0"></path>
+                                            <path d="M1.42 9a16 16 0 0 1 21.16 0"></path>
+                                            <path d="M8.53 16.11a6 6 0 0 1 6.95 0"></path>
+                                            <path d="M12 20h.01"></path>
+                                        </svg>
+                                    ) : (
+                                        <svg
+                                            width="20"
+                                            height="20"
+                                            fill="none"
+                                            stroke="#d00606"
+                                            strokeLinecap="round"
+                                            strokeLinejoin="round"
+                                            strokeWidth="2"
+                                            viewBox="0 0 24 24"
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            style={{
+                                                position: "absolute",
+                                                top: "10px",
+                                                right: "10px",
+                                            }}
+                                        >
+                                            <path d="m1 1 22 22"></path>
+                                            <path d="M16.72 11.06A10.94 10.94 0 0 1 19 12.55"></path>
+                                            <path d="M5 12.55a10.94 10.94 0 0 1 5.17-2.39"></path>
+                                            <path d="M10.71 5.05A16 16 0 0 1 22.58 9"></path>
+                                            <path d="M1.42 9a15.91 15.91 0 0 1 4.7-2.88"></path>
+                                            <path d="M8.53 16.11a6 6 0 0 1 6.95 0"></path>
+                                            <path d="M12 20h.01"></path>
+                                        </svg>
+                                    )}
+                                </Card>
                             </Col>
-                        </Row>
-                    </div>
-                </>
-            )}
-
-        </div>
+                        ))}
+                        <Col xs={24} sm={12} md={8} lg={6} xl={6}>
+                            <Button
+                                type="dashed"
+                                className="btn-add-device"
+                                onClick={showPopup}
+                            >
+                                <svg
+                                    width="20"
+                                    height="20"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth="2"
+                                    viewBox="0 0 24 24"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                >
+                                    <path d="M12 2a10 10 0 1 0 0 20 10 10 0 1 0 0-20z"></path>
+                                    <path d="M12 8v8"></path>
+                                    <path d="M8 12h8"></path>
+                                </svg>
+                            </Button>
+                        </Col>
+                    </Row>
+                </div>
+            </div>
+        </>
     );
 };
 

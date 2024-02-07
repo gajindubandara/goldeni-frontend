@@ -4,6 +4,7 @@ import {Table, Avatar, Input, Space, Button} from "antd";
 import {avatarPlaceHolder, baseUrl} from '../../services/commonVariables';
 import axios from 'axios';
 import {SearchOutlined} from "@ant-design/icons";
+import LoadingSpinner from "../../components/LoadingSpinner";
 
 const Users: React.FC = () => {
     const [data, setData] = useState([]);
@@ -100,9 +101,10 @@ const Users: React.FC = () => {
 
     return (
         <AppLayout>
+            <LoadingSpinner loading={loading}/>
             <h1>Users</h1>
             <div className="section-break">
-                <Table dataSource={data} columns={columns} pagination={paginationConfig} loading={loading}/>
+                <Table dataSource={data} columns={columns} pagination={paginationConfig}/>
                 <p>Total Users: {data.length}</p>
             </div>
         </AppLayout>
