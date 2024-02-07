@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from "react";
-import {Card, Row, Col, Button, message, Spin} from "antd";
+import {Card, Row, Col, Button, message} from "antd";
 import axios from "axios";
 import {baseUrl} from "../services/commonVariables";
 import LoadingSpinner from "./LoadingSpinner";

@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useMemo} from 'react';
 import {Modal, Form, Input, Button, message} from 'antd';
 import axios from "axios";
 import {baseUrl} from "../services/commonVariables";
@@ -25,14 +25,14 @@ const PopupEditForm: React.FC<PopupFormProps> = ({visible, onClose, deviceData, 
     const idToken = localStorage.getItem("idToken");
     const [loading, setLoading] = useState(false);
 
-    const initialFormData: FormData = {
+    const initialFormData = useMemo(() => ({
         name: deviceData.registeredUsername,
         number: deviceData.emergencyContactNumbers[0],
         altNumber: deviceData.emergencyContactNumbers[1],
         address: deviceData.registeredAddress,
-    };
-    const [formData, setFormData] = useState<FormData>(initialFormData);
+    }), [deviceData]);
 
+    const [formData, setFormData] = useState(initialFormData);
 
     useEffect(() => {
         if (visible) {
@@ -40,7 +40,7 @@ const PopupEditForm: React.FC<PopupFormProps> = ({visible, onClose, deviceData, 
             setFormData(initialFormData);
             form.resetFields();
         }
-    }, [visible, form]);
+    }, [visible, form, initialFormData]);
 
     const handleFormSubmit = (values: any) => {
         setLoading(true);

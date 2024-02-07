@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, {useEffect, useMemo, useState} from "react";
 import {Card, Button, Col, Row, Dropdown, Menu, Popconfirm, Space, message} from "antd";
 import PopupEditForm from "./PopupEditForm";
 import ultrasonic from '../assets/ultrasonic-sensor.png';
@@ -33,17 +33,18 @@ const DeviceInfoSection: React.FC<DeviceInfoSectionProps> = ({device}) => {
     const idToken = localStorage.getItem("idToken");
     const [loading, setLoading] = useState(false);
     const [dataToDisplay, setDataToDisplay] = useState<any>();
-    const initialDisplayData: any = {
+
+    const initialDisplayData = useMemo(() => ({
         name: device.registeredUsername,
         number: device.emergencyContactNumbers[0],
         altNumber: device.emergencyContactNumbers[1],
         address: device.registeredAddress,
-    };
-
+    }), [device]);
 
     useEffect(() => {
         setDataToDisplay(initialDisplayData);
-    }, []);
+    }, [initialDisplayData]);
+
 
     const showPopup = () => {
         setPopupVisible(true);
