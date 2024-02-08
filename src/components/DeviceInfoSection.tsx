@@ -1,5 +1,5 @@
 import React, {useEffect, useMemo, useState} from "react";
-import {Card, Button, Col, Row, Dropdown, Menu, Popconfirm, Space, message} from "antd";
+import {Card, Button, Col, Row, Dropdown, Menu, Popconfirm, Space, message, Statistic} from "antd";
 import PopupEditForm from "./PopupEditForm";
 import ultrasonic from '../assets/ultrasonic-sensor.png';
 import temp from '../assets/temprature.png';
@@ -8,6 +8,8 @@ import {EllipsisOutlined} from "@ant-design/icons";
 import {baseUrl} from "../services/commonVariables";
 import axios from "axios";
 import LoadingSpinner from "./LoadingSpinner";
+import {MapContainer, Marker, Popup, TileLayer} from "react-leaflet";
+import MapComponent from "./MapComponent";
 
 const {Meta} = Card;
 
@@ -32,6 +34,8 @@ const DeviceInfoSection: React.FC<DeviceInfoSectionProps> = ({device}) => {
     const [isPopupVisible, setPopupVisible] = useState(false);
     const idToken = localStorage.getItem("idToken");
     const [loading, setLoading] = useState(false);
+    const [lat, setLat] = useState(7.2955);
+    const [long, setLong] = useState(80.6356);
     const [dataToDisplay, setDataToDisplay] = useState<any>();
 
     const initialDisplayData = useMemo(() => ({
@@ -146,143 +150,54 @@ const DeviceInfoSection: React.FC<DeviceInfoSectionProps> = ({device}) => {
                             </Col>
                         </Row>
                     </Card>
-
                     <Row gutter={16}>
-                        <Col xs={24} sm={12} md={8} lg={8} xl={8}>
-                            <Card style={{marginTop: 16, border: "1px solid #cfcfcf"}}>
-                                <Meta
-                                    avatar={
-                                        <div>
-                                            <svg
-                                                width="60"
-                                                height="60"
-                                                fill="none"
-                                                stroke="#1db909"
-                                                strokeLinecap="round"
-                                                strokeLinejoin="round"
-                                                strokeWidth="2"
-                                                viewBox="0 0 24 24"
-                                                xmlns="http://www.w3.org/2000/svg"
-                                            >
-                                                <path d="M5 12.55a11 11 0 0 1 14.08 0"></path>
-                                                <path d="M1.42 9a16 16 0 0 1 21.16 0"></path>
-                                                <path d="M8.53 16.11a6 6 0 0 1 6.95 0"></path>
-                                                <path d="M12 20h.01"></path>
-                                            </svg>
-                                        </div>
-                                    }
-                                    title={<div style={{fontSize: "20px"}}>Connected</div>}
-                                    description={
-                                        <div style={{fontWeight: "bolder", color: "black"}}>
-                                            System Connection
-                                        </div>
-                                    }
-                                />
-                            </Card>
-                        </Col>
-                        <Col xs={24} sm={12} md={8} lg={8} xl={8}>
-                            <Card style={{marginTop: 16, border: "1px solid #cfcfcf"}}>
-                                <Meta
-                                    avatar={
-                                        <div>
-                                            <img src={temp} alt="Icon" style={{width: "60px"}}/>
-                                        </div>
-                                    }
-                                    title={<div style={{fontSize: "20px"}}>36.00°</div>}
-                                    description={
-                                        <div style={{fontWeight: "bolder", color: "black"}}>
-                                            System Temperature
-                                        </div>
-                                    }
-                                />
-                            </Card>
-                        </Col>
-                        <Col xs={24} sm={12} md={8} lg={8} xl={8}>
-                            <Card style={{marginTop: 16, border: "1px solid #cfcfcf"}}>
-                                <Meta
-                                    avatar={
-                                        <div>
-                                            <img src={ir} alt="Icon" style={{width: "60px"}}/>
-                                        </div>
-                                    }
-                                    title={<div style={{fontSize: "20px"}}>ON</div>}
-                                    description={
-                                        <div style={{fontWeight: "bolder", color: "black"}}>
-                                            Infrared Sensor
-                                        </div>
-                                    }
-                                />
-                            </Card>
-                        </Col>
 
-                        <Col xs={24} sm={12} md={8} lg={8} xl={8}>
-                            <Card style={{marginTop: 16, border: "1px solid #cfcfcf"}}>
-                                <Meta
-                                    avatar={
-                                        <div>
-                                            <img
-                                                src={ultrasonic}
-                                                alt="Icon"
-                                                style={{width: "60px"}}
-                                            />
-                                        </div>
-                                    }
-                                    title={<div style={{fontSize: "20px"}}>90.00cm</div>}
-                                    description={
-                                        <div style={{fontWeight: "bolder", color: "black"}}>
-                                            Top Ultrasonic
-                                        </div>
-                                    }
-                                />
-                            </Card>
+                        <Col xs={24} sm={6} md={6} lg={6} xl={6} className="stat-col">
+
+                            <Col>
+                                <Card className="stats-card">
+                                    <Statistic title="Connection" value={"Connected"} valueStyle={{color: '#3f8600'}}/>
+                                </Card>
+                            </Col>
+                            <Col>
+                                <Card className="stats-card">
+                                    <Statistic title="Systme Temp" value={36.78} suffix="°" precision={2}/>
+                                </Card>
+                            </Col>
+                            <Col>
+                                <Card className="stats-card">
+                                    <Statistic title="IR Sensor" value={"On"} valueStyle={{color: '#3f8600'}}/>
+                                </Card>
+                            </Col>
                         </Col>
-                        <Col xs={24} sm={12} md={8} lg={8} xl={8}>
-                            <Card style={{marginTop: 16, border: "1px solid #cfcfcf"}}>
-                                <Meta
-                                    avatar={
-                                        <div>
-                                            <img
-                                                src={ultrasonic}
-                                                alt="Icon"
-                                                style={{width: "60px"}}
-                                            />
-                                        </div>
-                                    }
-                                    title={<div style={{fontSize: "20px"}}>90.00cm</div>}
-                                    description={
-                                        <div style={{fontWeight: "bolder", color: "black"}}>
-                                            Middle Ultrasonic
-                                        </div>
-                                    }
-                                />
-                            </Card>
+                        <Col xs={24} sm={6} md={6} lg={6} xl={6} className="stat-col">
+                            <Col>
+                                <Card className="stats-card">
+                                    <Statistic title="Top Ultra Sonic" value={80.34} suffix="cm" precision={2}/>
+                                </Card>
+                            </Col>
+                            <Col>
+                                <Card className="stats-card">
+                                    <Statistic title="Mid Ultra Sonic" value={45.56} suffix="cm" precision={2}/>
+                                </Card>
+                            </Col>
+                            <Col>
+                                <Card className="stats-card">
+                                    <Statistic title="Bottom Ultra Sonic" value={50.56} suffix="cm" precision={2}/>
+                                </Card>
+                            </Col>
                         </Col>
-                        <Col xs={24} sm={12} md={8} lg={8} xl={8}>
-                            <Card style={{marginTop: 16, border: "1px solid #cfcfcf"}}>
-                                <Meta
-                                    avatar={
-                                        <div>
-                                            <img
-                                                src={ultrasonic}
-                                                alt="Icon"
-                                                style={{width: "60px"}}
-                                            />
-                                        </div>
-                                    }
-                                    title={<div style={{fontSize: "20px"}}>90.00cm</div>}
-                                    description={
-                                        <div style={{fontWeight: "bolder", color: "black"}}>
-                                            Bottom Ultrasonic
-                                        </div>
-                                    }
-                                />
+                        <Col xs={24} sm={12} md={12} lg={12} xl={12}>
+                            <Card className="simulation-card">
+                                <div>For 3D simulation</div>
                             </Card>
                         </Col>
                     </Row>
 
-                    <Row gutter={16}>
+                    <div>
+                        <MapComponent lat={lat} long={long} username={device.registeredUsername}/>
+                    </div>
 
-                    </Row>
                 </Card>
                 <PopupEditForm
                     visible={isPopupVisible}

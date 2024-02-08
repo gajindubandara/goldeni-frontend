@@ -186,3 +186,23 @@ code {
   z-index: 9999; /* Ensure it overlays everything */
 }
 
+/*Map*/
+.map-container {
+  height: 400px;
+  margin: 60px auto;
+  border-radius: 8px;
+
+}
+
+/*User stats*/
+.stats-card{
+  margin-top: 15px;
+  /*marign:10px 0px 10px 10px;*/
+}
+
+.simulation-card{
+  margin-top:15px
+}
+.stat-col{
+  padding: 0px !important;
+}
