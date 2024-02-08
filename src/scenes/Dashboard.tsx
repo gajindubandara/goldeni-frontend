@@ -1,7 +1,7 @@
 import React, {useState, useEffect} from "react";
 import AppLayout from "../layout/AppLayout";
-import UserDashboard from "../components/UserDashboard";
-import AdminDashboard from "../components/AdminDashboard";
+import UserDashboard from "../components/dashboards/UserDashboard";
+import AdminDashboard from "../components/dashboards/AdminDashboard";
 import {decodeIdToken} from "../services/decodeService";
 
 const Dashboard: React.FC = () => {

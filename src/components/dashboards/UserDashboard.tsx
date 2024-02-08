@@ -1,7 +1,7 @@
 import React, {useState} from "react";
-import PopupEnrollForm from "./PopupEnrollForm";
-import DeviceListCard from "./DeviceListCard";
-import DeviceInfoCard from "./DeviceInfoCard";
+import PopupEnrollForm from "../popups/PopupEnrollForm";
+import DeviceListCard from "../cards/DeviceListCard";
+import DeviceInfoCard from "../cards/DeviceInfoCard";
 
 interface Device {
     id: string;
@@ -49,8 +49,6 @@ const UserDashboard: React.FC = () => {
 
     return (
         <div>
-            <h1>User Dashboard</h1>
-            <hr/>
             {showDeviceCard && (
                 <DeviceListCard
                     toggleCards={toggleCards}

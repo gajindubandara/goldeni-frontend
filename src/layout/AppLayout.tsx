@@ -68,11 +68,6 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                   </Menu.Item>
               )
           ))}
-          {/*{routes.map((route) => (*/}
-          {/*    <Menu.Item key={route.path}>*/}
-          {/*      <Link to={route.path}>{route.name}</Link>*/}
-          {/*    </Menu.Item>*/}
-          {/*))}*/}
           <Menu.Item key="/logout" onClick={handleLogout}>
             Logout
           </Menu.Item>
@@ -99,7 +94,6 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
           </div>
           <div>©2024, Golden i</div>
         </Footer>
-      {/* <Footer style={{ textAlign: 'center' }}>©2023, Golden i</Footer> */}
       </Layout>
     </Layout>
   );

@@ -1,8 +1,8 @@
 import React, {useEffect, useState} from 'react';
 import {Modal, Form, Input, Button, message} from 'antd';
 import axios from "axios";
-import {baseUrl} from "../services/commonVariables";
-import LoadingSpinner from "./LoadingSpinner";
+import {baseUrl} from "../../services/commonVariables";
+import LoadingSpinner from "../utils/LoadingSpinner";
 
 interface PopupFormProps {
     visible: boolean;

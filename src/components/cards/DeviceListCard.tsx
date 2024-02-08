@@ -1,8 +1,8 @@
 import React, {useState, useEffect} from "react";
 import {Card, Row, Col, Button, message} from "antd";
 import axios from "axios";
-import {baseUrl} from "../services/commonVariables";
-import LoadingSpinner from "./LoadingSpinner";
+import {baseUrl} from "../../services/commonVariables";
+import LoadingSpinner from "../utils/LoadingSpinner";
 
 interface Device {
     id: string;
@@ -58,7 +58,7 @@ const DeviceListCard: React.FC<DeviceListCardProps> = ({toggleCards, showPopup, 
     return (
         <>
             <LoadingSpinner loading={loading}/>
-            <div className="section-break">
+            <div>
 
                 <h2>Devices</h2>
                 <div className="device-msg">

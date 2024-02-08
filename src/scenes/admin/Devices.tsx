@@ -4,10 +4,10 @@ import {Button, Input, Table, Tag, Space, Popconfirm, Dropdown, Menu, message, R
 import {SearchOutlined} from '@ant-design/icons';
 import {baseUrl} from '../../services/commonVariables';
 import {EllipsisOutlined} from '@ant-design/icons';
-import PopupEnrollForm from "../../components/PopupEnrollForm";
+import PopupEnrollForm from "../../components/popups/PopupEnrollForm";
 import axios from "axios";
-import PopupAddDeviceForm from "../../components/PopupAddDeviceForm";
-import LoadingSpinner from "../../components/LoadingSpinner";
+import PopupAddDeviceForm from "../../components/popups/PopupAddDeviceForm";
+import LoadingSpinner from "../../components/utils/LoadingSpinner";
 
 interface Device {
     deviceId: string;

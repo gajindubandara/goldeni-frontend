@@ -1,6 +1,6 @@
 import React from "react";
 import {Row, Col, Button} from "antd";
-import DeviceInfoSection from "./DeviceInfoSection";
+import DeviceInfoSection from "../sections/DeviceInfoSection";
 
 interface DeviceInfoCardProps {
     toggleCards: () => void;
@@ -22,7 +22,7 @@ interface Device {
 
 const DeviceInfoCard: React.FC<DeviceInfoCardProps> = ({toggleCards, device}) => {
     return (
-        <div className="section-break">
+        <div>
             <Row gutter={16}>
                 <Col xs={24} sm={12} md={12} lg={12} xl={12}>
                     <h2>Device Information</h2>

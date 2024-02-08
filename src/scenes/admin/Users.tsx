@@ -4,7 +4,7 @@ import {Table, Avatar, Input, Space, Button} from "antd";
 import {avatarPlaceHolder, baseUrl} from '../../services/commonVariables';
 import axios from 'axios';
 import {SearchOutlined} from "@ant-design/icons";
-import LoadingSpinner from "../../components/LoadingSpinner";
+import LoadingSpinner from "../../components/utils/LoadingSpinner";
 
 const Users: React.FC = () => {
     const [data, setData] = useState([]);

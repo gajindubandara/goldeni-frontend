@@ -1,9 +1,9 @@
 import React, {useState, useEffect} from 'react';
 import {Modal, Form, Input, Button, message, Steps, Card, Row, Col} from 'antd';
-import {baseUrl} from "../services/commonVariables";
+import {baseUrl} from "../../services/commonVariables";
 import axios from "axios";
-import {decodeIdToken} from "../services/decodeService";
-import LoadingSpinner from "./LoadingSpinner";
+import {decodeIdToken} from "../../services/decodeService";
+import LoadingSpinner from "../utils/LoadingSpinner";
 
 
 const {Step} = Steps;
