@@ -1,17 +1,13 @@
 import React, {useEffect, useMemo, useState} from "react";
 import {Card, Button, Col, Row, Dropdown, Menu, Popconfirm, Space, message, Statistic} from "antd";
 import PopupEditForm from "./PopupEditForm";
-import ultrasonic from '../assets/ultrasonic-sensor.png';
-import temp from '../assets/temprature.png';
-import ir from '../assets/infrared-sensor.png';
 import {EllipsisOutlined} from "@ant-design/icons";
 import {baseUrl} from "../services/commonVariables";
 import axios from "axios";
 import LoadingSpinner from "./LoadingSpinner";
-import {MapContainer, Marker, Popup, TileLayer} from "react-leaflet";
 import MapComponent from "./MapComponent";
+import Simulation from "./Simulation";
 
-const {Meta} = Card;
 
 interface DeviceInfoSectionProps {
     device: Device;
@@ -34,8 +30,10 @@ const DeviceInfoSection: React.FC<DeviceInfoSectionProps> = ({device}) => {
     const [isPopupVisible, setPopupVisible] = useState(false);
     const idToken = localStorage.getItem("idToken");
     const [loading, setLoading] = useState(false);
-    const [lat, setLat] = useState(7.2955);
-    const [long, setLong] = useState(80.6356);
+    // const [lat, setLat] = useState(7.2955);
+    // const [long, setLong] = useState(80.6356);
+    const lat =7.2955;
+    const long =80.6356;
     const [dataToDisplay, setDataToDisplay] = useState<any>();
 
     const initialDisplayData = useMemo(() => ({
@@ -97,6 +95,9 @@ const DeviceInfoSection: React.FC<DeviceInfoSectionProps> = ({device}) => {
         <>
             <LoadingSpinner loading={loading}/>
             <div>
+                {/*<Simulation gyroscopeData={gyroscopeData} />*/}
+                {/*<Simulation />*/}
+
                 <Card style={{background: "#f5f5f5"}}>
                     <Card style={{padding: "0px 24px !important"}}>
                         <Row gutter={16}>
@@ -156,12 +157,12 @@ const DeviceInfoSection: React.FC<DeviceInfoSectionProps> = ({device}) => {
 
                             <Col>
                                 <Card className="stats-card">
-                                    <Statistic title="Connection" value={"Connected"} valueStyle={{color: '#3f8600'}}/>
+                                    <Statistic title="Connection Status" value={"Connected"} valueStyle={{color: '#3f8600'}}/>
                                 </Card>
                             </Col>
                             <Col>
                                 <Card className="stats-card">
-                                    <Statistic title="Systme Temp" value={36.78} suffix="°" precision={2}/>
+                                    <Statistic title="System Temprature" value={36.78} suffix="°" precision={2}/>
                                 </Card>
                             </Col>
                             <Col>
@@ -189,7 +190,7 @@ const DeviceInfoSection: React.FC<DeviceInfoSectionProps> = ({device}) => {
                         </Col>
                         <Col xs={24} sm={12} md={12} lg={12} xl={12}>
                             <Card className="simulation-card">
-                                <div>For 3D simulation</div>
+                                <Simulation/>
                             </Card>
                         </Col>
                     </Row>

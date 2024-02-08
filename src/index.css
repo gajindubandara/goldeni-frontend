@@ -206,3 +206,66 @@ code {
 .stat-col{
   padding: 0px !important;
 }
+
+
+/*3d*/
+.sim-container {
+  perspective: 300px; /* Decreased perspective */
+  width: 150px; /* Decreased width */
+  height: 150px; /* Decreased height */
+  margin: 50px auto; /* Adjusted margin */
+}
+
+.sim-box {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+  transition: transform 0.5s ease;
+}
+
+.sim-face {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border: 2px solid black;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 14px;
+}
+
+.sim-front {
+  background-color: rgba(0, 153, 255, 0.801); /* Red color */
+  transform: translateZ(75px); /* Adjusted translateZ */
+}
+
+.sim-back {
+  background-color: rgba(0, 153, 255, 0.801);/* Green color */
+  transform: rotateY(180deg) translateZ(75px); /* Adjusted translateZ */
+}
+
+.sim-top {
+  background-color: rgba(0, 0, 255, 0.5); /* Blue color */
+  transform: rotateX(90deg) translateZ(75px); /* Adjusted translateZ */
+}
+
+.sim-bottom {
+  background-color: rgba(255, 0, 0, 0.5); /* Yellow color */
+  transform: rotateX(-90deg) translateZ(75px); /* Adjusted translateZ */
+}
+
+.sim-right {
+  background-color: rgba(0, 153, 255, 0.801); /* Magenta color */
+  transform: rotateY(90deg) translateZ(75px); /* Adjusted translateZ */
+}
+
+.sim-left {
+  background-color: rgba(0, 153, 255, 0.801); /* Cyan color */
+  transform: rotateY(-90deg) translateZ(75px); /* Adjusted translateZ */
+}
+
+.sim-gyro-data {
+  margin-top: 76px;
+  text-align: center;
+}
