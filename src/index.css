@@ -189,7 +189,7 @@ code {
 /*Map*/
 .map-container {
   height: 400px;
-  margin: 60px auto;
+  margin-top: 15px;
   border-radius: 8px;
 
 }
