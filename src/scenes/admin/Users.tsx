@@ -104,8 +104,8 @@ const Users: React.FC = () => {
             <LoadingSpinner loading={loading}/>
             <h1>Users</h1>
             <div className="section-break">
+                <span>Total Users: {data.length}</span>
                 <Table dataSource={data} columns={columns} pagination={paginationConfig}/>
-                <p>Total Users: {data.length}</p>
             </div>
         </AppLayout>
     );

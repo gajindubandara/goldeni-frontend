@@ -3,6 +3,7 @@ import AppLayout from "../layout/AppLayout";
 import UserDashboard from "../components/dashboards/UserDashboard";
 import AdminDashboard from "../components/dashboards/AdminDashboard";
 import {decodeIdToken} from "../services/decodeService";
+import LoadingSpinner from "../components/utils/LoadingSpinner";
 
 const Dashboard: React.FC = () => {
 
@@ -12,20 +13,26 @@ const Dashboard: React.FC = () => {
         picture: '',
         isAdmin: false // Default to non-admin
     });
+    const [loading, setLoading] = useState(true)
 
     useEffect(() => {
         const userData = decodeIdToken();
         if (userData) {
             setUser(userData);
+            setLoading(false);
         }
     }, []);
 
     return (
         <AppLayout>
-            {userData.isAdmin ? (
-                <AdminDashboard/>
+            {loading ? (
+                <LoadingSpinner loading={loading}/>
             ) : (
-                <UserDashboard/>
+                userData.isAdmin ? (
+                    <AdminDashboard/>
+                ) : (
+                    <UserDashboard/>
+                )
             )}
         </AppLayout>
     );

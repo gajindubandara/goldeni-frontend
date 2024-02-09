@@ -178,7 +178,7 @@ const Devices: React.FC = () => {
                                                 okText="Yes"
                                                 cancelText="No"
                                             >
-                                                <Button type="link" danger>Disenroll</Button>
+                                                <Button type="link" danger>Dis-enroll</Button>
                                             </Popconfirm>
                                         </Menu.Item>
                                     )}
@@ -302,13 +302,13 @@ const Devices: React.FC = () => {
                 </Button>
             </Row>
             <div className="section-break">
+                <span>Total Devices: {data.length}</span>
                 <Table
                     dataSource={data}
                     columns={columns}
                     pagination={paginationConfig}
                     rowKey={(record) => record.deviceId}
                 />
-                <p>Total Devices: {data.length}</p>
 
                 {showEnrollPopup && (
                     <PopupEnrollForm

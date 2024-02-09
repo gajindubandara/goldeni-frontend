@@ -16,7 +16,7 @@ const Login: React.FC = () => {
                 Your browser does not support the video tag.
             </video>
             <Button ghost className="sign-in-button" onClick={() => login()}>
-                Sign in with Google
+                Sign in
             </Button>
 
             <div className="home-content-container">

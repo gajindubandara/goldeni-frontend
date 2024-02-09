@@ -14,6 +14,12 @@ interface DeviceInfoSectionProps {
     device: Device;
 }
 
+interface MarkerInfo {
+    lat: number;
+    long: number;
+    username: string;
+}
+
 interface Device {
     id: string;
     deviceId: string;
@@ -46,11 +52,13 @@ const DeviceInfoSection: React.FC<DeviceInfoSectionProps> = ({device}) => {
     const idToken = localStorage.getItem("idToken");
     const [loading, setLoading] = useState(false);
     const [connection, setConnection] = useState(false);
-    const [mapCenter, setMapcenter] = useState({
+    const [center, setCenter] = useState({
         lat: 0,
-        long: 0
-    });
-    const [mapCenterUpdated, isMapCenterUpdated] = useState(false);
+        long: 0,
+        zoom: 16,
+    })
+
+    const [markers, setMakers] = useState<MarkerInfo[]>([]);
     const initialSocketData = {
         ut: 0.00,
         um: 0.00,
@@ -82,7 +90,6 @@ const DeviceInfoSection: React.FC<DeviceInfoSectionProps> = ({device}) => {
 
             socket.onopen = () => {
                 console.log('WebSocket connection established.');
-                setConnection(true);
             };
 
             socket.onmessage = (event) => {
@@ -90,12 +97,20 @@ const DeviceInfoSection: React.FC<DeviceInfoSectionProps> = ({device}) => {
                 try {
                     const data: socket = JSON.parse(event.data);
                     if (validateSocketData(data)) {
-                        setSocketData(data);
-                        setMapcenter({
+                        setSocketData(data)
+                        const center = {
                             lat: data.lat,
-                            long: data.long
-                        })
-                        isMapCenterUpdated(true);
+                            long: data.long,
+                            zoom: 16
+                        }
+                        const marker = [{
+                            lat: data.lat,
+                            long: data.long,
+                            username: device.registeredUsername
+                        }]
+                        setCenter(center);
+                        setMakers(marker)
+                        setConnection(true);
                     } else {
                         console.log('Invalid data format:', data);
                     }
@@ -117,7 +132,7 @@ const DeviceInfoSection: React.FC<DeviceInfoSectionProps> = ({device}) => {
         return () => {
             socket.close();
         };
-    }, [initialDisplayData,device.deviceId]);
+    }, [initialDisplayData, device.deviceId,device.registeredUsername]);
 
 
     const validateSocketData = (data: any): data is socket => {
@@ -218,7 +233,7 @@ const DeviceInfoSection: React.FC<DeviceInfoSectionProps> = ({device}) => {
                                                         okText="Yes"
                                                         cancelText="No"
                                                     >
-                                                        <Button type="link" danger>Disenroll Device</Button>
+                                                        <Button type="link" danger>Dis-enroll Device</Button>
                                                     </Popconfirm>
                                                 </Menu.Item>
                                             </Menu>
@@ -286,16 +301,19 @@ const DeviceInfoSection: React.FC<DeviceInfoSectionProps> = ({device}) => {
                         </Col>
                     </Row>
 
-                    {mapCenterUpdated ? (
-                        <div>
-                            <MapComponent classname={"map-container"} lat={socketData.lat} long={socketData.long} username={device.registeredUsername} center={mapCenter} id={"ws"}/>
-                        </div>
-                    ) : (
-                        <div>
-                            <MapComponent classname={"map-container"} lat={socketData.lat} long={socketData.long}
-                                          username={device.registeredUsername} center={mapCenter} id={"api"}/>
-                        </div>
-                    )}
+                    {connection ? (
+                            <div>
+                                <MapComponent center={center} markers={markers}
+                                              classname="map-container"/>{/*<MapComponent classname={"map-container"} username={device.registeredUsername} location={locationData}/>*/}
+                            </div>
+                        ) :
+                        (
+                            <div>
+                                {/*<MapComponent classname={"map-container"} lat={socketData.lat} long={socketData.long}*/}
+                                {/*              username={device.registeredUsername} center={mapCenter} id={"api"}/>*/}
+                            </div>
+                        )
+                    }
 
                 </Card>
                 <PopupEditForm
