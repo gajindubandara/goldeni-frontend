@@ -1,5 +1,5 @@
 import React, {useEffect, useMemo, useState} from "react";
-import {Card, Button, Col, Row, Dropdown, Menu, Popconfirm, Space, message, Statistic} from "antd";
+import {Card, Button, Col, Row, Dropdown, Menu, Popconfirm, Space, message, Statistic, Empty} from "antd";
 import PopupEditForm from "../popups/PopupEditForm";
 import {EllipsisOutlined} from "@ant-design/icons";
 import {baseUrl} from "../../services/commonVariables";
@@ -8,6 +8,7 @@ import LoadingSpinner from "../utils/LoadingSpinner";
 import MapComponent from "../maps/MapComponent";
 import Simulation from "../simulation/Simulation";
 import {socketUrl} from "../../services/commonVariables";
+import map from "../../assets/map.png"
 
 
 interface DeviceInfoSectionProps {
@@ -132,7 +133,7 @@ const DeviceInfoSection: React.FC<DeviceInfoSectionProps> = ({device}) => {
         return () => {
             socket.close();
         };
-    }, [initialDisplayData, device.deviceId,device.registeredUsername]);
+    }, [initialDisplayData, device.deviceId, device.registeredUsername]);
 
 
     const validateSocketData = (data: any): data is socket => {
@@ -309,8 +310,21 @@ const DeviceInfoSection: React.FC<DeviceInfoSectionProps> = ({device}) => {
                         ) :
                         (
                             <div>
-                                {/*<MapComponent classname={"map-container"} lat={socketData.lat} long={socketData.long}*/}
-                                {/*              username={device.registeredUsername} center={mapCenter} id={"api"}/>*/}
+                                <div className="map-container map-placeholder">
+                                    <div>
+                                    <Empty
+                                        image={map}
+                                        imageStyle={{
+                                            height: 60,
+                                        }}
+
+                                        description={
+                                            <span>Unable to load the map...</span>
+                                        }
+                                    >
+                                    </Empty>
+                                    </div>
+                                </div>
                             </div>
                         )
                     }

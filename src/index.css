@@ -199,6 +199,13 @@ code {
   border-radius: 8px;
 }
 
+.map-placeholder{
+  background: white;
+  padding-top: 153px;
+  padding-bottom: 153px;
+  border: 1px solid #e1e1e1;
+}
+
 /*User stats*/
 .stats-card{
   margin-top: 15px;
