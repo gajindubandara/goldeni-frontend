@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import {Modal, Form, Input, Button, message, Steps, Card, Row, Col} from 'antd';
+import {Modal, Form, Input, Button, message, Steps, Card, Row, Col, Checkbox} from 'antd';
 import {decodeIdToken} from "../../services/decodeService";
 import LoadingSpinner from "../utils/LoadingSpinner";
 import {enrollDevice} from "../../util/common-api-services";
@@ -41,6 +41,7 @@ const PopupEnrollForm: React.FC<PopupFormProps> = ({visible, onClose, onSuccess,
     const [formData, setFormData] = useState<FormData>(initialFormData);
     const idToken = localStorage.getItem("idToken");
     const [loading, setLoading] = useState(false)
+    const [agreed, setAgreed] = useState(false);
     const [userData, setUser] = useState({
         email: '',
         name: '',
@@ -64,6 +65,110 @@ const PopupEnrollForm: React.FC<PopupFormProps> = ({visible, onClose, onSuccess,
     }, [visible, form, data.deviceId, data.deviceSecret, isAdmin]);
 
     const steps = [
+        {
+            title: 'User Agreement',
+            content: (
+                <Form
+                    form={form}
+                    onFinish={(values) => {
+                        setFormData({...formData, ...values});
+                        setCurrentStep(currentStep + 1);
+                    }}
+                >
+                    <Form.Item>
+                        <Card title="Terms and Conditions"
+                              style={{width: '100%', maxHeight: '300px', overflowY: 'auto'}}>
+                            <div style={{textAlign: 'justify'}}>
+                                <p>
+                                    <strong>1. Data Ownership and Usage:</strong><br/> By using the Smart Walking Stick
+                                    for Blind - Golden I ("the
+                                    device"), you acknowledge and agree that the sensor data collected by the device is
+                                    the
+                                    property of organization. Organization reserves the right to
+                                    collect, store, and utilize the sensor data obtained from the device for research,
+                                    analysis, and improvement purposes related to assistive technology for the visually
+                                    impaired. The sensor data may include but is not limited to environmental readings,
+                                    user
+                                    location information, and device performance metrics.
+                                </p>
+                                <p>
+                                    <strong>2. Confidentiality:</strong><br/> You agree to maintain the confidentiality
+                                    of any sensitive
+                                    information or data obtained through the use of the device. This includes but is not
+                                    limited to personal information, location data, and device performance metrics.
+                                </p>
+                                <p>
+                                    <strong> 3. Accountability:</strong><br/> Organization shall not be held
+                                    liable for any misuse or
+                                    misinterpretation of the sensor data collected by the device. Users are solely
+                                    responsible for their actions and interactions while using the device.
+                                </p>
+                                <p>
+                                    <strong> 4. Data Security:</strong><br/> Organization is committed to
+                                    maintaining the security and
+                                    integrity of the sensor data collected by the device. Measures will be implemented
+                                    to
+                                    safeguard data against unauthorized access, disclosure, alteration, or destruction.
+                                </p>
+                                <p>
+                                    <strong> 5. User Responsibilities:</strong><br/> Users of the device are responsible
+                                    for its proper use and
+                                    maintenance. Any misuse, tampering, or modification of the device that may
+                                    compromise
+                                    its functionality or data integrity is strictly prohibited.
+                                </p>
+                                <p>
+                                    <strong> 6. Device Limitations: </strong><br/>While the device is designed to assist
+                                    visually impaired
+                                    individuals in navigation and safety, it may not guarantee complete protection
+                                    against
+                                    all hazards or obstacles. Users should exercise caution and sound judgment while
+                                    using
+                                    the device.
+                                </p>
+                                <p>
+                                    <strong>7. Software Updates:</strong><br/> Organization reserves the
+                                    right to release periodic
+                                    software updates and patches for the device to enhance performance, address security
+                                    vulnerabilities, and introduce new features. Users are encouraged to install updates
+                                    promptly to ensure optimal functionality.
+                                </p>
+                                <p>
+                                    <strong>8. User Consent:</strong><br/> By using the device, you consent to the
+                                    collection, processing, and
+                                    storage of sensor data as outlined in these terms and conditions. You also
+                                    acknowledge
+                                    that your use of the device is subject to compliance with applicable laws and
+                                    regulations governing data privacy and protection.
+                                </p>
+                                <p>
+                                    <strong>9. Modifications to Terms:</strong><br/> Organization reserves
+                                    the right to modify or
+                                    amend these terms and conditions at any time without prior notice. It is the user's
+                                    responsibility to review and understand the updated terms before continuing to use
+                                    the
+                                    device.
+                                </p>
+                                <p>
+                                    <strong>10. Contact Information:</strong><br/> For inquiries, feedback, or
+                                    assistance regarding the terms and
+                                    conditions or the use of the device, please contact the organization.
+                                </p>
+                            </div>
+
+                        </Card>
+                        <Checkbox checked={agreed} onChange={(e) => setAgreed(e.target.checked)}>
+                            I agree to the terms and conditions
+                        </Checkbox>
+                    </Form.Item>
+                    {currentStep === 0 && (
+                        <Button type="primary" htmlType="submit" disabled={!agreed}>
+                            Next
+                        </Button>
+                    )}
+                </Form>
+            ),
+        },
         {
             title: 'Personal Information',
             content: (
@@ -153,7 +258,12 @@ const PopupEnrollForm: React.FC<PopupFormProps> = ({visible, onClose, onSuccess,
                     >
                         <Input/>
                     </Form.Item>
-                    {currentStep === 0 && (
+                    {currentStep > 0 && (
+                        <Button style={{marginRight: 8}} onClick={() => setCurrentStep(currentStep - 1)}>
+                            Previous
+                        </Button>
+                    )}
+                    {currentStep === 1 && (
                         <Button type="primary" htmlType="submit">
                             Next
                         </Button>
@@ -200,7 +310,7 @@ const PopupEnrollForm: React.FC<PopupFormProps> = ({visible, onClose, onSuccess,
                             Previous
                         </Button>
                     )}
-                    {currentStep === 1 && (
+                    {currentStep === 2 && (
                         <Button type="primary" htmlType="submit">
                             Next
                         </Button>
@@ -256,7 +366,7 @@ const PopupEnrollForm: React.FC<PopupFormProps> = ({visible, onClose, onSuccess,
                     window.location.reload();
                 }, 500);
             }
-        } catch (error:any) {
+        } catch (error: any) {
             if (error.response && error.response.status === 409) {
                 console.error('Device already exists:', error.response.data);
                 message.error(error.response.data);
@@ -269,7 +379,6 @@ const PopupEnrollForm: React.FC<PopupFormProps> = ({visible, onClose, onSuccess,
             setLoading(false);
         }
     };
-
 
 
     return (
