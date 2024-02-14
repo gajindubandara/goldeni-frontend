@@ -372,7 +372,7 @@ const PopupEnrollForm: React.FC<PopupFormProps> = ({visible, onClose, onSuccess,
                 message.error(error.response.data);
             } else {
                 console.error('Error adding device:', error);
-                message.error('Failed to add device');
+                message.error(error.response.data);
             }
             onClose();
         } finally {
