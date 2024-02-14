@@ -1,9 +1,8 @@
 import React, {useState, useEffect} from 'react';
 import {Modal, Form, Input, Button, message, Steps, Card, Row, Col} from 'antd';
-import {baseUrl} from "../../services/commonVariables";
-import axios from "axios";
 import {decodeIdToken} from "../../services/decodeService";
 import LoadingSpinner from "../utils/LoadingSpinner";
+import {enrollDevice} from "../../util/common-api-services";
 
 
 const {Step} = Steps;
@@ -245,66 +244,32 @@ const PopupEnrollForm: React.FC<PopupFormProps> = ({visible, onClose, onSuccess,
         },
     ];
 
-    const handleFormSubmit = () => {
+    const handleFormSubmit = async () => {
         setLoading(true);
-        let email;
-        if (userData.isAdmin) {
-            email = formData.email;
-        } else {
-            email = userData.email;
+        try {
+            const response = await enrollDevice(idToken!, userData, formData, onSuccess);
+            console.log('Device enrolled successfully:', response);
+            message.success('Device enrolled successfully');
+            onClose();
+            if (!userData.isAdmin) {
+                setTimeout(() => {
+                    window.location.reload();
+                }, 500);
+            }
+        } catch (error:any) {
+            if (error.response && error.response.status === 409) {
+                console.error('Device already exists:', error.response.data);
+                message.error(error.response.data);
+            } else {
+                console.error('Error adding device:', error);
+                message.error('Failed to add device');
+            }
+            onClose();
+        } finally {
+            setLoading(false);
         }
-
-        const requestBody = {
-            deviceId: formData.deviceId,
-            deviceSecret: formData.deviceSecret,
-            registeredEmail: email,
-            registeredUsername: formData.name,
-            registeredAddress: formData.address,
-            emergencyContactNumbers: [formData.num.toString(), formData.altNum.toString()],
-        };
-
-        console.log(requestBody)
-
-        const config = {
-            method: 'put',
-            url: `${baseUrl}/devices/device/enroll`,
-            headers: {
-                'Authorization': `Bearer ${idToken}`
-            },
-            data: requestBody
-        };
-
-        axios.request(config)
-            .then((response) => {
-                // Handle successful response
-                console.log('Device enrolled successfully:', response.data);
-                message.success('Device enrolled successfully');
-                onSuccess();
-                onClose();
-                if (!userData.isAdmin) {
-                    setTimeout(() => {
-                        window.location.reload();
-                    }, 500);
-                }
-            })
-            .catch((error) => {
-                // Handle error
-                if (error.response && error.response.status === 409) {
-                    // If the status code is 409, handle the conflict
-                    console.error('Device already exists:', error.response.data);
-                    message.error(error.response.data);
-                    // Handle the conflict response data as needed
-                } else {
-                    // For other errors, log and display a general error message
-                    console.error('Error adding device:', error);
-                    message.error('Failed to add device');
-                }
-                onClose();
-            })
-            .finally(() => {
-                setLoading(false);
-            });
     };
+
 
 
     return (

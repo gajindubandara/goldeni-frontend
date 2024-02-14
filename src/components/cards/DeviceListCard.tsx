@@ -1,8 +1,7 @@
-import React, {useState, useEffect} from "react";
+import React, {useState, useEffect, useCallback} from "react";
 import {Card, Row, Col, Button, message} from "antd";
-import axios from "axios";
-import {baseUrl} from "../../services/commonVariables";
 import LoadingSpinner from "../utils/LoadingSpinner";
+import {fetchMyDevices} from "../../util/user-api-services";
 
 interface Device {
     id: string;
@@ -29,26 +28,28 @@ const DeviceListCard: React.FC<DeviceListCardProps> = ({toggleCards, showPopup, 
     const [loading, setLoading] = useState(true);
 
 
-    useEffect(() => {
-        fetchData(idToken)
-            .then(response => {
-                setDevices(response.data);
+    const fetchData = useCallback(async () => {
+        if (idToken) {
+            try {
+                const deviceResponse = await fetchMyDevices(idToken);
+                setDevices(deviceResponse.data);
                 setLoading(false);
-            })
-            .catch(error => {
-                console.error("Error fetching data:", error);
+            } catch (error) {
+                console.error("Error fetching device data:", error);
                 setLoading(false);
                 message.error('Failed to fetch devices');
-            });
+            }
+        }
     }, [idToken]);
 
-    const fetchData = (token: any) => {
-        return axios.get(`${baseUrl}/devices`, {
-            headers: {
-                Authorization: `Bearer ${token}`
-            }
-        });
-    };
+    useEffect(() => {
+        if (idToken) {
+            fetchData();
+        } else {
+            console.error("idToken is null or undefined");
+        }
+    }, [idToken,fetchData]);
+
 
     const handleDeviceCardClick = (device: Device) => {
         onSelectDevice(device);

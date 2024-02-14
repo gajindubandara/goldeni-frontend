@@ -1,8 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {Modal, Form, Input, Button, message} from 'antd';
-import axios from "axios";
-import {baseUrl} from "../../services/commonVariables";
 import LoadingSpinner from "../utils/LoadingSpinner";
+import {addDevice} from "../../util/admin-api-services";
 
 interface PopupFormProps {
     visible: boolean;
@@ -22,53 +21,26 @@ const PopupAddDeviceForm: React.FC<PopupFormProps> = ({visible, onClose, onSucce
         }
     }, [visible, form]);
 
-    const handleFormSubmit = (values: any) => {
+
+    const handleFormSubmit = async (values: any) => {
         setLoading(true);
-        const requestBody = {
-            deviceId: values.deviceId,
-            deviceSecret: values.deviceSecret,
-            registeredEmail: '',
-            registeredUsername: '',
-            registeredAddress: '',
-            macAddress: values.macAddress,
-            isConnected: false,
-            emergencyContactNumbers: [],
-            status: 'NEW'
-        };
-
-        axios.post(`${baseUrl}/admin/devices/add`, requestBody, {
-            headers: {
-                Authorization: `Bearer ${idToken}`
+        try {
+            const response = await addDevice(idToken!, values, onSuccess);
+            console.log('Device added successfully:', response);
+            message.success('Device added successfully');
+            onClose();
+        } catch (error:any) {
+            if (error.response && error.response.status === 409) {
+                console.error('Device already exists:', error.response.data);
+                message.error(error.response.data);
+            } else {
+                console.error('Error adding device:', error);
+                message.error('Failed to add device');
             }
-        })
-            .then(response => {
-                // Handle successful response
-                console.log('Device added successfully:', response.data);
-                message.success('Device added successfully')
-
-                onSuccess();
-
-                // Close the modal or perform other actions
-                onClose();
-            })
-            .catch(error => {
-                // Handle error
-                if (error.response && error.response.status === 409) {
-                    // If the status code is 409, handle the conflict
-                    console.error('Device already exists:', error.response.data);
-                    message.error(error.response.data);
-                    // Handle the conflict response data as needed
-                } else {
-                    // For other errors, log and display a general error message
-                    console.error('Error adding device:', error);
-                    message.error('Failed to add device');
-                }
-                // Close the modal or perform other actions
-                onClose();
-            })
-            .finally(() => {
-                setLoading(false);
-            });
+            onClose();
+        } finally {
+            setLoading(false);
+        }
     };
 
     return (

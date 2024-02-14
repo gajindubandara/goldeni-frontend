@@ -1,13 +1,13 @@
-import React, {useEffect, useState} from "react";
+import React, {useCallback, useEffect, useState} from "react";
 import AppLayout from "../../layout/AppLayout";
 import {Button, Input, Table, Tag, Space, Popconfirm, Dropdown, Menu, message, Row} from "antd";
 import {SearchOutlined} from '@ant-design/icons';
-import {baseUrl} from '../../services/commonVariables';
 import {EllipsisOutlined} from '@ant-design/icons';
 import PopupEnrollForm from "../../components/popups/PopupEnrollForm";
-import axios from "axios";
 import PopupAddDeviceForm from "../../components/popups/PopupAddDeviceForm";
 import LoadingSpinner from "../../components/utils/LoadingSpinner";
+import {deleteDevice, fetchDevices} from "../../util/admin-api-services";
+import {disenrollDevice} from "../../util/common-api-services";
 
 interface Device {
     deviceId: string;
@@ -28,25 +28,27 @@ const Devices: React.FC = () => {
     const [showAddDevicePopup, setShowAddDevicePopup] = useState(false);
     let isAdmin = true;
 
-    useEffect(() => {
-        fetchData(idToken)
-            .then(response => {
-                setData(response.data);
+    const fetchData = useCallback(async () => {
+        if (idToken) {
+            try {
+                const deviceResponse = await fetchDevices(idToken);
+                setData(deviceResponse.data);
                 setLoading(false);
-            })
-            .catch(error => {
-                console.error("Error fetching data:", error);
+            } catch (error) {
+                console.error("Error fetching device data:", error);
                 setLoading(false);
-            });
+                message.error('Failed to fetch devices');
+            }
+        }
     }, [idToken]);
 
-    const fetchData = (token: any) => {
-        return axios.get(`${baseUrl}/admin/devices`, {
-            headers: {
-                Authorization: `Bearer ${token}`
-            }
-        });
-    };
+    useEffect(() => {
+        if (idToken) {
+            fetchData();
+        } else {
+            console.error("idToken is null or undefined");
+        }
+    }, [idToken,fetchData]);
 
 
     const handleSearch = (selectedKeys: React.Key[], confirm: () => void, dataIndex: string) => {
@@ -104,11 +106,11 @@ const Devices: React.FC = () => {
             render: (registeredEmail: string) => (registeredEmail ? registeredEmail : '-'),
         },
         {
-            title: 'Emergency Contact Numbers',
+            title: 'Contact Numbers',
             dataIndex: 'emergencyContactNumbers',
             key: 'emergencyContactNumbers',
-            render: (emergencyContactNumbers: string[]) => (
-                <span>{emergencyContactNumbers.join(', ')}</span>
+            render: (emergencyContactNumbers: string[] | undefined) => (
+                <span>{emergencyContactNumbers && emergencyContactNumbers.length > 0 ? emergencyContactNumbers.join(', ') : '-'}</span>
             ),
         },
         {
@@ -200,28 +202,18 @@ const Devices: React.FC = () => {
         pageSize: 5, // Display 5 items per page
     };
 
+
     const handleDelete = async (deviceId: string) => {
         setLoading(true);
         try {
-            // Construct the URL with the device ID as a query parameter
-            const url = `${baseUrl}/admin/devices?id=${deviceId}`;
-
-            // Define the request headers
-            const headers = {
-                Authorization: `Bearer ${idToken}`
-            };
-
-            // Make the DELETE request using Axios
-            const response = await axios.delete(url, {headers});
+            const response = await deleteDevice(idToken!, deviceId);
 
             if (response.status === 200) {
-                setLoading(false);
                 // Device deleted successfully
                 console.log(`Device with ID ${deviceId} deleted successfully.`);
                 message.success('Device deleted successfully');
                 handleFetchData();
             } else {
-                setLoading(false);
                 // Failed to delete device
                 console.error(`Failed to delete device with ID ${deviceId}.`);
                 message.error('Failed to delete device');
@@ -229,6 +221,8 @@ const Devices: React.FC = () => {
         } catch (error) {
             console.error('Error deleting device:', error);
             message.error('Error deleting device');
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -242,32 +236,23 @@ const Devices: React.FC = () => {
         console.log(enrollDevice)
     };
 
-    const handleDisenroll = (deviceId: string) => {
+    const handleDisenroll = async (deviceId: string) => {
         setLoading(true);
-        const config = {
-            method: 'put',
-            url: `${baseUrl}/devices/device/disenroll?id=${deviceId}`,
-            headers: {
-                'Authorization': `Bearer ${idToken}`
-            }
-        };
+        try {
+            const response = await disenrollDevice(idToken!, deviceId);
 
-        axios.request(config)
-            .then((response) => {
-                // Handle success response
-                message.success('Device disenrolled successfully');
-                console.log(response.data); // Log or handle response data
-                handleFetchData();
-            })
-            .catch((error) => {
-                // Handle error
-                console.error('Error updating device:', error);
-                // You can display an error message here using antd message or other means
-                message.error('Error updating device. Please try again.');
-            })
-            .finally(() => {
-                setLoading(false);
-            });
+            // Handle success response
+            message.success('Device dis-enrolled successfully');
+            console.log(response.data); // Log or handle response data
+            handleFetchData();
+        } catch (error) {
+            // Handle error
+            console.error('Error updating device:', error);
+            // You can display an error message here using antd message or other means
+            message.error('Error updating device. Please try again.');
+        } finally {
+            setLoading(false);
+        }
     };
 
 
@@ -276,15 +261,7 @@ const Devices: React.FC = () => {
     };
 
     const handleFetchData = () => {
-        fetchData(idToken)
-            .then(response => {
-                setData(response.data);
-                setLoading(false);
-            })
-            .catch(error => {
-                console.error("Error fetching data:", error);
-                setLoading(false);
-            });
+        fetchData();
     };
 
 
@@ -301,32 +278,30 @@ const Devices: React.FC = () => {
                     Add Device
                 </Button>
             </Row>
-            <div className="section-break">
-                <span>Total Devices: {data.length}</span>
-                <Table
-                    dataSource={data}
-                    columns={columns}
-                    pagination={paginationConfig}
-                    rowKey={(record) => record.deviceId}
-                />
+            <div>Total Devices: {data.length}</div>
+            <Table
+                dataSource={data}
+                columns={columns}
+                pagination={paginationConfig}
+                rowKey={(record) => record.deviceId}
+            />
 
-                {showEnrollPopup && (
-                    <PopupEnrollForm
-                        visible={showEnrollPopup}
-                        isAdmin={isAdmin}
-                        onClose={() => setShowEnrollPopup(false)}
-                        onSuccess={handleFetchData}
-                        data={enrollDevice}
-                    />
-                )}
-                {showAddDevicePopup && (
-                    <PopupAddDeviceForm
-                        visible={showAddDevicePopup}
-                        onClose={() => setShowAddDevicePopup(false)}
-                        onSuccess={handleFetchData}
-                    />
-                )}
-            </div>
+            {showEnrollPopup && (
+                <PopupEnrollForm
+                    visible={showEnrollPopup}
+                    isAdmin={isAdmin}
+                    onClose={() => setShowEnrollPopup(false)}
+                    onSuccess={handleFetchData}
+                    data={enrollDevice}
+                />
+            )}
+            {showAddDevicePopup && (
+                <PopupAddDeviceForm
+                    visible={showAddDevicePopup}
+                    onClose={() => setShowAddDevicePopup(false)}
+                    onSuccess={handleFetchData}
+                />
+            )}
         </AppLayout>
     );
 };

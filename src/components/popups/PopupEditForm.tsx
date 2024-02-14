@@ -1,8 +1,7 @@
 import React, {useState, useEffect, useMemo} from 'react';
 import {Modal, Form, Input, Button, message} from 'antd';
-import axios from "axios";
-import {baseUrl} from "../../services/commonVariables";
 import LoadingSpinner from "../utils/LoadingSpinner";
+import {updateUserDevice} from "../../util/user-api-services";
 
 
 interface PopupFormProps {
@@ -11,14 +10,6 @@ interface PopupFormProps {
     deviceData: any;
     onUpdateDevice: (updatedDeviceData: any) => void;
 }
-
-interface FormData {
-    name: string;
-    number: number;
-    altNumber: number;
-    address: string;
-}
-
 
 const PopupEditForm: React.FC<PopupFormProps> = ({visible, onClose, deviceData, onUpdateDevice}) => {
     const [form] = Form.useForm();
@@ -42,70 +33,21 @@ const PopupEditForm: React.FC<PopupFormProps> = ({visible, onClose, deviceData, 
         }
     }, [visible, form, initialFormData]);
 
-    const handleFormSubmit = (values: any) => {
+    const handleFormSubmit = async (values: any) => {
         setLoading(true);
-        form
-            .validateFields()
-            .then(() => {
-                console.log(values)
-                if (values.name === deviceData.registeredUsername && values.address === deviceData.registeredAddress && values.number === deviceData.emergencyContactNumbers[0] && values.altNumber === deviceData.emergencyContactNumbers[1]) {
-                    message.warning('There is nothing to update');
-                    onClose();
-                    setLoading(false);
-                } else {
-                    const apiData = {
-                        deviceId: deviceData.deviceId,
-                        registeredEmail: deviceData.registeredEmail,
-                        registeredUsername: values.name,
-                        registeredAddress: values.address,
-                        emergencyContactNumbers: [
-                            values.number.toString(),
-                            values.altNumber.toString()
-                        ]
-                    };
+        try {
+            // Your form validation logic here
 
-                    const config = {
-                        method: 'put',
-                        url: `${baseUrl}/devices/device`,
-                        headers: {
-                            'Authorization': `Bearer ${idToken}`
-                        },
-                        data: apiData
-                    };
-
-                    axios.request(config)
-                        .then((response) => {
-                            // Handle successful response
-                            console.log('Device updated successfully:');
-                            message.success('Form submitted successfully');
-
-                            const updatedFormData: FormData = {
-                                name: values.name,
-                                number: values.number,
-                                altNumber: values.altNumber,
-                                address: values.address,
-                            };
-
-                            setFormData(updatedFormData);
-                            onUpdateDevice(updatedFormData);
-
-                        })
-                        .catch((error) => {
-                            console.error('Error updating device:', error);
-                            message.error('Failed to update device');
-                        })
-                        .finally(() => {
-                            setLoading(false);
-                        });
-                    onClose();
-
-
-                }
-
-            })
-            .catch((error) => {
-                message.error('Form submission failed');
-            });
+            const response = await updateUserDevice(idToken!, deviceData, values, onUpdateDevice);
+            console.log('Device updated successfully:', response);
+            message.success('Form submitted successfully');
+        } catch (error) {
+            console.error('Error updating device:', error);
+            message.error('Failed to update device');
+        } finally {
+            setLoading(false);
+            onClose(); // Close the modal or perform other actions
+        }
     };
 
     return (

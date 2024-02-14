@@ -2,13 +2,12 @@ import React, {useEffect, useMemo, useState} from "react";
 import {Card, Button, Col, Row, Dropdown, Menu, Popconfirm, Space, message, Statistic, Empty} from "antd";
 import PopupEditForm from "../popups/PopupEditForm";
 import {EllipsisOutlined} from "@ant-design/icons";
-import {baseUrl} from "../../services/commonVariables";
-import axios from "axios";
 import LoadingSpinner from "../utils/LoadingSpinner";
 import MapComponent from "../maps/MapComponent";
 import Simulation from "../simulation/Simulation";
 import {socketUrl} from "../../services/commonVariables";
 import map from "../../assets/map.png"
+import {disenrollDevice} from "../../util/common-api-services";
 
 
 interface DeviceInfoSectionProps {
@@ -163,32 +162,26 @@ const DeviceInfoSection: React.FC<DeviceInfoSectionProps> = ({device}) => {
         setDataToDisplay(updatedDeviceData)
     };
 
-    const handleDisenroll = (deviceId: string) => {
-        setLoading(true);
-        const config = {
-            method: 'put',
-            url: `${baseUrl}/devices/device/disenroll?id=${deviceId}`,
-            headers: {
-                'Authorization': `Bearer ${idToken}`
-            }
-        };
 
-        axios.request(config)
-            .then((response) => {
-                // Handle success response
-                message.success('Device disenrolled successfully');
-                setTimeout(() => {
-                    window.location.reload();
-                }, 500);
-            })
-            .catch((error) => {
-                // Handle error
-                console.error('Error updating device:', error);
-                // You can display an error message here using antd message or other means
-                message.error('Error updating device. Please try again.');
-            }).finally(() => {
+    const handleDisenroll = async (deviceId: string) => {
+        setLoading(true);
+        try {
+
+            const response = await disenrollDevice(idToken!, deviceId);
+            console.log(response.data);
+            // Handle success response
+            message.success('Device dis-enrolled successfully');
+            setTimeout(() => {
+                window.location.reload();
+            }, 500);
+        } catch (error) {
+            // Handle error
+            console.error('Error updating device:', error);
+            // You can display an error message here using antd message or other means
+            message.error('Error updating device. Please try again.');
+        } finally {
             setLoading(false);
-        });
+        }
     };
 
     return (
@@ -312,17 +305,17 @@ const DeviceInfoSection: React.FC<DeviceInfoSectionProps> = ({device}) => {
                             <div>
                                 <div className="map-container map-placeholder">
                                     <div>
-                                    <Empty
-                                        image={map}
-                                        imageStyle={{
-                                            height: 60,
-                                        }}
+                                        <Empty
+                                            image={map}
+                                            imageStyle={{
+                                                height: 60,
+                                            }}
 
-                                        description={
-                                            <span>Unable to load the map...</span>
-                                        }
-                                    >
-                                    </Empty>
+                                            description={
+                                                <span>Unable to load the map...</span>
+                                            }
+                                        >
+                                        </Empty>
                                     </div>
                                 </div>
                             </div>

@@ -1,10 +1,10 @@
 import React, {useEffect, useState} from "react";
 import AppLayout from "../../layout/AppLayout";
-import {Table, Avatar, Input, Space, Button} from "antd";
-import {avatarPlaceHolder, baseUrl} from '../../services/commonVariables';
-import axios from 'axios';
+import {Table, Avatar, Input, Space, Button, message} from "antd";
+import {avatarPlaceHolder} from '../../services/commonVariables';
 import {SearchOutlined} from "@ant-design/icons";
 import LoadingSpinner from "../../components/utils/LoadingSpinner";
+import {fetchUsers} from "../../util/admin-api-services";
 
 const Users: React.FC = () => {
     const [data, setData] = useState([]);
@@ -13,20 +13,20 @@ const Users: React.FC = () => {
 
 
     useEffect(() => {
-        const fetchData = () => {
-            axios.get(`${baseUrl}/admin/users`, {
-                headers: {
-                    Authorization: `Bearer ${idToken}`
-                }
-            })
-                .then(response => {
+        const fetchData = async () => {
+            if (idToken) {
+                try {
+                    const response = await fetchUsers(idToken);
                     setData(response.data);
                     setLoading(false);
-                })
-                .catch(error => {
+                } catch (error) {
                     console.error("Error fetching data:", error);
                     setLoading(false);
-                });
+                    message.error('Failed to fetch users');
+                }
+            } else {
+                console.error("idToken is null or undefined");
+            }
         };
 
         fetchData();
@@ -103,10 +103,8 @@ const Users: React.FC = () => {
         <AppLayout>
             <LoadingSpinner loading={loading}/>
             <h1>Users</h1>
-            <div className="section-break">
-                <span>Total Users: {data.length}</span>
+                <div>Total Users: {data.length}</div>
                 <Table dataSource={data} columns={columns} pagination={paginationConfig}/>
-            </div>
         </AppLayout>
     );
 };
