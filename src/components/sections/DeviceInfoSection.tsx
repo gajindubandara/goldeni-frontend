@@ -1,5 +1,17 @@
 import React, {useEffect, useMemo, useState} from "react";
-import {Card, Button, Col, Row, Dropdown, Menu, Popconfirm, Space, message, Statistic, Empty} from "antd";
+import {
+    Card,
+    Button,
+    Col,
+    Row,
+    Dropdown,
+    Menu,
+    Popconfirm,
+    Space,
+    message,
+    Statistic,
+    Empty
+} from "antd";
 import PopupEditForm from "../popups/PopupEditForm";
 import {EllipsisOutlined} from "@ant-design/icons";
 import LoadingSpinner from "../utils/LoadingSpinner";
@@ -8,6 +20,7 @@ import Simulation from "../simulation/Simulation";
 import {socketUrl} from "../../services/commonVariables";
 import map from "../../assets/map.png"
 import {disenrollDevice} from "../../util/common-api-services";
+import { Tabs } from 'antd';
 
 
 interface DeviceInfoSectionProps {
@@ -162,6 +175,8 @@ const DeviceInfoSection: React.FC<DeviceInfoSectionProps> = ({device}) => {
         setDataToDisplay(updatedDeviceData)
     };
 
+    const { TabPane } = Tabs;
+
 
     const handleDisenroll = async (deviceId: string) => {
         setLoading(true);
@@ -188,141 +203,233 @@ const DeviceInfoSection: React.FC<DeviceInfoSectionProps> = ({device}) => {
         <>
             <LoadingSpinner loading={loading}/>
             <div>
-                <Card style={{background: "#f5f5f5"}}>
-                    <Card style={{padding: "0px 24px !important"}}>
-                        <Row gutter={16}>
-                            <Col xs={24} sm={6} md={6} lg={6} xl={6}>
-                                <div className="user-detail-item">
-                                    <b>User's Name: </b>
-                                    <br/>
-                                    {dataToDisplay ? dataToDisplay.name : "Loading..."}
-                                </div>
-                            </Col>
-                            <Col xs={24} sm={6} md={6} lg={6} xl={6}>
-                                <div className="user-detail-item">
-                                    <b>Guardian's No: </b>
-                                    <br/>
-                                    {dataToDisplay ? dataToDisplay.number + ", " + dataToDisplay.altNumber : "Loading..."}
-                                </div>
-                            </Col>
-                            <Col xs={24} sm={10} md={10} lg={10} xl={10}>
-                                <div className="user-detail-item">
-                                    <b>User's Address: </b>
-                                    <br/>
-                                    {dataToDisplay ? dataToDisplay.address : "Loading..."}
-                                </div>
-                            </Col>
-                            <Col xs={24} sm={2} md={2} lg={2} xl={2}>
-                                <Space size="middle" style={{float: 'right', margin: '10px auto'}}>
-                                    <Dropdown
-                                        overlay={
-                                            <Menu>
-                                                <Menu.Item key="update">
-                                                    <Button type="link" onClick={showPopup}>Update Info</Button>
-                                                </Menu.Item>
-                                                <Menu.Item key="disenroll">
-                                                    <Popconfirm
-                                                        title="Are you sure to disenroll this device?"
-                                                        onConfirm={() => handleDisenroll(device.deviceId)}
-                                                        okText="Yes"
-                                                        cancelText="No"
+                <div>
+                    <Tabs defaultActiveKey="1" type="card">
+                        <TabPane tab="Basic View" key="1">
+                            <Card style={{background: "#f5f5f5"}}>
+                                <Card style={{padding: "0px 24px !important"}}>
+                                    <Row gutter={16}>
+                                        <Col xs={24} sm={6} md={6} lg={6} xl={6}>
+                                            <div className="user-detail-item">
+                                                <b>User's Name: </b>
+                                                <br/>
+                                                {dataToDisplay ? dataToDisplay.name : "Loading..."}
+                                            </div>
+                                        </Col>
+                                        <Col xs={24} sm={6} md={6} lg={6} xl={6}>
+                                            <div className="user-detail-item">
+                                                <b>Guardian's No: </b>
+                                                <br/>
+                                                {dataToDisplay ? dataToDisplay.number + ", " + dataToDisplay.altNumber : "Loading..."}
+                                            </div>
+                                        </Col>
+                                        <Col xs={24} sm={10} md={10} lg={10} xl={10}>
+                                            <div className="user-detail-item">
+                                                <b>User's Address: </b>
+                                                <br/>
+                                                {dataToDisplay ? dataToDisplay.address : "Loading..."}
+                                            </div>
+                                        </Col>
+                                        <Col xs={24} sm={2} md={2} lg={2} xl={2}>
+                                            <Space size="middle" style={{float: 'right', margin: '10px auto'}}>
+                                                <Dropdown
+                                                    overlay={
+                                                        <Menu>
+                                                            <Menu.Item key="update">
+                                                                <Button type="link" onClick={showPopup}>Update Info</Button>
+                                                            </Menu.Item>
+                                                            <Menu.Item key="disenroll">
+                                                                <Popconfirm
+                                                                    title="Are you sure to disenroll this device?"
+                                                                    onConfirm={() => handleDisenroll(device.deviceId)}
+                                                                    okText="Yes"
+                                                                    cancelText="No"
+                                                                >
+                                                                    <Button type="link" danger>Dis-enroll Device</Button>
+                                                                </Popconfirm>
+                                                            </Menu.Item>
+                                                        </Menu>
+                                                    }
+                                                    placement="bottomLeft"
+                                                    trigger={['click']}
+                                                >
+                                                    <Button type="text" icon={<EllipsisOutlined style={{fontSize: '24px'}}/>}/>
+                                                </Dropdown>
+                                            </Space>
+                                        </Col>
+                                    </Row>
+                                </Card>
+
+
+                                {connection ? (
+                                        <div>
+                                            <MapComponent center={center} markers={markers}
+                                                          classname="map-container"/>{/*<MapComponent classname={"map-container"} username={device.registeredUsername} location={locationData}/>*/}
+                                        </div>
+                                    ) :
+                                    (
+                                        <div>
+                                            <div className="map-container map-placeholder">
+                                                <div>
+                                                    <Empty
+                                                        image={map}
+                                                        imageStyle={{
+                                                            height: 60,
+                                                        }}
+
+                                                        description={
+                                                            <span>Unable to load the map...</span>
+                                                        }
                                                     >
-                                                        <Button type="link" danger>Dis-enroll Device</Button>
-                                                    </Popconfirm>
-                                                </Menu.Item>
-                                            </Menu>
-                                        }
-                                        placement="bottomLeft"
-                                        trigger={['click']}
-                                    >
-                                        <Button type="text" icon={<EllipsisOutlined style={{fontSize: '24px'}}/>}/>
-                                    </Dropdown>
-                                </Space>
-                            </Col>
-                        </Row>
-                    </Card>
-                    <Row gutter={16}>
+                                                    </Empty>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    )
+                                }
 
-                        <Col xs={24} sm={6} md={6} lg={6} xl={6} className="stat-col">
-
-                            <Col>
-                                <Card className="stats-card">
-                                    <Statistic title="Connection Status"
-                                               value={connection ? "Connected" : "Disconnected"}
-                                               valueStyle={{color: connection ? '#3f8600' : '#f5222d'}}
-                                    />
-                                </Card>
-                            </Col>
-                            <Col>
-                                <Card className="stats-card">
-                                    <Statistic title="System Temprature" value={socketData.temp} suffix="°"
-                                               precision={2}/>
-                                </Card>
-                            </Col>
-                            <Col>
-                                <Card className="stats-card">
-                                    <Statistic
-                                        title="IR Sensor"
-                                        value={socketData.ir ? "On" : "Off"}
-                                        valueStyle={{color: socketData.ir ? '#3f8600' : '#f5222d'}}
-                                    />
-                                </Card>
-                            </Col>
-                        </Col>
-                        <Col xs={24} sm={6} md={6} lg={6} xl={6} className="stat-col">
-                            <Col>
-                                <Card className="stats-card">
-                                    <Statistic title="Top Ultra Sonic" value={socketData.ut} suffix="cm" precision={2}/>
-                                </Card>
-                            </Col>
-                            <Col>
-                                <Card className="stats-card">
-                                    <Statistic title="Mid Ultra Sonic" value={socketData.um} suffix="cm" precision={2}/>
-                                </Card>
-                            </Col>
-                            <Col>
-                                <Card className="stats-card">
-                                    <Statistic title="Bottom Ultra Sonic" value={socketData.ub} suffix="cm"
-                                               precision={2}/>
-                                </Card>
-                            </Col>
-                        </Col>
-                        <Col xs={24} sm={12} md={12} lg={12} xl={12}>
-                            <Card className="simulation-card">
-                                <Simulation xAngle={socketData.gyroX} yAngle={socketData.gyroY}
-                                            zAngle={socketData.gyroZ}/>
                             </Card>
-                        </Col>
-                    </Row>
+                        </TabPane>
+                        <TabPane tab="Diagnosis View" key="2">
+                            <Card style={{background: "#f5f5f5"}}>
+                                <Card style={{padding: "0px 24px !important"}}>
+                                    <Row gutter={16}>
+                                        <Col xs={24} sm={6} md={6} lg={6} xl={6}>
+                                            <div className="user-detail-item">
+                                                <b>User's Name: </b>
+                                                <br/>
+                                                {dataToDisplay ? dataToDisplay.name : "Loading..."}
+                                            </div>
+                                        </Col>
+                                        <Col xs={24} sm={6} md={6} lg={6} xl={6}>
+                                            <div className="user-detail-item">
+                                                <b>Guardian's No: </b>
+                                                <br/>
+                                                {dataToDisplay ? dataToDisplay.number + ", " + dataToDisplay.altNumber : "Loading..."}
+                                            </div>
+                                        </Col>
+                                        <Col xs={24} sm={10} md={10} lg={10} xl={10}>
+                                            <div className="user-detail-item">
+                                                <b>User's Address: </b>
+                                                <br/>
+                                                {dataToDisplay ? dataToDisplay.address : "Loading..."}
+                                            </div>
+                                        </Col>
+                                        <Col xs={24} sm={2} md={2} lg={2} xl={2}>
+                                            <Space size="middle" style={{float: 'right', margin: '10px auto'}}>
+                                                <Dropdown
+                                                    overlay={
+                                                        <Menu>
+                                                            <Menu.Item key="update">
+                                                                <Button type="link" onClick={showPopup}>Update Info</Button>
+                                                            </Menu.Item>
+                                                            <Menu.Item key="disenroll">
+                                                                <Popconfirm
+                                                                    title="Are you sure to disenroll this device?"
+                                                                    onConfirm={() => handleDisenroll(device.deviceId)}
+                                                                    okText="Yes"
+                                                                    cancelText="No"
+                                                                >
+                                                                    <Button type="link" danger>Dis-enroll Device</Button>
+                                                                </Popconfirm>
+                                                            </Menu.Item>
+                                                        </Menu>
+                                                    }
+                                                    placement="bottomLeft"
+                                                    trigger={['click']}
+                                                >
+                                                    <Button type="text" icon={<EllipsisOutlined style={{fontSize: '24px'}}/>}/>
+                                                </Dropdown>
+                                            </Space>
+                                        </Col>
+                                    </Row>
+                                </Card>
+                                <Row gutter={16}>
 
-                    {connection ? (
-                            <div>
-                                <MapComponent center={center} markers={markers}
-                                              classname="map-container"/>{/*<MapComponent classname={"map-container"} username={device.registeredUsername} location={locationData}/>*/}
-                            </div>
-                        ) :
-                        (
-                            <div>
-                                <div className="map-container map-placeholder">
-                                    <div>
-                                        <Empty
-                                            image={map}
-                                            imageStyle={{
-                                                height: 60,
-                                            }}
+                                    <Col xs={24} sm={6} md={6} lg={6} xl={6} className="stat-col">
 
-                                            description={
-                                                <span>Unable to load the map...</span>
-                                            }
-                                        >
-                                        </Empty>
-                                    </div>
-                                </div>
-                            </div>
-                        )
-                    }
+                                        <Col>
+                                            <Card className="stats-card">
+                                                <Statistic title="Connection Status"
+                                                           value={connection ? "Connected" : "Disconnected"}
+                                                           valueStyle={{color: connection ? '#3f8600' : '#f5222d'}}
+                                                />
+                                            </Card>
+                                        </Col>
+                                        <Col>
+                                            <Card className="stats-card">
+                                                <Statistic title="System Temprature" value={socketData.temp} suffix="°"
+                                                           precision={2}/>
+                                            </Card>
+                                        </Col>
+                                        <Col>
+                                            <Card className="stats-card">
+                                                <Statistic
+                                                    title="IR Sensor"
+                                                    value={socketData.ir ? "On" : "Off"}
+                                                    valueStyle={{color: socketData.ir ? '#3f8600' : '#f5222d'}}
+                                                />
+                                            </Card>
+                                        </Col>
+                                    </Col>
+                                    <Col xs={24} sm={6} md={6} lg={6} xl={6} className="stat-col">
+                                        <Col>
+                                            <Card className="stats-card">
+                                                <Statistic title="Top Ultra Sonic" value={socketData.ut} suffix="cm" precision={2}/>
+                                            </Card>
+                                        </Col>
+                                        <Col>
+                                            <Card className="stats-card">
+                                                <Statistic title="Mid Ultra Sonic" value={socketData.um} suffix="cm" precision={2}/>
+                                            </Card>
+                                        </Col>
+                                        <Col>
+                                            <Card className="stats-card">
+                                                <Statistic title="Bottom Ultra Sonic" value={socketData.ub} suffix="cm"
+                                                           precision={2}/>
+                                            </Card>
+                                        </Col>
+                                    </Col>
+                                    <Col xs={24} sm={12} md={12} lg={12} xl={12}>
+                                        <Card className="simulation-card">
+                                            <Simulation xAngle={socketData.gyroX} yAngle={socketData.gyroY}
+                                                        zAngle={socketData.gyroZ}/>
+                                        </Card>
+                                    </Col>
+                                </Row>
 
-                </Card>
+                                {connection ? (
+                                        <div>
+                                            <MapComponent center={center} markers={markers}
+                                                          classname="map-container"/>{/*<MapComponent classname={"map-container"} username={device.registeredUsername} location={locationData}/>*/}
+                                        </div>
+                                    ) :
+                                    (
+                                        <div>
+                                            <div className="map-container map-placeholder">
+                                                <div>
+                                                    <Empty
+                                                        image={map}
+                                                        imageStyle={{
+                                                            height: 60,
+                                                        }}
+
+                                                        description={
+                                                            <span>Unable to load the map...</span>
+                                                        }
+                                                    >
+                                                    </Empty>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    )
+                                }
+
+                            </Card>
+                        </TabPane>
+                    </Tabs>
+                </div>
+
                 <PopupEditForm
                     visible={isPopupVisible}
                     onClose={closePopup}
