@@ -10,10 +10,11 @@ const App: React.FC = () => {
   const isSessionExpired = sessionExpiration ? new Date().getTime() > parseInt(sessionExpiration) : true;
 
   useEffect(() => {
-    const { hostname } = window.location;
-    console.log(hostname);
-    if (hostname === 'ap-southeast-1.amazonaws.com') {
-      window.location.href = 'https://goldeni.s3.ap-southeast-1.amazonaws.com/index.html';
+    const currentUrl = window.location.href;
+    const redirectUrl = 'https://github.com/users/gajindubandara/projects/3/views/1';
+
+    if (currentUrl === 'https://goldeni.s3.ap-southeast-1.amazonaws.com' || currentUrl === 'https://goldeni.s3.ap-southeast-1.amazonaws.com/') {
+      window.location.href = redirectUrl;
     }
     handleAuthentication();
   }, []);
