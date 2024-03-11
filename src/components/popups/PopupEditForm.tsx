@@ -40,7 +40,7 @@ const PopupEditForm: React.FC<PopupFormProps> = ({visible, onClose, deviceData, 
 
             const response = await updateUserDevice(idToken!, deviceData, values, onUpdateDevice);
             console.log('Device updated successfully:', response);
-            message.success('Form submitted successfully');
+            message.success('Device Updated successfully');
         } catch (error) {
             console.error('Error updating device:', error);
             message.error('Failed to update device');
