@@ -22,9 +22,9 @@ const Simulation: React.FC<Props> = ({ xAngle, yAngle, zAngle }) => {
                 </div>
             </div>
             <div className="sim-gyro-data">
-                <span><strong>X Angle:</strong> {xAngle}° </span>
-                <span><strong> Y Angle:</strong> {yAngle}° </span>
-                <span><strong> Z Angle:</strong> {zAngle}° </span>
+                <span><strong>X Angle:</strong> {xAngle.toFixed(2)}° </span><br/>
+                <span><strong> Y Angle:</strong> {yAngle.toFixed(2)}° </span><br/>
+                <span><strong> Z Angle:</strong> {zAngle.toFixed(2)}° </span>
             </div>
         </div>
     );

@@ -20,7 +20,7 @@ import Simulation from "../simulation/Simulation";
 import {socketUrl} from "../../services/commonVariables";
 import map from "../../assets/map.png"
 import {disenrollDevice} from "../../util/common-api-services";
-import { Tabs } from 'antd';
+import {Tabs} from 'antd';
 
 
 interface DeviceInfoSectionProps {
@@ -49,14 +49,17 @@ interface Device {
 interface socket {
     ut: number;
     um: number;
-    ub: number;
-    ir: boolean;
+    ir1: boolean;
+    ir2: boolean;
     lat: number;
     long: number;
     gyroX: number;
     gyroY: number;
     gyroZ: number;
     temp: number;
+    stair: number;
+    headObj: number;
+    midObj: number;
 
 }
 
@@ -75,14 +78,17 @@ const DeviceInfoSection: React.FC<DeviceInfoSectionProps> = ({device}) => {
     const initialSocketData = {
         ut: 0.00,
         um: 0.00,
-        ub: 0.00,
-        ir: false,
+        ir1: false,
+        ir2: false,
         lat: 0,
         long: 0,
         gyroX: 0,
         gyroY: 0,
         gyroZ: 0,
         temp: 0,
+        stair: 0,
+        headObj: 0,
+        midObj: 0
     }
     const [dataToDisplay, setDataToDisplay] = useState<any>();
     const [socketData, setSocketData] = useState<socket>(initialSocketData);
@@ -152,14 +158,19 @@ const DeviceInfoSection: React.FC<DeviceInfoSectionProps> = ({device}) => {
         return (
             typeof data.ut === 'number' &&
             typeof data.um === 'number' &&
-            typeof data.ub === 'number' &&
-            typeof data.ir === 'boolean' &&
+            typeof data.ir1 === 'boolean' &&
+            typeof data.ir2 === 'boolean' &&
             typeof data.lat === 'number' &&
             typeof data.long === 'number' &&
             typeof data.gyroX === 'number' &&
             typeof data.gyroY === 'number' &&
             typeof data.gyroZ === 'number' &&
-            typeof data.temp === 'number'
+            typeof data.temp === 'number' &&
+            typeof data.stair === 'number' &&
+            typeof data.headObj === 'number' &&
+            typeof data.midObj === 'number'
+
+
         );
     };
 
@@ -175,7 +186,7 @@ const DeviceInfoSection: React.FC<DeviceInfoSectionProps> = ({device}) => {
         setDataToDisplay(updatedDeviceData)
     };
 
-    const { TabPane } = Tabs;
+    const {TabPane} = Tabs;
 
 
     const handleDisenroll = async (deviceId: string) => {
@@ -236,7 +247,8 @@ const DeviceInfoSection: React.FC<DeviceInfoSectionProps> = ({device}) => {
                                                     overlay={
                                                         <Menu>
                                                             <Menu.Item key="update">
-                                                                <Button type="link" onClick={showPopup}>Update Info</Button>
+                                                                <Button type="link" onClick={showPopup}>Update
+                                                                    Info</Button>
                                                             </Menu.Item>
                                                             <Menu.Item key="disenroll">
                                                                 <Popconfirm
@@ -245,7 +257,8 @@ const DeviceInfoSection: React.FC<DeviceInfoSectionProps> = ({device}) => {
                                                                     okText="Yes"
                                                                     cancelText="No"
                                                                 >
-                                                                    <Button type="link" danger>Dis-enroll Device</Button>
+                                                                    <Button type="link" danger>Dis-enroll
+                                                                        Device</Button>
                                                                 </Popconfirm>
                                                             </Menu.Item>
                                                         </Menu>
@@ -253,12 +266,40 @@ const DeviceInfoSection: React.FC<DeviceInfoSectionProps> = ({device}) => {
                                                     placement="bottomLeft"
                                                     trigger={['click']}
                                                 >
-                                                    <Button type="text" icon={<EllipsisOutlined style={{fontSize: '24px'}}/>}/>
+                                                    <Button type="text"
+                                                            icon={<EllipsisOutlined style={{fontSize: '24px'}}/>}/>
                                                 </Dropdown>
                                             </Space>
                                         </Col>
                                     </Row>
                                 </Card>
+
+                                <Row gutter={16}>
+                                    <Col xs={24} sm={8} md={8} lg={8} xl={8}>
+                                        <Card className="stats-card">
+                                            <Statistic title="Head Level Obstacles"
+                                                       value={socketData.headObj ? "Obstacle Detected" : "Clear"}
+                                                       valueStyle={{color: socketData.headObj ? '#f5222d' : '#3f8600'}}
+                                            />
+                                        </Card>
+                                    </Col>
+                                    <Col xs={24} sm={8} md={8} lg={8} xl={8}>
+                                        <Card className="stats-card">
+                                            <Statistic title="Mid Level Obstacles"
+                                                       value={socketData.midObj ? "Obstacle Detected" : "Clear"}
+                                                       valueStyle={{color: socketData.midObj ? '#f5222d' : '#3f8600'}}
+                                            />
+                                        </Card>
+                                    </Col>
+                                    <Col xs={24} sm={8} md={8} lg={8} xl={8}>
+                                        <Card className="stats-card">
+                                            <Statistic title="Low Level Obstacles"
+                                                       value={socketData.stair ? "Obstacle Detected" : "Clear"}
+                                                       valueStyle={{color: socketData.stair ? '#f5222d' : '#3f8600'}}
+                                            />
+                                        </Card>
+                                    </Col>
+                                </Row>
 
 
                                 {connection ? (
@@ -321,7 +362,8 @@ const DeviceInfoSection: React.FC<DeviceInfoSectionProps> = ({device}) => {
                                                     overlay={
                                                         <Menu>
                                                             <Menu.Item key="update">
-                                                                <Button type="link" onClick={showPopup}>Update Info</Button>
+                                                                <Button type="link" onClick={showPopup}>Update
+                                                                    Info</Button>
                                                             </Menu.Item>
                                                             <Menu.Item key="disenroll">
                                                                 <Popconfirm
@@ -330,7 +372,8 @@ const DeviceInfoSection: React.FC<DeviceInfoSectionProps> = ({device}) => {
                                                                     okText="Yes"
                                                                     cancelText="No"
                                                                 >
-                                                                    <Button type="link" danger>Dis-enroll Device</Button>
+                                                                    <Button type="link" danger>Dis-enroll
+                                                                        Device</Button>
                                                                 </Popconfirm>
                                                             </Menu.Item>
                                                         </Menu>
@@ -338,7 +381,8 @@ const DeviceInfoSection: React.FC<DeviceInfoSectionProps> = ({device}) => {
                                                     placement="bottomLeft"
                                                     trigger={['click']}
                                                 >
-                                                    <Button type="text" icon={<EllipsisOutlined style={{fontSize: '24px'}}/>}/>
+                                                    <Button type="text"
+                                                            icon={<EllipsisOutlined style={{fontSize: '24px'}}/>}/>
                                                 </Dropdown>
                                             </Space>
                                         </Col>
@@ -358,7 +402,7 @@ const DeviceInfoSection: React.FC<DeviceInfoSectionProps> = ({device}) => {
                                         </Col>
                                         <Col>
                                             <Card className="stats-card">
-                                                <Statistic title="System Temprature" value={socketData.temp} suffix="°"
+                                                <Statistic title="Top Ultra Sonic" value={socketData.ut} suffix="cm"
                                                            precision={2}/>
                                             </Card>
                                         </Col>
@@ -366,8 +410,8 @@ const DeviceInfoSection: React.FC<DeviceInfoSectionProps> = ({device}) => {
                                             <Card className="stats-card">
                                                 <Statistic
                                                     title="IR Sensor"
-                                                    value={socketData.ir ? "On" : "Off"}
-                                                    valueStyle={{color: socketData.ir ? '#3f8600' : '#f5222d'}}
+                                                    value={socketData.ir1 ? "On" : "Off"}
+                                                    valueStyle={{color: socketData.ir1 ? '#3f8600' : '#f5222d'}}
                                                 />
                                             </Card>
                                         </Col>
@@ -375,18 +419,22 @@ const DeviceInfoSection: React.FC<DeviceInfoSectionProps> = ({device}) => {
                                     <Col xs={24} sm={6} md={6} lg={6} xl={6} className="stat-col">
                                         <Col>
                                             <Card className="stats-card">
-                                                <Statistic title="Top Ultra Sonic" value={socketData.ut} suffix="cm" precision={2}/>
-                                            </Card>
+                                                <Statistic title="System Temprature" value={socketData.temp} suffix="°"
+                                                           precision={2}/> </Card>
                                         </Col>
                                         <Col>
                                             <Card className="stats-card">
-                                                <Statistic title="Mid Ultra Sonic" value={socketData.um} suffix="cm" precision={2}/>
-                                            </Card>
-                                        </Col>
-                                        <Col>
-                                            <Card className="stats-card">
-                                                <Statistic title="Bottom Ultra Sonic" value={socketData.ub} suffix="cm"
+                                                <Statistic title="Mid Ultra Sonic" value={socketData.um} suffix="cm"
                                                            precision={2}/>
+                                            </Card>
+                                        </Col>
+                                        <Col>
+                                            <Card className="stats-card">
+                                                <Statistic
+                                                    title="IR Sensor 2"
+                                                    value={socketData.ir2 ? "On" : "Off"}
+                                                    valueStyle={{color: socketData.ir2 ? '#3f8600' : '#f5222d'}}
+                                                />
                                             </Card>
                                         </Col>
                                     </Col>
