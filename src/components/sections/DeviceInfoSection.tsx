@@ -1,17 +1,5 @@
 import React, {useEffect, useMemo, useState} from "react";
-import {
-    Card,
-    Button,
-    Col,
-    Row,
-    Dropdown,
-    Menu,
-    Popconfirm,
-    Space,
-    message,
-    Statistic,
-    Empty
-} from "antd";
+import {Button, Card, Col, Dropdown, Empty, Menu, message, Popconfirm, Row, Space, Statistic, Tabs} from "antd";
 import PopupEditForm from "../popups/PopupEditForm";
 import {EllipsisOutlined} from "@ant-design/icons";
 import LoadingSpinner from "../utils/LoadingSpinner";
@@ -20,7 +8,8 @@ import Simulation from "../simulation/Simulation";
 import {socketUrl} from "../../services/commonVariables";
 import map from "../../assets/map.png"
 import {disenrollDevice} from "../../util/common-api-services";
-import {Tabs} from 'antd';
+import {ApexOptions} from "apexcharts";
+import ReactApexChart from "react-apexcharts";
 
 
 interface DeviceInfoSectionProps {
@@ -60,6 +49,7 @@ interface socket {
     stair: number;
     headObj: number;
     midObj: number;
+    timestamp: number;
 
 }
 
@@ -73,6 +63,14 @@ const DeviceInfoSection: React.FC<DeviceInfoSectionProps> = ({device}) => {
         long: 0,
         zoom: 16,
     })
+    const [midSensorValues, setMidSensorValues] = useState<number[]>([]);
+    const [headSensorValues, setHeadSensorValues] = useState<number[]>([]);
+    const [xAngleValues, setXAngleValues] = useState<number[]>([]);
+    const [yAngleValues, setYAngleValues] = useState<number[]>([]);
+    const [zAngleValues, setZAngleValues] = useState<number[]>([]);
+    const [temperature, setTemperature] = useState<number[]>([]);
+    const [timeStamps, setTimeStamps] = useState<any[]>([]);
+
 
     const [markers, setMakers] = useState<MarkerInfo[]>([]);
     const initialSocketData = {
@@ -88,8 +86,96 @@ const DeviceInfoSection: React.FC<DeviceInfoSectionProps> = ({device}) => {
         temp: 0,
         stair: 0,
         headObj: 0,
-        midObj: 0
+        midObj: 0,
+        timestamp: 0.
     }
+
+    const ultraChartOptions: ApexOptions = {
+        chart: {
+            height: 350,
+            type: "line",
+            zoom: {
+                enabled: true,
+            },
+        },
+        xaxis: {
+            categories: timeStamps
+        },
+        yaxis: {
+            max: 300,
+        },
+    };
+
+    const tempChartOptions: ApexOptions = {
+        chart: {
+            height: 350,
+            type: "line",
+            zoom: {
+                enabled: true,
+            },
+        },
+        xaxis: {
+            categories: timeStamps
+        },
+        yaxis: {
+            labels: {
+                formatter: function (value: number) {
+                    return value.toFixed(2);
+                },
+            },
+        },
+    };
+
+    const angleChartOptions: ApexOptions = {
+        chart: {
+            height: 350,
+            type: "line",
+            zoom: {
+                enabled: true,
+            },
+        },
+        xaxis: {
+            categories: timeStamps
+        },
+        yaxis: {
+            labels: {
+                formatter: function (value: number) {
+                    return value.toFixed(2);
+                },
+            },
+        },
+    };
+
+    const ultraSeries = [{
+        name: 'Head Ultra',
+        data: headSensorValues
+    },
+        {
+            name: 'Mid Ultra',
+            data: midSensorValues
+        }
+    ]
+
+    const angleSeries = [{
+        name: 'X axis',
+        data: xAngleValues
+    },
+        {
+            name: 'Y axis',
+            data: yAngleValues
+        },
+        {
+            name: 'Z axis',
+            data: zAngleValues
+        }
+    ]
+
+    const tempSeries = [{
+        name: 'Temperature',
+        data: temperature
+    }
+    ]
+
     const [dataToDisplay, setDataToDisplay] = useState<any>();
     const [socketData, setSocketData] = useState<socket>(initialSocketData);
 
@@ -104,11 +190,13 @@ const DeviceInfoSection: React.FC<DeviceInfoSectionProps> = ({device}) => {
     useEffect(() => {
         setDataToDisplay(initialDisplayData);
 
-        let socket = new WebSocket(`${socketUrl}/device?id=${device.deviceId}`);
+        let socket = new WebSocket(`${socketUrl}/device?id=${device.deviceId}&secret=${device.deviceSecret}`);
+        let heartbeatInterval: any;
         const connectWebSocket = () => {
 
             socket.onopen = () => {
                 console.log('WebSocket connection established.');
+                startHeartbeat();
             };
 
             socket.onmessage = (event) => {
@@ -116,7 +204,35 @@ const DeviceInfoSection: React.FC<DeviceInfoSectionProps> = ({device}) => {
                 try {
                     const data: socket = JSON.parse(event.data);
                     if (validateSocketData(data)) {
-                        setSocketData(data)
+                        resetHeartbeat();
+                        setSocketData(data);
+                        setMidSensorValues(prevNumbers => {
+                            return [...prevNumbers, data.um].slice(-50);
+                        });
+                        setHeadSensorValues(prevNumbers => {
+                            return [...prevNumbers, data.ut].slice(-50);
+                        });
+
+                        setXAngleValues(prevNumbers => {
+                            return [...prevNumbers, data.gyroX].slice(-50);
+                        });
+                        setYAngleValues(prevNumbers => {
+                            return [...prevNumbers, data.gyroY].slice(-50);
+                        });
+
+                        setZAngleValues(prevNumbers => {
+                            return [...prevNumbers, data.gyroZ].slice(-50);
+                        });
+                        setTemperature(prevNumbers => {
+                            return [...prevNumbers, data.temp].slice(-50);
+                        });
+                        setTimeStamps(prevNumbers => {
+                            const options = {hour12: false};
+                            const formattedTimestamp = new Date(data.timestamp * 1000).toLocaleTimeString([], options);
+                            return [...prevNumbers, formattedTimestamp].slice(-50);
+                        });
+
+
                         const center = {
                             lat: data.lat,
                             long: data.long,
@@ -138,7 +254,8 @@ const DeviceInfoSection: React.FC<DeviceInfoSectionProps> = ({device}) => {
                 }
             };
 
-            socket.onclose = () => {
+            socket.onclose = (event) => {
+                console.log(event)
                 console.log('WebSocket connection closed.');
                 setConnection(false);
                 // Attempt reconnection after 5 seconds
@@ -146,12 +263,29 @@ const DeviceInfoSection: React.FC<DeviceInfoSectionProps> = ({device}) => {
             };
         };
 
+        const startHeartbeat = () => {
+            heartbeatInterval = setInterval(() => {
+                // Send a heartbeat message to the server
+                socket.send(JSON.stringify({type: 'heartbeat'}));
+            }, 5000); // Send heartbeat every 5 seconds
+        };
+
+        const resetHeartbeat = () => {
+            clearInterval(heartbeatInterval);
+            startHeartbeat();
+        };
+
+        const stopHeartbeat = () => {
+            clearInterval(heartbeatInterval);
+        };
+
         connectWebSocket(); // Initial connection
 
         return () => {
             socket.close();
+            stopHeartbeat();
         };
-    }, [initialDisplayData, device.deviceId, device.registeredUsername]);
+    }, [initialDisplayData, device.deviceId, device.registeredUsername,device.deviceSecret]);
 
 
     const validateSocketData = (data: any): data is socket => {
@@ -168,7 +302,8 @@ const DeviceInfoSection: React.FC<DeviceInfoSectionProps> = ({device}) => {
             typeof data.temp === 'number' &&
             typeof data.stair === 'number' &&
             typeof data.headObj === 'number' &&
-            typeof data.midObj === 'number'
+            typeof data.midObj === 'number' &&
+            typeof data.timestamp === 'number'
 
 
         );
@@ -210,11 +345,26 @@ const DeviceInfoSection: React.FC<DeviceInfoSectionProps> = ({device}) => {
         }
     };
 
+    const formatDate = (timestamp: number) => {
+        const date = new Date(timestamp * 1000);
+        const day = date.getDate();
+        const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+        const monthIndex = date.getMonth();
+        const year = date.getFullYear();
+        const hours = date.getHours();
+        const minutes = date.getMinutes();
+        const seconds = date.getSeconds();
+
+        return `${day} ${monthNames[monthIndex]}, ${year} ${hours}:${minutes}:${seconds}`;
+    };
+
     return (
         <>
             <LoadingSpinner loading={loading}/>
             <div>
                 <div>
+                    <div style={{marginTop: '10px', marginBottom: '10px'}}> Last Updated at
+                        : {formatDate(socketData.timestamp)}</div>
                     <Tabs defaultActiveKey="1" type="card">
                         <TabPane tab="Basic View" key="1">
                             <Card style={{background: "#f5f5f5"}}>
@@ -275,7 +425,15 @@ const DeviceInfoSection: React.FC<DeviceInfoSectionProps> = ({device}) => {
                                 </Card>
 
                                 <Row gutter={16}>
-                                    <Col xs={24} sm={8} md={8} lg={8} xl={8}>
+                                    <Col xs={24} sm={6} md={6} lg={6} xl={6}>
+                                        <Card className="stats-card">
+                                            <Statistic title="Connection Status"
+                                                       value={connection ? "Connected" : "Disconnected"}
+                                                       valueStyle={{color: connection ? '#3f8600' : '#f5222d'}}
+                                            />
+                                        </Card>
+                                    </Col>
+                                    <Col xs={24} sm={6} md={6} lg={6} xl={6}>
                                         <Card className="stats-card">
                                             <Statistic title="Head Level Obstacles"
                                                        value={socketData.headObj ? "Obstacle Detected" : "Clear"}
@@ -283,7 +441,7 @@ const DeviceInfoSection: React.FC<DeviceInfoSectionProps> = ({device}) => {
                                             />
                                         </Card>
                                     </Col>
-                                    <Col xs={24} sm={8} md={8} lg={8} xl={8}>
+                                    <Col xs={24} sm={6} md={6} lg={6} xl={6}>
                                         <Card className="stats-card">
                                             <Statistic title="Mid Level Obstacles"
                                                        value={socketData.midObj ? "Obstacle Detected" : "Clear"}
@@ -291,7 +449,7 @@ const DeviceInfoSection: React.FC<DeviceInfoSectionProps> = ({device}) => {
                                             />
                                         </Card>
                                     </Col>
-                                    <Col xs={24} sm={8} md={8} lg={8} xl={8}>
+                                    <Col xs={24} sm={6} md={6} lg={6} xl={6}>
                                         <Card className="stats-card">
                                             <Statistic title="Low Level Obstacles"
                                                        value={socketData.stair ? "Obstacle Detected" : "Clear"}
@@ -302,7 +460,7 @@ const DeviceInfoSection: React.FC<DeviceInfoSectionProps> = ({device}) => {
                                 </Row>
 
 
-                                {connection ? (
+                                {connection && socketData.lat !== 0 ? (
                                         <div>
                                             <MapComponent center={center} markers={markers}
                                                           classname="map-container"/>{/*<MapComponent classname={"map-container"} username={device.registeredUsername} location={locationData}/>*/}
@@ -446,7 +604,7 @@ const DeviceInfoSection: React.FC<DeviceInfoSectionProps> = ({device}) => {
                                     </Col>
                                 </Row>
 
-                                {connection ? (
+                                {connection && socketData.lat !== 0 ? (
                                         <div>
                                             <MapComponent center={center} markers={markers}
                                                           classname="map-container"/>{/*<MapComponent classname={"map-container"} username={device.registeredUsername} location={locationData}/>*/}
@@ -473,6 +631,35 @@ const DeviceInfoSection: React.FC<DeviceInfoSectionProps> = ({device}) => {
                                     )
                                 }
 
+                            </Card>
+                        </TabPane>
+                        <TabPane tab="Chart View" key="3">
+                            <Card style={{background: "#f5f5f5", marginTop: "10px"}}>
+                                <h3>Ultra-Sonic Readings</h3>
+                                <ReactApexChart
+                                    options={ultraChartOptions}
+                                    series={ultraSeries}
+                                    type="line"
+                                    height={350}
+                                />
+                            </Card>
+                            <Card style={{background: "#f5f5f5", marginTop: "10px"}}>
+                                <h3>Orientation Readings</h3>
+                                <ReactApexChart
+                                    options={angleChartOptions}
+                                    series={angleSeries}
+                                    type="line"
+                                    height={350}
+                                />
+                            </Card>
+                            <Card style={{background: "#f5f5f5", marginTop: "10px"}}>
+                                <h3>System Temperature Readings</h3>
+                                <ReactApexChart
+                                    options={tempChartOptions}
+                                    series={tempSeries}
+                                    type="line"
+                                    height={350}
+                                />
                             </Card>
                         </TabPane>
                     </Tabs>
