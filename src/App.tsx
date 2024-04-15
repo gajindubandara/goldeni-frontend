@@ -10,12 +10,6 @@ const App: React.FC = () => {
   const isSessionExpired = sessionExpiration ? new Date().getTime() > parseInt(sessionExpiration) : true;
 
   useEffect(() => {
-    const currentUrl = window.location.href;
-    const redirectUrl = 'https://github.com/users/gajindubandara/projects/3/views/1';
-
-    if (currentUrl === 'https://goldeni.s3.ap-southeast-1.amazonaws.com' || currentUrl === 'https://goldeni.s3.ap-southeast-1.amazonaws.com/') {
-      window.location.href = redirectUrl;
-    }
     handleAuthentication();
   }, []);
 
