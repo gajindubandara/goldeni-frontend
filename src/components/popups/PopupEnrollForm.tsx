@@ -357,7 +357,7 @@ const PopupEnrollForm: React.FC<PopupFormProps> = ({visible, onClose, onSuccess,
     const handleFormSubmit = async () => {
         setLoading(true);
         try {
-            const response = await enrollDevice(idToken!, userData, formData, onSuccess);
+            await enrollDevice(idToken!, userData, formData, onSuccess);
             message.success('Device enrolled successfully');
             onClose();
             if (!userData.isAdmin) {
