@@ -233,7 +233,7 @@ const Devices: React.FC = () => {
         }
         setEnrollDevice(enrollDeviceData)
         setShowEnrollPopup(true);
-        console.log(enrollDevice)
+        // console.log(enrollDevice)
     };
 
     const handleDisenroll = async (deviceId: string) => {
@@ -243,7 +243,7 @@ const Devices: React.FC = () => {
 
             // Handle success response
             message.success('Device dis-enrolled successfully');
-            console.log(response.data); // Log or handle response data
+            // console.log(response.data); // Log or handle response data
             handleFetchData();
         } catch (error) {
             // Handle error

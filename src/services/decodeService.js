@@ -4,7 +4,7 @@ export const decodeIdToken = () => {
 
     if (idToken) {
         try {
-            console.log(idToken);
+            // console.log(idToken);
             // Decoding the payload (second part of the token)
             const decodedPayload = JSON.parse(atob(idToken.split('.')[1]));
 
@@ -16,7 +16,7 @@ export const decodeIdToken = () => {
             // Check if custom role is "admin"
             const isAdmin = customRole === "admin";
 
-            console.log(decodedPayload);
+            // console.log(decodedPayload);
 
             return { email, name, picture,isAdmin };
         } catch (error) {

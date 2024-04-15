@@ -26,7 +26,6 @@ const PopupAddDeviceForm: React.FC<PopupFormProps> = ({visible, onClose, onSucce
         setLoading(true);
         try {
             const response = await addDevice(idToken!, values, onSuccess);
-            console.log('Device added successfully:', response);
             message.success('Device added successfully');
             onClose();
         } catch (error:any) {
