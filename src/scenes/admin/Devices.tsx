@@ -239,7 +239,7 @@ const Devices: React.FC = () => {
     const handleDisenroll = async (deviceId: string) => {
         setLoading(true);
         try {
-            const response = await disenrollDevice(idToken!, deviceId);
+            await disenrollDevice(idToken!, deviceId);
 
             // Handle success response
             message.success('Device dis-enrolled successfully');

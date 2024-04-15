@@ -87,7 +87,7 @@ const DeviceInfoSection: React.FC<DeviceInfoSectionProps> = ({device}) => {
         stair: 0,
         headObj: 0,
         midObj: 0,
-        timestamp: 0.
+        timestamp: 0
     }
 
     const ultraChartOptions: ApexOptions = {
@@ -255,7 +255,7 @@ const DeviceInfoSection: React.FC<DeviceInfoSectionProps> = ({device}) => {
             };
 
             socket.onclose = (event) => {
-                console.log(event)
+                // console.log(event)
                 console.log('WebSocket connection closed.');
                 setConnection(false);
                 // Attempt reconnection after 5 seconds
@@ -328,8 +328,8 @@ const DeviceInfoSection: React.FC<DeviceInfoSectionProps> = ({device}) => {
         setLoading(true);
         try {
 
-            const response = await disenrollDevice(idToken!, deviceId);
-            console.log(response.data);
+            await disenrollDevice(idToken!, deviceId);
+            // console.log(response.data);
             // Handle success response
             message.success('Device dis-enrolled successfully');
             setTimeout(() => {
@@ -363,8 +363,9 @@ const DeviceInfoSection: React.FC<DeviceInfoSectionProps> = ({device}) => {
             <LoadingSpinner loading={loading}/>
             <div>
                 <div>
-                    <div style={{marginTop: '10px', marginBottom: '10px'}}> Last Updated at
-                        : {formatDate(socketData.timestamp)}</div>
+                    <div style={{marginTop: '10px', marginBottom: '10px'}}>
+                        Last Updated at: {socketData.timestamp !== 0 ? formatDate(socketData.timestamp) : "Time data unavailable"}
+                    </div>
                     <Tabs defaultActiveKey="1" type="card">
                         <TabPane tab="Basic View" key="1">
                             <Card style={{background: "#f5f5f5"}}>

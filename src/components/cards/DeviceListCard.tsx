@@ -2,6 +2,7 @@ import React, {useState, useEffect, useCallback} from "react";
 import {Card, Row, Col, Button, message} from "antd";
 import LoadingSpinner from "../utils/LoadingSpinner";
 import {fetchMyDevices} from "../../util/user-api-services";
+import {socketUrl} from "../../services/commonVariables";
 
 interface Device {
     id: string;
@@ -33,6 +34,7 @@ const DeviceListCard: React.FC<DeviceListCardProps> = ({toggleCards, showPopup, 
             try {
                 const deviceResponse = await fetchMyDevices(idToken);
                 setDevices(deviceResponse.data);
+                connectWebSocket(deviceResponse.data);
                 setLoading(false);
             } catch (error) {
                 console.error("Error fetching device data:", error);
@@ -42,12 +44,63 @@ const DeviceListCard: React.FC<DeviceListCardProps> = ({toggleCards, showPopup, 
         }
     }, [idToken]);
 
+
+            const connectWebSocket = (data:any) => {
+                    if (data.length > 0) {
+                        data.forEach((device: Device) => {
+                            console.log(device.deviceId)
+                                let socket = new WebSocket(`${socketUrl}/device?id=${device.deviceId}&secret=${device.deviceSecret}`);
+
+                                socket.onopen = () => {
+                                    console.log('WebSocket connection established.');
+                                };
+
+                                socket.onmessage = (event) => {
+                                    try {
+                                        JSON.parse(event.data);
+                                        console.log('Connected');
+                                        device.connected=true;
+                                        setDevices(data);
+                                        socket.close();
+                                    } catch (error) {
+                                        device.connected=false;
+                                        setDevices(data);
+                                        console.log('Disconnected',data);
+                                        socket.close();
+
+                                    }
+                                };
+
+                                socket.onclose = (event) => {
+                                    console.log(event)
+                                    console.log('WebSocket connection closed.');
+                                };
+                        });
+                    }
+                    else{console.log("no")
+                        setTimeout(connectWebSocket, 5000);}
+
+
+            };
+
+
+
     useEffect(() => {
         if (idToken) {
             fetchData();
         } else {
             console.error("idToken is null or undefined");
         }
+
+        // if (devices.length > 0) {
+        //     console.log("Devices are set. Running forEach function...");
+        //     devices.forEach((device: Device) => {
+        //         console.log("Device ID:", device.deviceId);
+        //         // Call other functions or perform actions with each device here
+        //     });
+        // } else {
+        //     console.log("Devices are not set yet.");
+        // }
     }, [idToken,fetchData]);
 
 
