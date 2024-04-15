@@ -29,6 +29,44 @@ const DeviceListCard: React.FC<DeviceListCardProps> = ({toggleCards, showPopup, 
     const [loading, setLoading] = useState(true);
 
 
+    const connectWebSocket = (data:any) => {
+        if (data.length > 0) {
+            data.forEach((device: Device) => {
+                console.log(device.deviceId)
+                let socket = new WebSocket(`${socketUrl}/device?id=${device.deviceId}&secret=${device.deviceSecret}`);
+
+                socket.onopen = () => {
+                    console.log('WebSocket connection established.');
+                };
+
+                socket.onmessage = (event) => {
+                    try {
+                        JSON.parse(event.data);
+                        console.log('Connected');
+                        device.connected=true;
+                        setDevices(data);
+                        socket.close();
+                    } catch (error) {
+                        device.connected=false;
+                        setDevices(data);
+                        console.log('Disconnected',data);
+                        socket.close();
+
+                    }
+                };
+
+                socket.onclose = (event) => {
+                    console.log(event)
+                    console.log('WebSocket connection closed.');
+                };
+            });
+        }
+        else{console.log("no")
+            setTimeout(connectWebSocket, 5000);}
+
+
+    };
+
     const fetchData = useCallback(async () => {
         if (idToken) {
             try {
@@ -42,48 +80,7 @@ const DeviceListCard: React.FC<DeviceListCardProps> = ({toggleCards, showPopup, 
                 message.error('Failed to fetch devices');
             }
         }
-    }, [idToken]);
-
-
-            const connectWebSocket = (data:any) => {
-                    if (data.length > 0) {
-                        data.forEach((device: Device) => {
-                            console.log(device.deviceId)
-                                let socket = new WebSocket(`${socketUrl}/device?id=${device.deviceId}&secret=${device.deviceSecret}`);
-
-                                socket.onopen = () => {
-                                    console.log('WebSocket connection established.');
-                                };
-
-                                socket.onmessage = (event) => {
-                                    try {
-                                        JSON.parse(event.data);
-                                        console.log('Connected');
-                                        device.connected=true;
-                                        setDevices(data);
-                                        socket.close();
-                                    } catch (error) {
-                                        device.connected=false;
-                                        setDevices(data);
-                                        console.log('Disconnected',data);
-                                        socket.close();
-
-                                    }
-                                };
-
-                                socket.onclose = (event) => {
-                                    console.log(event)
-                                    console.log('WebSocket connection closed.');
-                                };
-                        });
-                    }
-                    else{console.log("no")
-                        setTimeout(connectWebSocket, 5000);}
-
-
-            };
-
-
+    }, [idToken, connectWebSocket]);
 
     useEffect(() => {
         if (idToken) {
