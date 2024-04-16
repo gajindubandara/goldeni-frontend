@@ -377,7 +377,7 @@ const DeviceInfoSection: React.FC<DeviceInfoSectionProps> = ({device}) => {
                     <div>
                         <h4>Device Disconnected...</h4>
 
-                        IoT device is currently unavailable. It seems to be disconnected at the
+                        Device is currently unavailable. It seems to be disconnected at the
                         moment. The last known location displayed on the map.
                         {socketData.lat !== 0 ? (
                                 <div>
