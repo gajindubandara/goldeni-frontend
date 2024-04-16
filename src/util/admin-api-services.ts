@@ -67,3 +67,13 @@ export const addDevice = async (idToken: string, values: any, onSuccess: () => v
         throw error;
     }
 };
+
+
+//Get analytics
+export const fetchAnalytics = (idToken: string) => {
+    return axios.get(`${baseUrl}/admin/analytics`, {
+        headers: {
+            Authorization: `Bearer ${idToken}`
+        }
+    });
+};

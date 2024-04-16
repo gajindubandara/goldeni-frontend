@@ -205,6 +205,9 @@ code {
   padding-bottom: 153px;
   border: 1px solid #e1e1e1;
 }
+.admin-map-placeholder{
+  padding-top: 235px !important;
+}
 
 /*User stats*/
 .stats-card{
