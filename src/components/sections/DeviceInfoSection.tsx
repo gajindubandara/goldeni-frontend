@@ -1,15 +1,15 @@
 import React, {useEffect, useMemo, useState} from "react";
-import {Button, Card, Col, Dropdown, Empty, Menu, message, Popconfirm, Row, Space, Statistic, Tabs} from "antd";
+import {Button, Card, Col, Dropdown, Empty, Menu, message, Popconfirm, Row, Space, Tabs} from "antd";
 import PopupEditForm from "../popups/PopupEditForm";
 import {EllipsisOutlined} from "@ant-design/icons";
 import LoadingSpinner from "../utils/LoadingSpinner";
 import MapComponent from "../maps/MapComponent";
-import Simulation from "../simulation/Simulation";
 import {socketUrl} from "../../services/commonVariables";
 import map from "../../assets/map.png"
 import {disenrollDevice} from "../../util/common-api-services";
-import {ApexOptions} from "apexcharts";
-import ReactApexChart from "react-apexcharts";
+import BasicViewTab from "./BasicViewTab";
+import DiagnosisViewTab from "./DiagnosisViewTab";
+import ChartViewTab from "./ChartViewTab";
 
 
 interface DeviceInfoSectionProps {
@@ -89,92 +89,6 @@ const DeviceInfoSection: React.FC<DeviceInfoSectionProps> = ({device}) => {
         midObj: 0,
         timestamp: 0
     }
-
-    const ultraChartOptions: ApexOptions = {
-        chart: {
-            height: 350,
-            type: "line",
-            zoom: {
-                enabled: true,
-            },
-        },
-        xaxis: {
-            categories: timeStamps
-        },
-        yaxis: {
-            max: 300,
-        },
-    };
-
-    const tempChartOptions: ApexOptions = {
-        chart: {
-            height: 350,
-            type: "line",
-            zoom: {
-                enabled: true,
-            },
-        },
-        xaxis: {
-            categories: timeStamps
-        },
-        yaxis: {
-            labels: {
-                formatter: function (value: number) {
-                    return value.toFixed(2);
-                },
-            },
-        },
-    };
-
-    const angleChartOptions: ApexOptions = {
-        chart: {
-            height: 350,
-            type: "line",
-            zoom: {
-                enabled: true,
-            },
-        },
-        xaxis: {
-            categories: timeStamps
-        },
-        yaxis: {
-            labels: {
-                formatter: function (value: number) {
-                    return value.toFixed(2);
-                },
-            },
-        },
-    };
-
-    const ultraSeries = [{
-        name: 'Head Ultra',
-        data: headSensorValues
-    },
-        {
-            name: 'Mid Ultra',
-            data: midSensorValues
-        }
-    ]
-
-    const angleSeries = [{
-        name: 'X axis',
-        data: xAngleValues
-    },
-        {
-            name: 'Y axis',
-            data: yAngleValues
-        },
-        {
-            name: 'Z axis',
-            data: zAngleValues
-        }
-    ]
-
-    const tempSeries = [{
-        name: 'Temperature',
-        data: temperature
-    }
-    ]
 
     const [dataToDisplay, setDataToDisplay] = useState<any>();
     const [socketData, setSocketData] = useState<socket>(initialSocketData);
@@ -285,7 +199,7 @@ const DeviceInfoSection: React.FC<DeviceInfoSectionProps> = ({device}) => {
             socket.close();
             stopHeartbeat();
         };
-    }, [initialDisplayData, device.deviceId, device.registeredUsername,device.deviceSecret]);
+    }, [initialDisplayData, device.deviceId, device.registeredUsername, device.deviceSecret]);
 
 
     const validateSocketData = (data: any): data is socket => {
@@ -362,309 +276,139 @@ const DeviceInfoSection: React.FC<DeviceInfoSectionProps> = ({device}) => {
         <>
             <LoadingSpinner loading={loading}/>
             <div>
-                <div>
-                    <div style={{marginTop: '10px', marginBottom: '10px'}}>
-                        Last Updated at: {socketData.timestamp !== 0 ? formatDate(socketData.timestamp) : "Time data unavailable"}
+                {connection ? (
+                    <div>
+                        <div style={{marginTop: '10px', marginBottom: '10px'}}>
+                            Last Updated
+                            at: {socketData.timestamp !== 0 ? formatDate(socketData.timestamp) : "Time data unavailable"}
+                        </div>
+                        <Tabs defaultActiveKey="1" type="card">
+                            <TabPane tab="Basic View" key="1">
+                                <Card style={{background: "#f5f5f5"}}>
+                                    <Card style={{padding: "0px 24px !important"}}>
+                                        <Row gutter={16}>
+                                            <Col xs={24} sm={6} md={6} lg={6} xl={6}>
+                                                <div className="user-detail-item">
+                                                    <b>User's Name: </b>
+                                                    <br/>
+                                                    {dataToDisplay ? dataToDisplay.name : "Loading..."}
+                                                </div>
+                                            </Col>
+                                            <Col xs={24} sm={6} md={6} lg={6} xl={6}>
+                                                <div className="user-detail-item">
+                                                    <b>Guardian's No: </b>
+                                                    <br/>
+                                                    {dataToDisplay ? dataToDisplay.number + ", " + dataToDisplay.altNumber : "Loading..."}
+                                                </div>
+                                            </Col>
+                                            <Col xs={24} sm={10} md={10} lg={10} xl={10}>
+                                                <div className="user-detail-item">
+                                                    <b>User's Address: </b>
+                                                    <br/>
+                                                    {dataToDisplay ? dataToDisplay.address : "Loading..."}
+                                                </div>
+                                            </Col>
+                                            <Col xs={24} sm={2} md={2} lg={2} xl={2}>
+                                                <Space size="middle" style={{float: 'right', margin: '10px auto'}}>
+                                                    <Dropdown
+                                                        overlay={
+                                                            <Menu>
+                                                                <Menu.Item key="update">
+                                                                    <Button type="link" onClick={showPopup}>Update
+                                                                        Info</Button>
+                                                                </Menu.Item>
+                                                                <Menu.Item key="disenroll">
+                                                                    <Popconfirm
+                                                                        title="Are you sure to disenroll this device?"
+                                                                        onConfirm={() => handleDisenroll(device.deviceId)}
+                                                                        okText="Yes"
+                                                                        cancelText="No"
+                                                                    >
+                                                                        <Button type="link" danger>Dis-enroll
+                                                                            Device</Button>
+                                                                    </Popconfirm>
+                                                                </Menu.Item>
+                                                            </Menu>
+                                                        }
+                                                        placement="bottomLeft"
+                                                        trigger={['click']}
+                                                    >
+                                                        <Button type="text"
+                                                                icon={<EllipsisOutlined style={{fontSize: '24px'}}/>}/>
+                                                    </Dropdown>
+                                                </Space>
+                                            </Col>
+                                        </Row>
+                                    </Card>
+
+                                    <BasicViewTab
+                                        connection={connection}
+                                        socketData={socketData}
+                                        center={center}
+                                        markers={markers}
+
+                                    />
+                                </Card>
+                            </TabPane>
+                            <TabPane tab="Diagnosis View" key="2">
+                                <Card style={{background: "#f5f5f5"}}>
+                                    <DiagnosisViewTab
+                                        connection={connection}
+                                        socketData={socketData}
+                                        center={center}
+                                        markers={markers}
+                                    />
+                                </Card>
+                            </TabPane>
+                            <TabPane tab="Chart View" key="3">
+                                <ChartViewTab
+                                    timeStamps={timeStamps}
+                                    headSensorValues={headSensorValues}
+                                    midSensorValues={midSensorValues}
+                                    xAngleValues={xAngleValues}
+                                    yAngleValues={yAngleValues}
+                                    zAngleValues={zAngleValues}
+                                    temperature={temperature}
+                                />
+                            </TabPane>
+                        </Tabs>
                     </div>
-                    <Tabs defaultActiveKey="1" type="card">
-                        <TabPane tab="Basic View" key="1">
-                            <Card style={{background: "#f5f5f5"}}>
-                                <Card style={{padding: "0px 24px !important"}}>
-                                    <Row gutter={16}>
-                                        <Col xs={24} sm={6} md={6} lg={6} xl={6}>
-                                            <div className="user-detail-item">
-                                                <b>User's Name: </b>
-                                                <br/>
-                                                {dataToDisplay ? dataToDisplay.name : "Loading..."}
-                                            </div>
-                                        </Col>
-                                        <Col xs={24} sm={6} md={6} lg={6} xl={6}>
-                                            <div className="user-detail-item">
-                                                <b>Guardian's No: </b>
-                                                <br/>
-                                                {dataToDisplay ? dataToDisplay.number + ", " + dataToDisplay.altNumber : "Loading..."}
-                                            </div>
-                                        </Col>
-                                        <Col xs={24} sm={10} md={10} lg={10} xl={10}>
-                                            <div className="user-detail-item">
-                                                <b>User's Address: </b>
-                                                <br/>
-                                                {dataToDisplay ? dataToDisplay.address : "Loading..."}
-                                            </div>
-                                        </Col>
-                                        <Col xs={24} sm={2} md={2} lg={2} xl={2}>
-                                            <Space size="middle" style={{float: 'right', margin: '10px auto'}}>
-                                                <Dropdown
-                                                    overlay={
-                                                        <Menu>
-                                                            <Menu.Item key="update">
-                                                                <Button type="link" onClick={showPopup}>Update
-                                                                    Info</Button>
-                                                            </Menu.Item>
-                                                            <Menu.Item key="disenroll">
-                                                                <Popconfirm
-                                                                    title="Are you sure to disenroll this device?"
-                                                                    onConfirm={() => handleDisenroll(device.deviceId)}
-                                                                    okText="Yes"
-                                                                    cancelText="No"
-                                                                >
-                                                                    <Button type="link" danger>Dis-enroll
-                                                                        Device</Button>
-                                                                </Popconfirm>
-                                                            </Menu.Item>
-                                                        </Menu>
-                                                    }
-                                                    placement="bottomLeft"
-                                                    trigger={['click']}
-                                                >
-                                                    <Button type="text"
-                                                            icon={<EllipsisOutlined style={{fontSize: '24px'}}/>}/>
-                                                </Dropdown>
-                                            </Space>
-                                        </Col>
-                                    </Row>
-                                </Card>
+                ) : (
+                    <div>
+                        <h4>Device Disconnected...</h4>
 
-                                <Row gutter={16}>
-                                    <Col xs={24} sm={6} md={6} lg={6} xl={6}>
-                                        <Card className="stats-card">
-                                            <Statistic title="Connection Status"
-                                                       value={connection ? "Connected" : "Disconnected"}
-                                                       valueStyle={{color: connection ? '#3f8600' : '#f5222d'}}
-                                            />
-                                        </Card>
-                                    </Col>
-                                    <Col xs={24} sm={6} md={6} lg={6} xl={6}>
-                                        <Card className="stats-card">
-                                            <Statistic title="Head Level Obstacles"
-                                                       value={socketData.headObj ? "Obstacle Detected" : "Clear"}
-                                                       valueStyle={{color: socketData.headObj ? '#f5222d' : '#3f8600'}}
-                                            />
-                                        </Card>
-                                    </Col>
-                                    <Col xs={24} sm={6} md={6} lg={6} xl={6}>
-                                        <Card className="stats-card">
-                                            <Statistic title="Mid Level Obstacles"
-                                                       value={socketData.midObj ? "Obstacle Detected" : "Clear"}
-                                                       valueStyle={{color: socketData.midObj ? '#f5222d' : '#3f8600'}}
-                                            />
-                                        </Card>
-                                    </Col>
-                                    <Col xs={24} sm={6} md={6} lg={6} xl={6}>
-                                        <Card className="stats-card">
-                                            <Statistic title="Low Level Obstacles"
-                                                       value={socketData.stair ? "Obstacle Detected" : "Clear"}
-                                                       valueStyle={{color: socketData.stair ? '#f5222d' : '#3f8600'}}
-                                            />
-                                        </Card>
-                                    </Col>
-                                </Row>
-
-
-                                {connection && socketData.lat !== 0 ? (
+                        IoT device is currently unavailable. It seems to be disconnected at the
+                        moment. The last known location displayed on the map.
+                        {socketData.lat !== 0 ? (
+                                <div>
+                                    <MapComponent center={center} markers={markers}
+                                                  classname="map-container"/>{/*<MapComponent classname={"map-container"} username={device.registeredUsername} location={locationData}/>*/}
+                                </div>
+                            ) :
+                            (
+                                <div>
+                                    <div className="map-container map-placeholder">
                                         <div>
-                                            <MapComponent center={center} markers={markers}
-                                                          classname="map-container"/>{/*<MapComponent classname={"map-container"} username={device.registeredUsername} location={locationData}/>*/}
+                                            <Empty
+                                                image={map}
+                                                imageStyle={{
+                                                    height: 60,
+                                                }}
+
+                                                description={
+                                                    <span>Unable to load the map...</span>
+                                                }
+                                            >
+                                            </Empty>
                                         </div>
-                                    ) :
-                                    (
-                                        <div>
-                                            <div className="map-container map-placeholder">
-                                                <div>
-                                                    <Empty
-                                                        image={map}
-                                                        imageStyle={{
-                                                            height: 60,
-                                                        }}
+                                    </div>
+                                </div>
+                            )
+                        }
+                    </div>
+                )
+                }
 
-                                                        description={
-                                                            <span>Unable to load the map...</span>
-                                                        }
-                                                    >
-                                                    </Empty>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    )
-                                }
-
-                            </Card>
-                        </TabPane>
-                        <TabPane tab="Diagnosis View" key="2">
-                            <Card style={{background: "#f5f5f5"}}>
-                                <Card style={{padding: "0px 24px !important"}}>
-                                    <Row gutter={16}>
-                                        <Col xs={24} sm={6} md={6} lg={6} xl={6}>
-                                            <div className="user-detail-item">
-                                                <b>User's Name: </b>
-                                                <br/>
-                                                {dataToDisplay ? dataToDisplay.name : "Loading..."}
-                                            </div>
-                                        </Col>
-                                        <Col xs={24} sm={6} md={6} lg={6} xl={6}>
-                                            <div className="user-detail-item">
-                                                <b>Guardian's No: </b>
-                                                <br/>
-                                                {dataToDisplay ? dataToDisplay.number + ", " + dataToDisplay.altNumber : "Loading..."}
-                                            </div>
-                                        </Col>
-                                        <Col xs={24} sm={10} md={10} lg={10} xl={10}>
-                                            <div className="user-detail-item">
-                                                <b>User's Address: </b>
-                                                <br/>
-                                                {dataToDisplay ? dataToDisplay.address : "Loading..."}
-                                            </div>
-                                        </Col>
-                                        <Col xs={24} sm={2} md={2} lg={2} xl={2}>
-                                            <Space size="middle" style={{float: 'right', margin: '10px auto'}}>
-                                                <Dropdown
-                                                    overlay={
-                                                        <Menu>
-                                                            <Menu.Item key="update">
-                                                                <Button type="link" onClick={showPopup}>Update
-                                                                    Info</Button>
-                                                            </Menu.Item>
-                                                            <Menu.Item key="disenroll">
-                                                                <Popconfirm
-                                                                    title="Are you sure to disenroll this device?"
-                                                                    onConfirm={() => handleDisenroll(device.deviceId)}
-                                                                    okText="Yes"
-                                                                    cancelText="No"
-                                                                >
-                                                                    <Button type="link" danger>Dis-enroll
-                                                                        Device</Button>
-                                                                </Popconfirm>
-                                                            </Menu.Item>
-                                                        </Menu>
-                                                    }
-                                                    placement="bottomLeft"
-                                                    trigger={['click']}
-                                                >
-                                                    <Button type="text"
-                                                            icon={<EllipsisOutlined style={{fontSize: '24px'}}/>}/>
-                                                </Dropdown>
-                                            </Space>
-                                        </Col>
-                                    </Row>
-                                </Card>
-                                <Row gutter={16}>
-
-                                    <Col xs={24} sm={6} md={6} lg={6} xl={6} className="stat-col">
-
-                                        <Col>
-                                            <Card className="stats-card">
-                                                <Statistic title="Connection Status"
-                                                           value={connection ? "Connected" : "Disconnected"}
-                                                           valueStyle={{color: connection ? '#3f8600' : '#f5222d'}}
-                                                />
-                                            </Card>
-                                        </Col>
-                                        <Col>
-                                            <Card className="stats-card">
-                                                <Statistic title="Top Ultra Sonic" value={socketData.ut} suffix="cm"
-                                                           precision={2}/>
-                                            </Card>
-                                        </Col>
-                                        <Col>
-                                            <Card className="stats-card">
-                                                <Statistic
-                                                    title="IR Sensor"
-                                                    value={socketData.ir1 ? "On" : "Off"}
-                                                    valueStyle={{color: socketData.ir1 ? '#3f8600' : '#f5222d'}}
-                                                />
-                                            </Card>
-                                        </Col>
-                                    </Col>
-                                    <Col xs={24} sm={6} md={6} lg={6} xl={6} className="stat-col">
-                                        <Col>
-                                            <Card className="stats-card">
-                                                <Statistic title="System Temprature" value={socketData.temp} suffix="°"
-                                                           precision={2}/> </Card>
-                                        </Col>
-                                        <Col>
-                                            <Card className="stats-card">
-                                                <Statistic title="Mid Ultra Sonic" value={socketData.um} suffix="cm"
-                                                           precision={2}/>
-                                            </Card>
-                                        </Col>
-                                        <Col>
-                                            <Card className="stats-card">
-                                                <Statistic
-                                                    title="IR Sensor 2"
-                                                    value={socketData.ir2 ? "On" : "Off"}
-                                                    valueStyle={{color: socketData.ir2 ? '#3f8600' : '#f5222d'}}
-                                                />
-                                            </Card>
-                                        </Col>
-                                    </Col>
-                                    <Col xs={24} sm={12} md={12} lg={12} xl={12}>
-                                        <Card className="simulation-card">
-                                            <Simulation xAngle={socketData.gyroX} yAngle={socketData.gyroY}
-                                                        zAngle={socketData.gyroZ}/>
-                                        </Card>
-                                    </Col>
-                                </Row>
-
-                                {connection && socketData.lat !== 0 ? (
-                                        <div>
-                                            <MapComponent center={center} markers={markers}
-                                                          classname="map-container"/>{/*<MapComponent classname={"map-container"} username={device.registeredUsername} location={locationData}/>*/}
-                                        </div>
-                                    ) :
-                                    (
-                                        <div>
-                                            <div className="map-container map-placeholder">
-                                                <div>
-                                                    <Empty
-                                                        image={map}
-                                                        imageStyle={{
-                                                            height: 60,
-                                                        }}
-
-                                                        description={
-                                                            <span>Unable to load the map...</span>
-                                                        }
-                                                    >
-                                                    </Empty>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    )
-                                }
-
-                            </Card>
-                        </TabPane>
-                        <TabPane tab="Chart View" key="3">
-                            <Card style={{background: "#f5f5f5", marginTop: "10px"}}>
-                                <h3>Ultra-Sonic Readings</h3>
-                                <ReactApexChart
-                                    options={ultraChartOptions}
-                                    series={ultraSeries}
-                                    type="line"
-                                    height={350}
-                                />
-                            </Card>
-                            <Card style={{background: "#f5f5f5", marginTop: "10px"}}>
-                                <h3>Orientation Readings</h3>
-                                <ReactApexChart
-                                    options={angleChartOptions}
-                                    series={angleSeries}
-                                    type="line"
-                                    height={350}
-                                />
-                            </Card>
-                            <Card style={{background: "#f5f5f5", marginTop: "10px"}}>
-                                <h3>System Temperature Readings</h3>
-                                <ReactApexChart
-                                    options={tempChartOptions}
-                                    series={tempSeries}
-                                    type="line"
-                                    height={350}
-                                />
-                            </Card>
-                        </TabPane>
-                    </Tabs>
-                </div>
 
                 <PopupEditForm
                     visible={isPopupVisible}
