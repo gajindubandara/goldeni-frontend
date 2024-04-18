@@ -51,7 +51,7 @@ const BasicViewTab: React.FC<basicViewTabProps> = ({
                     <Card className="stats-card">
                         <Statistic
                             title="Head Level Obstacles"
-                            value={socketData.headObj ? "Obstacle Detected" : "Clear"}
+                            value={socketData.headObj ? "Detected" : "Clear"}
                             valueStyle={{ color: socketData.headObj ? '#f5222d' : '#3f8600' }}
                         />
                     </Card>
@@ -60,7 +60,7 @@ const BasicViewTab: React.FC<basicViewTabProps> = ({
                     <Card className="stats-card">
                         <Statistic
                             title="Mid Level Obstacles"
-                            value={socketData.midObj ? "Obstacle Detected" : "Clear"}
+                            value={socketData.midObj ? "Detected" : "Clear"}
                             valueStyle={{ color: socketData.midObj ? '#f5222d' : '#3f8600' }}
                         />
                     </Card>
@@ -69,7 +69,7 @@ const BasicViewTab: React.FC<basicViewTabProps> = ({
                     <Card className="stats-card">
                         <Statistic
                             title="Low Level Obstacles"
-                            value={socketData.stair ? "Obstacle Detected" : "Clear"}
+                            value={socketData.stair ? "Detected" : "Clear"}
                             valueStyle={{ color: socketData.stair ? '#f5222d' : '#3f8600' }}
                         />
                     </Card>

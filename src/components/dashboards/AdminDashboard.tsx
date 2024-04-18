@@ -2,8 +2,7 @@ import React, {useEffect, useState} from "react";
 import MapComponent from "../maps/MapComponent";
 import {Card, Col, Empty, message, Row, Statistic} from "antd";
 import map from "../../assets/map.png";
-import {Interface} from "node:readline";
-import {fetchAnalytics, fetchUsers} from "../../util/admin-api-services";
+import {fetchAnalytics} from "../../util/admin-api-services";
 import LoadingSpinner from "../utils/LoadingSpinner";
 
 
@@ -98,7 +97,7 @@ const AdminDashboard: React.FC = () => {
                 </Col>
             </Row>
 
-            {adminStats.locations.length != 0 ? (
+            {adminStats.locations.length !== 0 ? (
                 <MapComponent center={center} markers={adminStats.locations.map(item => ({
                     long: item.longitude,
                     lat: item.latitude,

@@ -10,6 +10,7 @@ import {disenrollDevice} from "../../util/common-api-services";
 import BasicViewTab from "./BasicViewTab";
 import DiagnosisViewTab from "./DiagnosisViewTab";
 import ChartViewTab from "./ChartViewTab";
+import {fetchLastKnownDeviceData, setConnectionState} from "../../util/user-api-services";
 
 
 interface DeviceInfoSectionProps {
@@ -100,7 +101,6 @@ const DeviceInfoSection: React.FC<DeviceInfoSectionProps> = ({device}) => {
         address: device.registeredAddress,
     }), [device]);
 
-
     useEffect(() => {
         setDataToDisplay(initialDisplayData);
 
@@ -179,10 +179,53 @@ const DeviceInfoSection: React.FC<DeviceInfoSectionProps> = ({device}) => {
 
         const startHeartbeat = () => {
             heartbeatInterval = setInterval(() => {
-                // Send a heartbeat message to the server
-                socket.send(JSON.stringify({type: 'heartbeat'}));
+                // Check if the data was received within the last 5 seconds
+                const currentTime = Date.now();
+                const lastDataTimestamp = socketData.timestamp * 1000; // Convert to milliseconds
+                const timeDifference = currentTime - lastDataTimestamp;
+
+                if (timeDifference > 5000) {
+                    console.log("Data set not received.");
+                    setConnection(false)
+                    handleConnectionStateChange(device.deviceId,false);
+                } else {
+                    // Send a heartbeat message to the server
+                    socket.send(JSON.stringify({ type: 'heartbeat' }));
+                    console.log("Sending heartbeat");
+                }
             }, 5000); // Send heartbeat every 5 seconds
         };
+
+        const handleConnectionStateChange = async (deviceId: string,state:boolean) => {
+            try {
+                await setConnectionState(idToken!, deviceId,state);
+            } catch (error) {
+                console.error(error);
+            }
+        };
+
+            if(!connection){
+                if (idToken) {
+                    try {
+                        const response =  fetchLastKnownDeviceData(idToken);
+                        console.log(response)
+
+                        setLoading(false);
+                    } catch (error) {
+                        console.error("Error fetching data:", error);
+                        setLoading(false);
+                        message.error('Failed to fetch data');
+                    }
+                } else {
+                    console.error("idToken is null or undefined");
+                }
+            }
+        // const startHeartbeat = () => {
+        //     heartbeatInterval = setInterval(() => {
+        //         // Send a heartbeat message to the server
+        //         socket.send(JSON.stringify({type: 'heartbeat'}));
+        //     }, 5000); // Send heartbeat every 5 seconds
+        // };
 
         const resetHeartbeat = () => {
             clearInterval(heartbeatInterval);
@@ -199,8 +242,8 @@ const DeviceInfoSection: React.FC<DeviceInfoSectionProps> = ({device}) => {
             socket.close();
             stopHeartbeat();
         };
-    }, [initialDisplayData, device.deviceId, device.registeredUsername, device.deviceSecret]);
-
+        // eslint-disable-next-line
+    }, [initialDisplayData, device.deviceId, device.registeredUsername,device.deviceSecret,idToken]);
 
     const validateSocketData = (data: any): data is socket => {
         return (

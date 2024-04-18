@@ -1,7 +1,7 @@
 import React, {useState, useEffect, useCallback} from "react";
 import {Card, Row, Col, Button, message} from "antd";
 import LoadingSpinner from "../utils/LoadingSpinner";
-import {fetchMyDevices} from "../../util/user-api-services";
+import {fetchMyDevices, setConnectionState} from "../../util/user-api-services";
 import {socketUrl} from "../../services/commonVariables";
 
 interface Device {
@@ -32,11 +32,11 @@ const DeviceListCard: React.FC<DeviceListCardProps> = ({toggleCards, showPopup, 
     const connectWebSocketCallback = useCallback((data:any) => {
         if (data.length > 0) {
             data.forEach((device: Device) => {
-                console.log(device.deviceId)
+                // console.log(device.deviceId)
                 let socket = new WebSocket(`${socketUrl}/device?id=${device.deviceId}&secret=${device.deviceSecret}`);
 
                 socket.onopen = () => {
-                    console.log('WebSocket connection established.');
+                    console.log('WebSocket connection established.',device.deviceId);
                 };
 
                 socket.onmessage = (event) => {
@@ -46,11 +46,10 @@ const DeviceListCard: React.FC<DeviceListCardProps> = ({toggleCards, showPopup, 
                         device.connected=true;
                         setDevices(data);
                         socket.close();
+                        handleConnectionStateChange(device.deviceId,true);
                     } catch (error) {
-                        device.connected=false;
-                        setDevices(data);
-                        console.log('Disconnected',data);
-                        socket.close();
+                        handleConnectionStateChange(device.deviceId,false);
+                        console.log(error)
 
                     }
                 };
@@ -64,6 +63,14 @@ const DeviceListCard: React.FC<DeviceListCardProps> = ({toggleCards, showPopup, 
         else{console.log("no")
             setTimeout( connectWebSocketCallback, 5000);}
     }, []);
+
+    const handleConnectionStateChange = async (deviceId: string,state:boolean) => {
+        try {
+            await setConnectionState(idToken!, deviceId,state);
+        } catch (error) {
+            console.error(error);
+        }
+    };
 
     // const connectWebSocket = (data:any) => {
     //     if (data.length > 0) {

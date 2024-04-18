@@ -43,3 +43,32 @@ export const updateUserDevice = async (idToken: string, deviceData: any, values:
         throw error;
     }
 };
+
+//Update device state
+export const setConnectionState = async (idToken: string, deviceId: string,state:boolean) => {
+    try {
+
+        const config = {
+            method: 'put',
+            url: `${baseUrl}/devices/device/connection-state?id=${deviceId}`,
+            headers: {
+                'Authorization': `Bearer ${idToken}`,
+                'Content-Type': 'application/json'
+            },
+            data: state
+        };
+
+        return await axios.request(config);
+    } catch (error) {
+        throw error;
+    }
+};
+
+//Fetch last known device data
+export const fetchLastKnownDeviceData = (idToken: string) => {
+    // return axios.get(`${baseUrl}/devices`, {
+    //     headers: {
+    //         Authorization: `Bearer ${idToken}`
+    //     }
+    // });
+};
