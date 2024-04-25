@@ -7,6 +7,7 @@ import dayjs, {Dayjs} from "dayjs";
 import {fetchLastKnownDeviceData} from "../../util/user-api-services";
 import MapComponent from "../maps/MapComponent";
 import map from "../../assets/map.png";
+import noData from "../../assets/no-data.png";
 import LoadingSpinner from "../utils/LoadingSpinner";
 
 interface DisconnectedViewProps {
@@ -71,6 +72,7 @@ const DisconnectedView: React.FC<DisconnectedViewProps> = ({device, connection})
         zoom: 16,
     })
     const [loading, setLoading] = useState(false);
+    const [hasLastKnownData, setHasLastKnownData] = useState(true);
     const initialStartDateTimeStamp = startDate.startOf('day').valueOf() / 1000;
     const initialEndDateTimeStamp = Math.floor(endDate.endOf('day').valueOf() / 1000)
 
@@ -178,6 +180,10 @@ const DisconnectedView: React.FC<DisconnectedViewProps> = ({device, connection})
                 const response = await fetchLastKnownDeviceData(idToken, device.deviceId, start, end);
                 console.log(JSON.stringify(response.data[0])); // Accessing data property after awaiting the promise
                 const lastData = response.data[0];
+                if (response.data.length === 0) {
+                    setHasLastKnownData(false);
+                }
+
                 response.data.forEach((item: {
                     ultrasonicMid: number;
                     ultrasonicHead: number;
@@ -230,7 +236,7 @@ const DisconnectedView: React.FC<DisconnectedViewProps> = ({device, connection})
     useEffect(() => {
         fetchLastKnownData(initialStartDateTimeStamp, initialEndDateTimeStamp);
 // eslint-disable-next-line
-    }, [initialEndDateTimeStamp,initialStartDateTimeStamp]);
+    }, [initialEndDateTimeStamp, initialStartDateTimeStamp]);
 
 
     const disabledEndDate = (current: Dayjs) => {
@@ -257,152 +263,179 @@ const DisconnectedView: React.FC<DisconnectedViewProps> = ({device, connection})
     return (
         <>
             <LoadingSpinner loading={loading}/>
-            {!connection && (
-                <>
-                    <Row gutter={16} align="middle" style={{marginTop: "40px"}}>
-                        <Col span={12}>
-                            <h3>Last known data</h3>
-                        </Col>
-                    </Row>
-                    <Row gutter={16}>
-                        <Col xs={24} sm={6} md={6} lg={6} xl={6} className="stat-col">
-                            <Card className="stats-card">
-                                <Statistic
-                                    title="Connection Status"
-                                    value="Disconnected"
-                                    valueStyle={{color: "#f5222d"}}
+            {hasLastKnownData ? (
+                    <>
+                        {!connection && (
+                            <>
+                                Device is currently unavailable. It seems to be disconnected at the
+                                moment. The last known location displayed on the map.
+                                <Row gutter={16} align="middle" style={{marginTop: "40px"}}>
+                                    <Col span={12}>
+                                        <h3>Last known data</h3>
+                                    </Col>
+                                </Row>
+                                <Row gutter={16}>
+                                    <Col xs={24} sm={6} md={6} lg={6} xl={6} className="stat-col">
+                                        <Card className="stats-card">
+                                            <Statistic
+                                                title="Connection Status"
+                                                value="Disconnected"
+                                                valueStyle={{color: "#f5222d"}}
+                                            />
+                                        </Card>
+                                        <Card className="stats-card">
+                                            <Statistic
+                                                title="Top Ultra Sonic"
+                                                value={socketData?.ultrasonicHead}
+                                                suffix="cm"
+                                                precision={2}
+                                            />
+                                        </Card>
+                                        <Card className="stats-card">
+                                            <Statistic
+                                                title="IR Sensor"
+                                                value={socketData?.irFront ? "On" : "Off"}
+                                                valueStyle={{color: socketData?.irFront ? '#3f8600' : '#f5222d'}}
+                                            />
+                                        </Card>
+                                    </Col>
+                                    <Col xs={24} sm={6} md={6} lg={6} xl={6} className="stat-col">
+                                        <Card className="stats-card">
+                                            <Statistic
+                                                title="System Temperature"
+                                                value={socketData?.temp}
+                                                suffix="°"
+                                                precision={2}
+                                            />
+                                        </Card>
+                                        <Card className="stats-card">
+                                            <Statistic
+                                                title="Mid Ultra Sonic"
+                                                value={socketData?.ultrasonicMid}
+                                                suffix="cm"
+                                                precision={2}
+                                            />
+                                        </Card>
+                                        <Card className="stats-card">
+                                            <Statistic
+                                                title="IR Sensor 2"
+                                                value={socketData?.irBack ? "On" : "Off"}
+                                                valueStyle={{color: socketData?.irBack ? '#3f8600' : '#f5222d'}}
+                                            />
+                                        </Card>
+                                    </Col>
+                                    <Col xs={24} sm={12} md={12} lg={12} xl={12}>
+                                        <Card className="simulation-card">
+                                            {socketData ? (
+                                                <Simulation
+                                                    xAngle={socketData?.gyroX}
+                                                    yAngle={socketData?.gyroY}
+                                                    zAngle={socketData?.gyroZ}
+                                                />
+                                            ):(
+                                                <Simulation
+                                                    xAngle={0}
+                                                    yAngle={0}
+                                                    zAngle={0}
+                                                />
+                                            )}
+
+                                        </Card>
+                                    </Col>
+                                </Row>
+                            </>
+                        )}
+
+                        {socketData?.latitude !== 0 ? (
+                                <MapComponent center={center} markers={markers} classname="map-container"/>
+                            )
+                            :
+                            (
+                                <div className="map-container map-placeholder">
+                                    <div>
+                                        <Empty
+                                            image={map}
+                                            imageStyle={{
+                                                height: 60,
+                                            }}
+                                            description={<span>Unable to load the map...</span>}
+                                        />
+                                    </div>
+                                </div>
+                            )
+                        }
+
+                        <Row gutter={16} align="middle" style={{marginTop: "40px"}}>
+                            <Col span={12}>
+                                <h3>Device data history</h3>
+                            </Col>
+                            <Col span={12} style={{display: 'flex', justifyContent: 'flex-end'}}>
+                                <DatePicker.RangePicker
+                                    value={[startDate, endDate]}
+                                    onChange={(dates) => {
+                                        if (dates) {
+                                            setStartDate(dates[0] as Dayjs);
+                                            setEndDate(dates[1] as Dayjs);
+                                        }
+                                        onRangeChange(dates as [Dayjs | null, Dayjs | null], [startDate.format('YYYY/MM/DD'), endDate.format('YYYY/MM/DD')]);
+                                    }}
+                                    disabledDate={disabledEndDate}
                                 />
-                            </Card>
-                            <Card className="stats-card">
-                                <Statistic
-                                    title="Top Ultra Sonic"
-                                    value={socketData?.ultrasonicHead}
-                                    suffix="cm"
-                                    precision={2}
+                            </Col>
+                        </Row>
+
+                        <Card style={{background: "#f5f5f5", marginTop: "10px"}}>
+                            <h3>Ultra-Sonic Readings</h3>
+                            <ReactApexChart
+                                options={ultraChartOptions}
+                                series={ultraSeries}
+                                type="line"
+                                height={350}
+                            />
+                        </Card>
+                        <Card style={{background: "#f5f5f5", marginTop: "10px"}}>
+                            <h3>Orientation Readings</h3>
+                            <ReactApexChart
+                                options={angleChartOptions}
+                                series={angleSeries}
+                                type="line"
+                                height={350}
+                            />
+                        </Card>
+                        <Card style={{background: "#f5f5f5", marginTop: "10px"}}>
+                            <h3>System Temperature Readings</h3>
+                            <ReactApexChart
+                                options={tempChartOptions}
+                                series={tempSeries}
+                                type="line"
+                                height={350}
+                            />
+                        </Card>
+                    </>
+
+
+                ) :
+                (
+                    <>
+
+                        <div className="map-container map-placeholder">
+                            <div>
+                                <Empty
+                                    image={noData}
+                                    imageStyle={{
+                                        height: 60,
+                                    }}
+                                    description={<span>No available data...</span>}
                                 />
-                            </Card>
-                            <Card className="stats-card">
-                                <Statistic
-                                    title="IR Sensor"
-                                    value={socketData?.irFront ? "On" : "Off"}
-                                    valueStyle={{color: socketData?.irFront ? '#3f8600' : '#f5222d'}}
-                                />
-                            </Card>
-                        </Col>
-                        <Col xs={24} sm={6} md={6} lg={6} xl={6} className="stat-col">
-                            <Card className="stats-card">
-                                <Statistic
-                                    title="System Temperature"
-                                    value={socketData?.temp}
-                                    suffix="°"
-                                    precision={2}
-                                />
-                            </Card>
-                            <Card className="stats-card">
-                                <Statistic
-                                    title="Mid Ultra Sonic"
-                                    value={socketData?.ultrasonicMid}
-                                    suffix="cm"
-                                    precision={2}
-                                />
-                            </Card>
-                            <Card className="stats-card">
-                                <Statistic
-                                    title="IR Sensor 2"
-                                    value={socketData?.irBack ? "On" : "Off"}
-                                    valueStyle={{color: socketData?.irBack ? '#3f8600' : '#f5222d'}}
-                                />
-                            </Card>
-                        </Col>
-                        <Col xs={24} sm={12} md={12} lg={12} xl={12}>
-                            <Card className="simulation-card">
-                                {socketData && (
-                                    <Simulation
-                                        xAngle={socketData?.gyroX}
-                                        yAngle={socketData?.gyroY}
-                                        zAngle={socketData?.gyroZ}
-                                    />
-                                )}
-
-                            </Card>
-                        </Col>
-                    </Row>
-                </>
-            )}
-
-            {/*<Row gutter={16} align="middle" style={{marginTop: "40px"}}>*/}
-            {/*    <Col span={12}>*/}
-            {/*        <h3>Last known data</h3>*/}
-            {/*    </Col>*/}
-            {/*</Row>*/}
-
-
-            {socketData?.latitude !== 0 ? (
-                <MapComponent center={center} markers={markers} classname="map-container"/>
-            ) : (
-                <div className="map-container map-placeholder">
-                    <div>
-                        <Empty
-                            image={map}
-                            imageStyle={{
-                                height: 60,
-                            }}
-                            description={<span>Unable to load the map...</span>}
-                        />
-                    </div>
-                </div>
-            )}
-
-            <Row gutter={16} align="middle" style={{marginTop: "40px"}}>
-                <Col span={12}>
-                    <h3>Device data history</h3>
-                </Col>
-                <Col span={12} style={{display: 'flex', justifyContent: 'flex-end'}}>
-                    <DatePicker.RangePicker
-                        value={[startDate, endDate]}
-                        onChange={(dates) => {
-                            if (dates) {
-                                setStartDate(dates[0] as Dayjs);
-                                setEndDate(dates[1] as Dayjs);
-                            }
-                            onRangeChange(dates as [Dayjs | null, Dayjs | null], [startDate.format('YYYY/MM/DD'), endDate.format('YYYY/MM/DD')]);
-                        }}
-                        disabledDate={disabledEndDate}
-                    />
-                </Col>
-            </Row>
-
-            <Card style={{background: "#f5f5f5", marginTop: "10px"}}>
-                <h3>Ultra-Sonic Readings</h3>
-                <ReactApexChart
-                    options={ultraChartOptions}
-                    series={ultraSeries}
-                    type="line"
-                    height={350}
-                />
-            </Card>
-            <Card style={{background: "#f5f5f5", marginTop: "10px"}}>
-                <h3>Orientation Readings</h3>
-                <ReactApexChart
-                    options={angleChartOptions}
-                    series={angleSeries}
-                    type="line"
-                    height={350}
-                />
-            </Card>
-            <Card style={{background: "#f5f5f5", marginTop: "10px"}}>
-                <h3>System Temperature Readings</h3>
-                <ReactApexChart
-                    options={tempChartOptions}
-                    series={tempSeries}
-                    type="line"
-                    height={350}
-                />
-            </Card>
-
+                            </div>
+                        </div>
+                    </>
+                )
+            }
 
         </>
-    );
+    )
+        ;
 };
 
 export default DisconnectedView;

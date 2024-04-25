@@ -358,17 +358,14 @@ const DeviceInfoSection: React.FC<DeviceInfoSectionProps> = ({device}) => {
                                 handleDisenroll={handleDisenroll}
                                 device={device}
                             />
-                            <h4>Device Disconnected...</h4>
-
-                            Device is currently unavailable. It seems to be disconnected at the
-                            moment. The last known location displayed on the map.
+                            <h2>Device Disconnected...</h2>
                             <DisconnectedView
                                 device={device}
                                 connection={connection}
                             />
                         </Card>
                     </div>
-                    )
+                )
                 }
 
 
