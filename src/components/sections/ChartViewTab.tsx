@@ -34,7 +34,7 @@ const ChartViewTab: React.FC<ChartViewTabProps> = ({
             categories: timeStamps
         },
         yaxis: {
-            max: 300,
+            max: 125,
         },
     };
 

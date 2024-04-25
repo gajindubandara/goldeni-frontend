@@ -77,3 +77,12 @@ export const fetchAnalytics = (idToken: string) => {
         }
     });
 };
+
+//Get activity
+export const fetchActivity = (idToken: string,start:number,end:number) => {
+    return axios.get(`${baseUrl}/admin/analytics/activity?startTimestamp=${start}&endTimestamp=${end}`, {
+        headers: {
+            Authorization: `Bearer ${idToken}`
+        }
+    });
+};

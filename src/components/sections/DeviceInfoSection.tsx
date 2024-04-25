@@ -1,16 +1,15 @@
 import React, {useEffect, useMemo, useState} from "react";
-import {Button, Card, Col, Dropdown, Empty, Menu, message, Popconfirm, Row, Space, Tabs} from "antd";
+import {Button, Card, Col, Dropdown, Menu, message, Popconfirm, Row, Space, Tabs} from "antd";
 import PopupEditForm from "../popups/PopupEditForm";
 import {EllipsisOutlined} from "@ant-design/icons";
 import LoadingSpinner from "../utils/LoadingSpinner";
-import MapComponent from "../maps/MapComponent";
 import {socketUrl} from "../../services/commonVariables";
-import map from "../../assets/map.png"
 import {disenrollDevice} from "../../util/common-api-services";
 import BasicViewTab from "./BasicViewTab";
 import DiagnosisViewTab from "./DiagnosisViewTab";
 import ChartViewTab from "./ChartViewTab";
-import {fetchLastKnownDeviceData, setConnectionState} from "../../util/user-api-services";
+import {setConnectionState} from "../../util/user-api-services";
+import DisconnectedView from "./DisconnectedView";
 
 
 interface DeviceInfoSectionProps {
@@ -18,8 +17,8 @@ interface DeviceInfoSectionProps {
 }
 
 interface MarkerInfo {
-    lat: number;
-    long: number;
+    latitude: number;
+    longitude: number;
     username: string;
 }
 
@@ -37,19 +36,19 @@ interface Device {
 }
 
 interface socket {
-    ut: number;
-    um: number;
-    ir1: boolean;
-    ir2: boolean;
-    lat: number;
-    long: number;
+    ultrasonicHead: number;
+    ultrasonicMid: number;
+    irFront: boolean;
+    irBack: boolean;
+    latitude: number;
+    longitude: number;
     gyroX: number;
     gyroY: number;
     gyroZ: number;
     temp: number;
-    stair: number;
-    headObj: number;
-    midObj: number;
+    isStaircase: number;
+    isHeadObstacle: number;
+    isMidObstacle: number;
     timestamp: number;
 
 }
@@ -60,8 +59,8 @@ const DeviceInfoSection: React.FC<DeviceInfoSectionProps> = ({device}) => {
     const [loading, setLoading] = useState(false);
     const [connection, setConnection] = useState(false);
     const [center, setCenter] = useState({
-        lat: 0,
-        long: 0,
+        latitude: 0,
+        longitude: 0,
         zoom: 16,
     })
     const [midSensorValues, setMidSensorValues] = useState<number[]>([]);
@@ -75,19 +74,19 @@ const DeviceInfoSection: React.FC<DeviceInfoSectionProps> = ({device}) => {
 
     const [markers, setMakers] = useState<MarkerInfo[]>([]);
     const initialSocketData = {
-        ut: 0.00,
-        um: 0.00,
-        ir1: false,
-        ir2: false,
-        lat: 0,
-        long: 0,
+        ultrasonicHead: 0.00,
+        ultrasonicMid: 0.00,
+        irFront: false,
+        irBack: false,
+        latitude: 0,
+        longitude: 0,
         gyroX: 0,
         gyroY: 0,
         gyroZ: 0,
         temp: 0,
-        stair: 0,
-        headObj: 0,
-        midObj: 0,
+        isStaircase: 0,
+        isHeadObstacle: 0,
+        isMidObstacle: 0,
         timestamp: 0
     }
 
@@ -121,10 +120,10 @@ const DeviceInfoSection: React.FC<DeviceInfoSectionProps> = ({device}) => {
                         resetHeartbeat();
                         setSocketData(data);
                         setMidSensorValues(prevNumbers => {
-                            return [...prevNumbers, data.um].slice(-50);
+                            return [...prevNumbers, data.ultrasonicMid].slice(-50);
                         });
                         setHeadSensorValues(prevNumbers => {
-                            return [...prevNumbers, data.ut].slice(-50);
+                            return [...prevNumbers, data.ultrasonicHead].slice(-50);
                         });
 
                         setXAngleValues(prevNumbers => {
@@ -148,13 +147,13 @@ const DeviceInfoSection: React.FC<DeviceInfoSectionProps> = ({device}) => {
 
 
                         const center = {
-                            lat: data.lat,
-                            long: data.long,
+                            latitude: data.latitude,
+                            longitude: data.longitude,
                             zoom: 16
                         }
                         const marker = [{
-                            lat: data.lat,
-                            long: data.long,
+                            latitude: data.latitude,
+                            longitude: data.longitude,
                             username: device.registeredUsername
                         }]
                         setCenter(center);
@@ -204,28 +203,10 @@ const DeviceInfoSection: React.FC<DeviceInfoSectionProps> = ({device}) => {
             }
         };
 
-            if(!connection){
-                if (idToken) {
-                    try {
-                        const response =  fetchLastKnownDeviceData(idToken);
-                        console.log(response)
+        // if(!connection){
+        //     fetchLastKnownData();
+        // }
 
-                        setLoading(false);
-                    } catch (error) {
-                        console.error("Error fetching data:", error);
-                        setLoading(false);
-                        message.error('Failed to fetch data');
-                    }
-                } else {
-                    console.error("idToken is null or undefined");
-                }
-            }
-        // const startHeartbeat = () => {
-        //     heartbeatInterval = setInterval(() => {
-        //         // Send a heartbeat message to the server
-        //         socket.send(JSON.stringify({type: 'heartbeat'}));
-        //     }, 5000); // Send heartbeat every 5 seconds
-        // };
 
         const resetHeartbeat = () => {
             clearInterval(heartbeatInterval);
@@ -247,22 +228,20 @@ const DeviceInfoSection: React.FC<DeviceInfoSectionProps> = ({device}) => {
 
     const validateSocketData = (data: any): data is socket => {
         return (
-            typeof data.ut === 'number' &&
-            typeof data.um === 'number' &&
-            typeof data.ir1 === 'boolean' &&
-            typeof data.ir2 === 'boolean' &&
-            typeof data.lat === 'number' &&
-            typeof data.long === 'number' &&
+            typeof data.ultrasonicHead === 'number' &&
+            typeof data.ultrasonicMid === 'number' &&
+            typeof data.irFront === 'boolean' &&
+            typeof data.irBack === 'boolean' &&
+            typeof data.latitude === 'number' &&
+            typeof data.longitude === 'number' &&
             typeof data.gyroX === 'number' &&
             typeof data.gyroY === 'number' &&
             typeof data.gyroZ === 'number' &&
             typeof data.temp === 'number' &&
-            typeof data.stair === 'number' &&
-            typeof data.headObj === 'number' &&
-            typeof data.midObj === 'number' &&
+            typeof data.isStaircase === 'number' &&
+            typeof data.isHeadObstacle === 'number' &&
+            typeof data.isMidObstacle === 'number' &&
             typeof data.timestamp === 'number'
-
-
         );
     };
 
@@ -280,6 +259,42 @@ const DeviceInfoSection: React.FC<DeviceInfoSectionProps> = ({device}) => {
 
     const {TabPane} = Tabs;
 
+
+    // const fetchLastKnownData = async () => {
+    //     if (idToken) {
+    //         try {
+    //             // Await the asynchronous operation
+    //             const response = await fetchLastKnownDeviceData(idToken, device.deviceId);
+    //             console.log(JSON.stringify(response.data[0])); // Accessing data property after awaiting the promise
+    //             const lastData =response.data[0]
+    //             setLastKnownData(lastData);
+    //             console.log("last",lastKnownData)
+    //
+    //             if(lastKnownData) {
+    //                 const center = {
+    //                     latitude: response.data[0].latitude,
+    //                     longitude: response.data[0].longitude,
+    //                     zoom: 16
+    //                 }
+    //                 const marker = [{
+    //                     latitude: response.data[0].latitude,
+    //                     longitude: response.data[0].longitude,
+    //                     username: device.registeredUsername
+    //                 }]
+    //                 setCenter(center);
+    //                 setMakers(marker);
+    //                 console.log(response.data[0])
+    //             }
+    //             setLoading(false);
+    //         } catch (error) {
+    //             console.error("Error fetching data:", error);
+    //             setLoading(false);
+    //             message.error('Failed to fetch data');
+    //         }
+    //     } else {
+    //         console.error("idToken is null or undefined");
+    //     }
+    // };
 
     const handleDisenroll = async (deviceId: string) => {
         setLoading(true);
@@ -414,6 +429,12 @@ const DeviceInfoSection: React.FC<DeviceInfoSectionProps> = ({device}) => {
                                     temperature={temperature}
                                 />
                             </TabPane>
+                            <TabPane tab="Previous Data" key="4">
+                                <DisconnectedView
+                                    device={device}
+                                    connection={connection}
+                                />
+                            </TabPane>
                         </Tabs>
                     </div>
                 ) : (
@@ -422,32 +443,10 @@ const DeviceInfoSection: React.FC<DeviceInfoSectionProps> = ({device}) => {
 
                         Device is currently unavailable. It seems to be disconnected at the
                         moment. The last known location displayed on the map.
-                        {socketData.lat !== 0 ? (
-                                <div>
-                                    <MapComponent center={center} markers={markers}
-                                                  classname="map-container"/>{/*<MapComponent classname={"map-container"} username={device.registeredUsername} location={locationData}/>*/}
-                                </div>
-                            ) :
-                            (
-                                <div>
-                                    <div className="map-container map-placeholder">
-                                        <div>
-                                            <Empty
-                                                image={map}
-                                                imageStyle={{
-                                                    height: 60,
-                                                }}
-
-                                                description={
-                                                    <span>Unable to load the map...</span>
-                                                }
-                                            >
-                                            </Empty>
-                                        </div>
-                                    </div>
-                                </div>
-                            )
-                        }
+                        <DisconnectedView
+                            device={device}
+                            connection={connection}
+                        />
                     </div>
                 )
                 }

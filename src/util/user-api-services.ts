@@ -65,10 +65,10 @@ export const setConnectionState = async (idToken: string, deviceId: string,state
 };
 
 //Fetch last known device data
-export const fetchLastKnownDeviceData = (idToken: string) => {
-    // return axios.get(`${baseUrl}/devices`, {
-    //     headers: {
-    //         Authorization: `Bearer ${idToken}`
-    //     }
-    // });
+export const fetchLastKnownDeviceData = (idToken: string,deviceId:string,start:number,end:number) => {
+    return axios.get(`${baseUrl}/admin/event?deviceId=${deviceId}&startTimestamp=${start}&endTimestamp=${end}`, {
+        headers: {
+            Authorization: `Bearer ${idToken}`
+        }
+    });
 };

@@ -7,24 +7,24 @@ import map from "../../assets/map.png";
 interface DiagnosisViewTabProps {
     connection: boolean;
     socketData: {
-        ut: number;
-        um: number;
-        ir1: boolean;
-        ir2: boolean;
-        lat: number;
-        long: number;
+        ultrasonicHead: number;
+        ultrasonicMid: number;
+        irFront: boolean;
+        irBack: boolean;
+        latitude: number;
+        longitude: number;
         gyroX: number;
         gyroY: number;
         gyroZ: number;
         temp: number;
-        stair: number;
-        headObj: number;
-        midObj: number;
+        isStaircase: number;
+        isHeadObstacle: number;
+        isMidObstacle: number;
         timestamp: number;
     };
     center: {
-        lat: number;
-        long: number;
+        latitude: number;
+        longitude: number;
         zoom: number;
     };
     markers: Array<any>; // Adjust the type according to your markers
@@ -50,7 +50,7 @@ const DiagnosisViewTab: React.FC<DiagnosisViewTabProps> = ({
                     <Card className="stats-card">
                         <Statistic
                             title="Top Ultra Sonic"
-                            value={socketData.ut}
+                            value={socketData.ultrasonicHead}
                             suffix="cm"
                             precision={2}
                         />
@@ -58,8 +58,8 @@ const DiagnosisViewTab: React.FC<DiagnosisViewTabProps> = ({
                     <Card className="stats-card">
                         <Statistic
                             title="IR Sensor"
-                            value={socketData.ir1 ? "On" : "Off"}
-                            valueStyle={{ color: socketData.ir1 ? '#3f8600' : '#f5222d' }}
+                            value={socketData.irFront ? "On" : "Off"}
+                            valueStyle={{ color: socketData.irFront ? '#3f8600' : '#f5222d' }}
                         />
                     </Card>
                 </Col>
@@ -75,7 +75,7 @@ const DiagnosisViewTab: React.FC<DiagnosisViewTabProps> = ({
                     <Card className="stats-card">
                         <Statistic
                             title="Mid Ultra Sonic"
-                            value={socketData.um}
+                            value={socketData.ultrasonicMid}
                             suffix="cm"
                             precision={2}
                         />
@@ -83,8 +83,8 @@ const DiagnosisViewTab: React.FC<DiagnosisViewTabProps> = ({
                     <Card className="stats-card">
                         <Statistic
                             title="IR Sensor 2"
-                            value={socketData.ir2 ? "On" : "Off"}
-                            valueStyle={{ color: socketData.ir2 ? '#3f8600' : '#f5222d' }}
+                            value={socketData.irBack ? "On" : "Off"}
+                            valueStyle={{ color: socketData.irBack ? '#3f8600' : '#f5222d' }}
                         />
                     </Card>
                 </Col>
@@ -99,7 +99,7 @@ const DiagnosisViewTab: React.FC<DiagnosisViewTabProps> = ({
                 </Col>
             </Row>
 
-            {connection && socketData.lat !== 0 ? (
+            {connection && socketData.latitude !== 0 ? (
                 <MapComponent center={center} markers={markers} classname="map-container" />
             ) : (
                 <div className="map-container map-placeholder">

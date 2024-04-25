@@ -6,24 +6,24 @@ import map from "../../assets/map.png";
 interface basicViewTabProps {
     connection: boolean;
     socketData: {
-        ut: number;
-        um: number;
-        ir1: boolean;
-        ir2: boolean;
-        lat: number;
-        long: number;
+        ultrasonicHead: number;
+        ultrasonicMid: number;
+        irFront: boolean;
+        irBack: boolean;
+        latitude: number;
+        longitude: number;
         gyroX: number;
         gyroY: number;
         gyroZ: number;
         temp: number;
-        stair: number;
-        headObj: number;
-        midObj: number;
+        isStaircase: number;
+        isHeadObstacle: number;
+        isMidObstacle: number;
         timestamp: number;
     };
     center: {
-        lat: number;
-        long: number;
+        latitude: number;
+        longitude: number;
         zoom: number;
     };
     markers: Array<any>;
@@ -51,8 +51,8 @@ const BasicViewTab: React.FC<basicViewTabProps> = ({
                     <Card className="stats-card">
                         <Statistic
                             title="Head Level Obstacles"
-                            value={socketData.headObj ? "Detected" : "Clear"}
-                            valueStyle={{ color: socketData.headObj ? '#f5222d' : '#3f8600' }}
+                            value={socketData.isHeadObstacle ? "Detected" : "Clear"}
+                            valueStyle={{ color: socketData.isHeadObstacle ? '#f5222d' : '#3f8600' }}
                         />
                     </Card>
                 </Col>
@@ -60,8 +60,8 @@ const BasicViewTab: React.FC<basicViewTabProps> = ({
                     <Card className="stats-card">
                         <Statistic
                             title="Mid Level Obstacles"
-                            value={socketData.midObj ? "Detected" : "Clear"}
-                            valueStyle={{ color: socketData.midObj ? '#f5222d' : '#3f8600' }}
+                            value={socketData.isMidObstacle ? "Detected" : "Clear"}
+                            valueStyle={{ color: socketData.isMidObstacle ? '#f5222d' : '#3f8600' }}
                         />
                     </Card>
                 </Col>
@@ -69,14 +69,14 @@ const BasicViewTab: React.FC<basicViewTabProps> = ({
                     <Card className="stats-card">
                         <Statistic
                             title="Low Level Obstacles"
-                            value={socketData.stair ? "Detected" : "Clear"}
-                            valueStyle={{ color: socketData.stair ? '#f5222d' : '#3f8600' }}
+                            value={socketData.isStaircase ? "Detected" : "Clear"}
+                            valueStyle={{ color: socketData.isStaircase ? '#f5222d' : '#3f8600' }}
                         />
                     </Card>
                 </Col>
             </Row>
 
-            {connection && socketData.lat !== 0 ? (
+            {connection && socketData.latitude !== 0 ? (
                 <MapComponent center={center} markers={markers} classname="map-container" />
             ) : (
                 <div className="map-container map-placeholder">
