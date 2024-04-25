@@ -1,7 +1,6 @@
 import React, {useEffect, useMemo, useState} from "react";
-import {Button, Card, Col, Dropdown, Menu, message, Popconfirm, Row, Space, Tabs} from "antd";
+import {Card, message, Tabs} from "antd";
 import PopupEditForm from "../popups/PopupEditForm";
-import {EllipsisOutlined} from "@ant-design/icons";
 import LoadingSpinner from "../utils/LoadingSpinner";
 import {socketUrl} from "../../services/commonVariables";
 import {disenrollDevice} from "../../util/common-api-services";
@@ -10,6 +9,7 @@ import DiagnosisViewTab from "./DiagnosisViewTab";
 import ChartViewTab from "./ChartViewTab";
 import {setConnectionState} from "../../util/user-api-services";
 import DisconnectedView from "./DisconnectedView";
+import UserDataView from "./UserDataView";
 
 
 interface DeviceInfoSectionProps {
@@ -186,18 +186,18 @@ const DeviceInfoSection: React.FC<DeviceInfoSectionProps> = ({device}) => {
                 if (timeDifference > 5000) {
                     console.log("Data set not received.");
                     setConnection(false)
-                    handleConnectionStateChange(device.deviceId,false);
+                    handleConnectionStateChange(device.deviceId, false);
                 } else {
                     // Send a heartbeat message to the server
-                    socket.send(JSON.stringify({ type: 'heartbeat' }));
+                    socket.send(JSON.stringify({type: 'heartbeat'}));
                     console.log("Sending heartbeat");
                 }
             }, 5000); // Send heartbeat every 5 seconds
         };
 
-        const handleConnectionStateChange = async (deviceId: string,state:boolean) => {
+        const handleConnectionStateChange = async (deviceId: string, state: boolean) => {
             try {
-                await setConnectionState(idToken!, deviceId,state);
+                await setConnectionState(idToken!, deviceId, state);
             } catch (error) {
                 console.error(error);
             }
@@ -224,7 +224,7 @@ const DeviceInfoSection: React.FC<DeviceInfoSectionProps> = ({device}) => {
             stopHeartbeat();
         };
         // eslint-disable-next-line
-    }, [initialDisplayData, device.deviceId, device.registeredUsername,device.deviceSecret,idToken]);
+    }, [initialDisplayData, device.deviceId, device.registeredUsername, device.deviceSecret, idToken]);
 
     const validateSocketData = (data: any): data is socket => {
         return (
@@ -258,43 +258,6 @@ const DeviceInfoSection: React.FC<DeviceInfoSectionProps> = ({device}) => {
     };
 
     const {TabPane} = Tabs;
-
-
-    // const fetchLastKnownData = async () => {
-    //     if (idToken) {
-    //         try {
-    //             // Await the asynchronous operation
-    //             const response = await fetchLastKnownDeviceData(idToken, device.deviceId);
-    //             console.log(JSON.stringify(response.data[0])); // Accessing data property after awaiting the promise
-    //             const lastData =response.data[0]
-    //             setLastKnownData(lastData);
-    //             console.log("last",lastKnownData)
-    //
-    //             if(lastKnownData) {
-    //                 const center = {
-    //                     latitude: response.data[0].latitude,
-    //                     longitude: response.data[0].longitude,
-    //                     zoom: 16
-    //                 }
-    //                 const marker = [{
-    //                     latitude: response.data[0].latitude,
-    //                     longitude: response.data[0].longitude,
-    //                     username: device.registeredUsername
-    //                 }]
-    //                 setCenter(center);
-    //                 setMakers(marker);
-    //                 console.log(response.data[0])
-    //             }
-    //             setLoading(false);
-    //         } catch (error) {
-    //             console.error("Error fetching data:", error);
-    //             setLoading(false);
-    //             message.error('Failed to fetch data');
-    //         }
-    //     } else {
-    //         console.error("idToken is null or undefined");
-    //     }
-    // };
 
     const handleDisenroll = async (deviceId: string) => {
         setLoading(true);
@@ -343,68 +306,17 @@ const DeviceInfoSection: React.FC<DeviceInfoSectionProps> = ({device}) => {
                         <Tabs defaultActiveKey="1" type="card">
                             <TabPane tab="Basic View" key="1">
                                 <Card style={{background: "#f5f5f5"}}>
-                                    <Card style={{padding: "0px 24px !important"}}>
-                                        <Row gutter={16}>
-                                            <Col xs={24} sm={6} md={6} lg={6} xl={6}>
-                                                <div className="user-detail-item">
-                                                    <b>User's Name: </b>
-                                                    <br/>
-                                                    {dataToDisplay ? dataToDisplay.name : "Loading..."}
-                                                </div>
-                                            </Col>
-                                            <Col xs={24} sm={6} md={6} lg={6} xl={6}>
-                                                <div className="user-detail-item">
-                                                    <b>Guardian's No: </b>
-                                                    <br/>
-                                                    {dataToDisplay ? dataToDisplay.number + ", " + dataToDisplay.altNumber : "Loading..."}
-                                                </div>
-                                            </Col>
-                                            <Col xs={24} sm={10} md={10} lg={10} xl={10}>
-                                                <div className="user-detail-item">
-                                                    <b>User's Address: </b>
-                                                    <br/>
-                                                    {dataToDisplay ? dataToDisplay.address : "Loading..."}
-                                                </div>
-                                            </Col>
-                                            <Col xs={24} sm={2} md={2} lg={2} xl={2}>
-                                                <Space size="middle" style={{float: 'right', margin: '10px auto'}}>
-                                                    <Dropdown
-                                                        overlay={
-                                                            <Menu>
-                                                                <Menu.Item key="update">
-                                                                    <Button type="link" onClick={showPopup}>Update
-                                                                        Info</Button>
-                                                                </Menu.Item>
-                                                                <Menu.Item key="disenroll">
-                                                                    <Popconfirm
-                                                                        title="Are you sure to disenroll this device?"
-                                                                        onConfirm={() => handleDisenroll(device.deviceId)}
-                                                                        okText="Yes"
-                                                                        cancelText="No"
-                                                                    >
-                                                                        <Button type="link" danger>Dis-enroll
-                                                                            Device</Button>
-                                                                    </Popconfirm>
-                                                                </Menu.Item>
-                                                            </Menu>
-                                                        }
-                                                        placement="bottomLeft"
-                                                        trigger={['click']}
-                                                    >
-                                                        <Button type="text"
-                                                                icon={<EllipsisOutlined style={{fontSize: '24px'}}/>}/>
-                                                    </Dropdown>
-                                                </Space>
-                                            </Col>
-                                        </Row>
-                                    </Card>
-
+                                    <UserDataView
+                                        dataToDisplay={dataToDisplay}
+                                        showPopup={showPopup}
+                                        handleDisenroll={handleDisenroll}
+                                        device={device}
+                                    />
                                     <BasicViewTab
                                         connection={connection}
                                         socketData={socketData}
                                         center={center}
                                         markers={markers}
-
                                     />
                                 </Card>
                             </TabPane>
@@ -439,16 +351,24 @@ const DeviceInfoSection: React.FC<DeviceInfoSectionProps> = ({device}) => {
                     </div>
                 ) : (
                     <div>
-                        <h4>Device Disconnected...</h4>
+                        <Card style={{background: "#f5f5f5"}}>
+                            <UserDataView
+                                dataToDisplay={dataToDisplay}
+                                showPopup={showPopup}
+                                handleDisenroll={handleDisenroll}
+                                device={device}
+                            />
+                            <h4>Device Disconnected...</h4>
 
-                        Device is currently unavailable. It seems to be disconnected at the
-                        moment. The last known location displayed on the map.
-                        <DisconnectedView
-                            device={device}
-                            connection={connection}
-                        />
+                            Device is currently unavailable. It seems to be disconnected at the
+                            moment. The last known location displayed on the map.
+                            <DisconnectedView
+                                device={device}
+                                connection={connection}
+                            />
+                        </Card>
                     </div>
-                )
+                    )
                 }
 
 
