@@ -62,6 +62,7 @@ const DeviceListCard: React.FC<DeviceListCardProps> = ({toggleCards, showPopup, 
         }
         else{console.log("no")
             setTimeout( connectWebSocketCallback, 5000);}
+        // eslint-disable-next-line
     }, []);
 
     const handleConnectionStateChange = async (deviceId: string,state:boolean) => {
