@@ -10,6 +10,7 @@ import ChartViewTab from "./ChartViewTab";
 import {setConnectionState} from "../../util/user-api-services";
 import DisconnectedView from "./DisconnectedView";
 import UserDataView from "./UserDataView";
+import NotificationViewTab from "./NotificationViewTab";
 
 
 interface DeviceInfoSectionProps {
@@ -341,7 +342,10 @@ const DeviceInfoSection: React.FC<DeviceInfoSectionProps> = ({device}) => {
                                     temperature={temperature}
                                 />
                             </TabPane>
-                            <TabPane tab="Previous Data" key="4">
+                            <TabPane tab="Notifications" key="4">
+                                    <NotificationViewTab device={device} />
+                            </TabPane>
+                            <TabPane tab="Previous Data" key="5">
                                 <DisconnectedView
                                     device={device}
                                     connection={connection}
@@ -351,23 +355,29 @@ const DeviceInfoSection: React.FC<DeviceInfoSectionProps> = ({device}) => {
                     </div>
                 ) : (
                     <div>
-                        <Card style={{background: "#f5f5f5"}}>
-                            <UserDataView
-                                dataToDisplay={dataToDisplay}
-                                showPopup={showPopup}
-                                handleDisenroll={handleDisenroll}
-                                device={device}
-                            />
-                            <h2>Device Disconnected...</h2>
-                            <DisconnectedView
-                                device={device}
-                                connection={connection}
-                            />
-                        </Card>
+                        <Tabs defaultActiveKey="1" type="card">
+                            <TabPane tab="Disconnected view" key="1">
+                                <Card style={{background: "#f5f5f5"}}>
+                                    <UserDataView
+                                        dataToDisplay={dataToDisplay}
+                                        showPopup={showPopup}
+                                        handleDisenroll={handleDisenroll}
+                                        device={device}
+                                    />
+                                    <h2>Device Disconnected...</h2>
+                                    <DisconnectedView
+                                        device={device}
+                                        connection={connection}
+                                    />
+                                </Card>
+                            </TabPane>
+                            <TabPane tab="Notifications" key="2">
+                                    <NotificationViewTab device={device} />
+                            </TabPane>
+                        </Tabs>
                     </div>
                 )
                 }
-
 
                 <PopupEditForm
                     visible={isPopupVisible}

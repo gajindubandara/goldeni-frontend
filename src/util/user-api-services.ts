@@ -72,3 +72,12 @@ export const fetchLastKnownDeviceData = (idToken: string,deviceId:string,start:n
         }
     });
 };
+
+//Fetch emergency data
+export const fetchMyEmergencyData = (idToken: string,deviceId:string) => {
+    return axios.get(`${baseUrl}/emergency-alert?id=${deviceId}`, {
+        headers: {
+            Authorization: `Bearer ${idToken}`
+        }
+    });
+};
