@@ -21,7 +21,7 @@ interface MapProps {
 const MapComponent: React.FC<MapProps> = ({center,markers,classname}) => {
 
     return(
-        <LeafletMap center={[center.latitude, center.longitude]} zoom={center.zoom} scrollWheelZoom={false} className={classname}>
+        <LeafletMap center={[center.latitude, center.longitude]} zoom={center.zoom} scrollWheelZoom={true} className={classname}>
             <TileLayer
                 attribution=''
                 url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
