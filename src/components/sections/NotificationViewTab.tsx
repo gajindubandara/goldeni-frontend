@@ -1,8 +1,9 @@
 import React, {useEffect, useState} from 'react';
-import {Table, Input, Space, Button, message} from 'antd';
+import {Table, Input, Space, Button, message, Empty} from 'antd';
 import LoadingSpinner from "../utils/LoadingSpinner";
 import {SearchOutlined} from "@ant-design/icons";
 import {fetchMyEmergencyData} from "../../util/user-api-services";
+import noData from "../../assets/no-data.png";
 
 interface NotificationViewProps {
     device: Device;
@@ -29,10 +30,10 @@ const NotificationViewTab: React.FC<NotificationViewProps> = ({device}) => {
     console.log(device.deviceId)
 
     useEffect(() => {
-        const fetchAlerts= async ()=>{
+        const fetchAlerts = async () => {
             if (idToken) {
                 try {
-                    const alertResponse = await fetchMyEmergencyData(idToken,device.deviceId);
+                    const alertResponse = await fetchMyEmergencyData(idToken, device.deviceId);
                     setData(alertResponse.data);
                     console.log(data)
                     setLoading(false);
@@ -45,7 +46,7 @@ const NotificationViewTab: React.FC<NotificationViewProps> = ({device}) => {
 
         }
         fetchAlerts();
-    }, [idToken,data,device.deviceId]);
+    }, [idToken, data, device.deviceId]);
 
 
     const handleSearch = (selectedKeys: React.Key[], confirm: () => void, dataIndex: string) => {
@@ -93,7 +94,7 @@ const NotificationViewTab: React.FC<NotificationViewProps> = ({device}) => {
             dataIndex: 'timestamp',
             key: 'timestamp',
             ...getColumnSearchProps('timestamp'),
-            render: (timestamp:number) => {
+            render: (timestamp: number) => {
                 // Convert timestamp to local date and time
                 const localDateTime = new Date(timestamp * 1000).toLocaleString();
                 return <span>{localDateTime}</span>;
@@ -112,13 +113,33 @@ const NotificationViewTab: React.FC<NotificationViewProps> = ({device}) => {
     };
 
 
-
     return (
         <>
             <LoadingSpinner loading={loading}/>
             <h1>Notifications</h1>
-            <div>Total Notifications: {data.length}</div>
-            <Table dataSource={data} columns={columns} pagination={paginationConfig}/>
+            {data.length !== 0 ? (
+                    <>
+                        <div>Total Notifications: {data.length}</div>
+                        <Table dataSource={data} columns={columns} pagination={paginationConfig}/>
+                    </>
+                ) :
+                (
+                    <>
+
+                        <div className="map-container map-placeholder">
+                            <div>
+                                <Empty
+                                    image={noData}
+                                    imageStyle={{
+                                        height: 60,
+                                    }}
+                                    description={<span>No available data...</span>}
+                                />
+                            </div>
+                        </div>
+                    </>
+                )}
+
         </>
     );
 };
