@@ -19,9 +19,7 @@ interface MapProps {
 }
 
 const MapComponent: React.FC<MapProps> = ({center,markers,classname}) => {
-    // const { lat, lang, username } = this.props;
 
-    //zoom 16 user / zoom 7 admin
     return(
         <LeafletMap center={[center.latitude, center.longitude]} zoom={center.zoom} scrollWheelZoom={false} className={classname}>
             <TileLayer
