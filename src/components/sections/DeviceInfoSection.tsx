@@ -60,9 +60,9 @@ const DeviceInfoSection: React.FC<DeviceInfoSectionProps> = ({device}) => {
     const [loading, setLoading] = useState(false);
     const [connection, setConnection] = useState(false);
     const [center, setCenter] = useState({
-        latitude: 0,
-        longitude: 0,
-        zoom: 16,
+        latitude: 7.8731,
+        longitude: 80.7718,
+        zoom: 7,
     })
     const [midSensorValues, setMidSensorValues] = useState<number[]>([]);
     const [headSensorValues, setHeadSensorValues] = useState<number[]>([]);

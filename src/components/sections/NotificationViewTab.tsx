@@ -27,7 +27,6 @@ const NotificationViewTab: React.FC<NotificationViewProps> = ({device}) => {
     const [loading, setLoading] = useState(true);
     const idToken = localStorage.getItem("idToken");
     const [data, setData] = useState([]);
-    console.log(device.deviceId)
 
     useEffect(() => {
         const fetchAlerts = async () => {
@@ -35,7 +34,6 @@ const NotificationViewTab: React.FC<NotificationViewProps> = ({device}) => {
                 try {
                     const alertResponse = await fetchMyEmergencyData(idToken, device.deviceId);
                     setData(alertResponse.data);
-                    console.log(data)
                     setLoading(false);
                 } catch (error) {
                     console.error("Error fetching device data:", error);
@@ -46,7 +44,8 @@ const NotificationViewTab: React.FC<NotificationViewProps> = ({device}) => {
 
         }
         fetchAlerts();
-    }, [idToken, data, device.deviceId]);
+        // eslint-disable-next-line
+    }, [idToken]);
 
 
     const handleSearch = (selectedKeys: React.Key[], confirm: () => void, dataIndex: string) => {

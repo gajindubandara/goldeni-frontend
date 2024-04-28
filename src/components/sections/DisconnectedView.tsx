@@ -67,9 +67,9 @@ const DisconnectedView: React.FC<DisconnectedViewProps> = ({device, connection})
     const idToken = localStorage.getItem("idToken");
     const [markers, setMakers] = useState<MarkerInfo[]>([]);
     const [center, setCenter] = useState({
-        latitude: 0,
-        longitude: 0,
-        zoom: 16,
+        latitude: 7.8731,
+        longitude: 80.7718,
+        zoom: 7,
     })
     const [loading, setLoading] = useState(false);
     const [hasLastKnownData, setHasLastKnownData] = useState(true);
@@ -179,7 +179,17 @@ const DisconnectedView: React.FC<DisconnectedViewProps> = ({device, connection})
                 // Await the asynchronous operation
                 const response = await fetchLastKnownDeviceData(idToken, device.deviceId, start, end);
                 console.log(JSON.stringify(response.data[0])); // Accessing data property after awaiting the promise
-                const lastData = response.data[0];
+                // const lastData = response.data[0];
+                const lastData = response.data.reduce((latest:any, current:any) => {
+                    const currentTimestamp = parseInt(current.timestamp);
+                    if (currentTimestamp > latest.timestamp) {
+                        return current;
+                    } else {
+                        return latest;
+                    }
+                }, { timestamp: 0 });
+                console.log(lastData)
+
                 if (response.data.length === 0) {
                     setHasLastKnownData(false);
                 }
@@ -205,19 +215,22 @@ const DisconnectedView: React.FC<DisconnectedViewProps> = ({device, connection})
                 setSocketData(lastData);
                 setLoading(false)
 
-                if (socketData) {
+                if (response.data) {
                     const center = {
-                        latitude: socketData.latitude,
-                        longitude: socketData.longitude,
+                        latitude: response.data[0].latitude,
+                        longitude: response.data[0].longitude,
                         zoom: 16
                     }
-                    const marker = [{
-                        latitude: socketData.latitude,
-                        longitude: socketData.longitude,
-                        username: device.registeredUsername
-                    }]
+                    const markers = response.data
+                        .filter((item: any) => item.latitude !== 0 && item.longitude !== 0) // Filter out items with latitude and longitude as 0
+                        .map((item: any) => ({
+                            latitude: item.latitude,
+                            longitude: item.longitude,
+                            username: device.registeredUsername
+                        }));
+
                     setCenter(center);
-                    setMakers(marker);
+                    setMakers(markers);
 
 
                 }
@@ -346,7 +359,7 @@ const DisconnectedView: React.FC<DisconnectedViewProps> = ({device, connection})
                             </>
                         )}
 
-                        {socketData?.latitude !== 0 ? (
+                        {markers ? (
                                 <MapComponent center={center} markers={markers} classname="map-container"/>
                             )
                             :
