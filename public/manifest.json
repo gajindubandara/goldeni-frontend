@@ -3,17 +3,17 @@
   "name": "Golden i",
   "icons": [
     {
-      "src": "https://res.cloudinary.com/dwldehfnr/image/upload/v1714049582/goldeni-frontend/wrxhwh3fmgayw16c4gj3.png",
+      "src": "https://res.cloudinary.com/dwldehfnr/image/upload/v1698754779/goldeni-frontend/wmjw8aurif20ion883mg.png",
       "sizes": "64x64 32x32 24x24 16x16",
       "type": "image/x-icon"
     },
     {
-      "src": "https://res.cloudinary.com/dwldehfnr/image/upload/v1714049582/goldeni-frontend/wrxhwh3fmgayw16c4gj3.png",
+      "src": "https://res.cloudinary.com/dwldehfnr/image/upload/v1698754779/goldeni-frontend/wmjw8aurif20ion883mg.png",
       "type": "image/png",
       "sizes": "192x192"
     },
     {
-      "src": "https://res.cloudinary.com/dwldehfnr/image/upload/v1714049582/goldeni-frontend/wrxhwh3fmgayw16c4gj3.png",
+      "src": "https://res.cloudinary.com/dwldehfnr/image/upload/v1698754779/goldeni-frontend/wmjw8aurif20ion883mg.png",
       "type": "image/png",
       "sizes": "512x512"
     }
@@ -21,5 +21,5 @@
   "start_url": "/index.html",
   "display": "standalone",
   "theme_color": "#000000",
-  "background_color": "#1677ff"
+  "background_color": "#ffffff"
 }
