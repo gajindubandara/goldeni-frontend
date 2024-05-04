@@ -109,7 +109,7 @@ const AdminDashboard: React.FC = () => {
     };
 
     const activitySeries = [{
-        name: 'Head Ultra',
+        name: 'Active Device(s)',
         data: noOfDevices
     },
     ];
