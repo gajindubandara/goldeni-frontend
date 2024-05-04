@@ -221,14 +221,25 @@ const DisconnectedView: React.FC<DisconnectedViewProps> = ({device, connection})
                         longitude: response.data[0].longitude,
                         zoom: 16
                     }
-                    const markers = response.data
-                        .filter((item: any) => item.latitude !== 0 && item.longitude !== 0) // Filter out items with latitude and longitude as 0
-                        .map((item: any) => ({
-                            latitude: item.latitude,
-                            longitude: item.longitude,
-                            username: device.registeredUsername
-                        }));
 
+                    const data = response.data;
+
+                    // Filter out items with latitude and longitude as 0
+                    const validData = data.filter((item: any) => item.latitude !== 0 && item.longitude !== 0);
+
+                    let markers: any[] = [];
+
+                    if (validData.length > 0) {
+                        // Sort valid data by timestamp in descending order
+                        validData.sort((a: any, b: any) => b.timestamp - a.timestamp);
+
+                        // Take the first valid data point
+                        markers.push({
+                            latitude: validData[0].latitude,
+                            longitude: validData[0].longitude,
+                            username: device.registeredUsername
+                        });
+                    }
                     setCenter(center);
                     setMakers(markers);
 
