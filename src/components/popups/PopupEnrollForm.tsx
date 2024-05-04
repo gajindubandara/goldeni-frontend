@@ -291,7 +291,7 @@ const PopupEnrollForm: React.FC<PopupFormProps> = ({visible, onClose, onSuccess,
                             },
                         ]}
                     >
-                        <Input disabled={isAdmin}/>
+                        <Input />
                     </Form.Item>
                     <Form.Item
                         label="Device Secret"
@@ -303,7 +303,7 @@ const PopupEnrollForm: React.FC<PopupFormProps> = ({visible, onClose, onSuccess,
                             },
                         ]}
                     >
-                        <Input disabled={isAdmin}/>
+                        <Input/>
                     </Form.Item>
                     {currentStep > 0 && (
                         <Button style={{marginRight: 8}} onClick={() => setCurrentStep(currentStep - 1)}>
